@@ -1,0 +1,33 @@
+{
+  "name": "enevti-core",
+  "version": "1.0.0",
+  "description": "📟 Enevti blockchain application platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enevtihq/enevti-core.git"
+  },
+  "keywords": [
+    "blockchain",
+    "NFT",
+    "Lisk",
+    "DeFi",
+    "cryptocurrency",
+    "DPoS"
+  ],
+  "author": "Enevti",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/enevtihq/enevti-core/issues"
+  },
+  "homepage": "https://github.com/enevtihq/enevti-core#readme",
+  "dependencies": {
+    "lisk-sdk": "^5.1.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
