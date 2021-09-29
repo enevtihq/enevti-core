@@ -4,12 +4,14 @@ const UTILITY = require("../constants/utility");
 const RECURRING = require("../constants/recurring");
 const NFTTYPE = require("../constants/nft_type");
 const CreateOneKindNFTAssetSchema = require("../schemas/assets/create_onekind_nft");
-const { generateID, getAllNFT, setAllNFT, getAllNFTContainer, setAllNFTContainer, setNFTById } = require("../utils/chain_state");
+const { generateID, getAllNFT, setAllNFT, getAllNFTContainer, setAllNFTContainer, setNFTById, setNFTContainerById } = require("../utils/chain_state");
 const CHAIN = require("../constants/chain");
 const RARITY = require("../constants/rarity");
 const JOURNEYACTIVITY = require("../constants/journey_activity");
 const REDEEMSTATUS = require("../constants/redeem_status");
 const { asyncForEach } = require("../utils/helper");
+const INSTANTUTILITY = require("../constants/instant_utility");
+const CreateOneKindNFTValidator = require("../external-validator/create_onekind_nft");
 
 class CreateOneKindNFTAsset extends BaseAsset {
   name = "createOneKindNFTAsset";
@@ -17,53 +19,56 @@ class CreateOneKindNFTAsset extends BaseAsset {
   schema = CreateOneKindNFTAssetSchema;
 
   validate({ asset }) {
-    if (!asset.name || asset.name.length > 18) {
-      throw new Error(`Invalid "asset.name" defined on transaction: Valid string is expected and Below 18 Char Length`);
+    if (asset.name.length > 18) {
+      throw new Error(`asset.name must be below 18 char length`);
     }
-    if (!asset.description) {
-      throw new Error(`Invalid "asset.description" defined on transaction: Valid string is expected`);
+    if (!Object.values(UTILITY).includes(asset.utility)) {
+      throw new Error(`asset.utility is unknown`);
     }
-    if (!asset.data) {
-      throw new Error(`Invalid "asset.data" defined on transaction: Valid string is expected`);
+    if (!Object.values(RECURRING).includes(asset.recurring)) {
+      throw new Error(`asset.recurring is unknown`);
     }
-    if (!asset.utility || !Object.values(UTILITY).includes(asset.utility)) {
-      throw new Error(`Invalid "asset.utility" defined on transaction: Valid string is expected or asset.utility is unknown`);
+    if (asset.recurring !== RECURRING.INSTANT) {
+      if (asset.recurring === RECURRING.PERWEEK && asset.time.day < 0) {
+        throw new Error(`asset.time.day is required on recurring perweek`);
+      }
+      if (asset.recurring === RECURRING.PERMONTH && asset.time.date <= 0) {
+        throw new Error(`asset.time.date is required on recurring permonth`);
+      }
+      if (asset.recurring === RECURRING.PERYEAR && (asset.time.date <= 0 || asset.time.month <= 0)) {
+        throw new Error(`asset.time.date and asset.time.month are required on recurring peryear`);
+      }
+      if (asset.recurring === RECURRING.ONCE && (asset.time.date <= 0 || asset.time.month <= 0 || asset.time.year <= 0)) {
+        throw new Error(`asset.time.date, asset.time.month, and asset.time.year are required on recurring once`);
+      }
+    } else {
+      if (!Object.values(INSTANTUTILITY).includes(asset.utility)) {
+        throw new Error(`recurring instant and asset.utility doesn't match`);
+      }
+      if (asset.time.day !== -1 || asset.time.date !== -1 || asset.time.month !== -1 || asset.time.year !== -1) {
+        throw new Error(`asset.time.day, asset.time.date, asset.time.month, and asset.time.year must be -1 on recurring instant`);
+      }
     }
-    if (!asset.recurring || !Object.values(RECURRING).includes(asset.recurring)) {
-      throw new Error(`Invalid "asset.recurring" defined on transaction: Valid string is expected or asset.recurring is unknown`);
+    if (asset.redeemLimit <= 0) {
+      throw new Error(`asset.redeemLimit must be greater than 0`);
     }
-    if (asset.recurring === RECURRING.PERWEEK && !asset.time.day) {
-      throw new Error(`Invalid "asset.time.day" defined on transaction: Day is required on recurring perweek, Valid number is expected`);
+    if (asset.price <= 0) {
+      throw new Error(`asset.price must be greater than 0`);
     }
-    if (asset.recurring === RECURRING.PERMONTH && !asset.time.date) {
-      throw new Error(`Invalid "asset.time.date" defined on transaction: Date is required on recurring permonth, Valid number is expected`);
+    if (asset.quantity <= 1) {
+      throw new Error(`asset.quantity must be greater than 0`);
     }
-    if (asset.recurring === RECURRING.PERYEAR && (!asset.time.date || !asset.time.month)) {
-      throw new Error(`Invalid "asset.time.date" or "asset.time.month" defined on transaction: Date and Month is required on recurring peryear, Valid number is expected`);
+    if (asset.mintingExpire !== -1 && asset.mintingExpire <= 10000) {
+      throw new Error(`valid asset.mintingExpire must be greater than 10000 (10 sec)`);
     }
-    if (asset.recurring === RECURRING.ONCE && (!asset.time.date || !asset.time.month || !asset.time.year)) {
-      throw new Error(`Invalid "asset.time.date" or "asset.time.month" defined on transaction: Date and Month is required on recurring peryear, Valid number is expected`);
+    if (asset.timestamp > Date.now()) {
+      throw new Error(`asset.timestamp can't be in the future`);
     }
-    if (!asset.from) {
-      throw new Error(`Invalid "asset.from" defined on transaction: Valid string is expected`);
+    if (asset.royalty.origin <= 0) {
+      throw new Error(`asset.royalty.origin must be greater than 0`);
     }
-    if (!asset.until) {
-      throw new Error(`Invalid "asset.until" defined on transaction: Valid string is expected`);
-    }
-    if (!asset.limit || asset.limit < 1) {
-      throw new Error(`Invalid "asset.limit" defined on transaction: Valid number greater than 1 is expected`);
-    }
-    if (!asset.price || asset.price < 0) {
-      throw new Error(`Invalid "asset.price" defined on transaction: Valid non negative number is expected`);
-    }
-    if (!asset.quantity || asset.quantity < 1) {
-      throw new Error(`Invalid "asset.quantity" defined on transaction: Valid number greater than 1 is expected`);
-    }
-    if (!asset.mintingExpire || asset.mintingExpire < Date.now()) {
-      throw new Error(`Invalid "asset.mintingExpire" defined on transaction: Valid number is expected and can't be in the past`);
-    }
-    if (!asset.timestamp || typeof asset.timestamp !== "number" || asset.timestamp > Date.now()) {
-      throw new Error(`Invalid "asset.timestamp" defined on transaction: Valid number is expected and can't be in the future`);
+    if (asset.royalty.staker <= 0) {
+      throw new Error(`asset.royalty.staker must be greater than 0`);
     }
   }
 
@@ -71,16 +76,21 @@ class CreateOneKindNFTAsset extends BaseAsset {
     const senderAddress = transaction.senderAddress;
     const allRegisteredNFT = await getAllNFT(stateStore);
 
+    const externalValidation = CreateOneKindNFTValidator(asset, stateStore, reducerHandler, transaction);
+    if (externalValidation.status !== true) {
+      throw new Error(`Error during external validation: ${externalValidation.message}`);
+    }
+
     const allNFT = [];
     for (let i = 0; i < asset.quantity; i++) {
       const nft = {
-        id: generateID(senderAddress, transaction.nonce + BigInt(i)),
+        id: generateID(senderAddress, transaction.nonce + BigInt(i + 1)),
         serial: asset.name + "-" + i.toString(),
         name: asset.name,
         description: asset.description,
         createdOn: asset.timestamp,
         data: asset.data,
-        ownerAddress: senderAddress,
+        ownerAddress: "",
         originAddress: senderAddress,
         originChain: CHAIN.NAME,
         NFTType: NFTTYPE.ONEKIND,
@@ -89,30 +99,36 @@ class CreateOneKindNFTAsset extends BaseAsset {
           parts: [],
           partition: [],
           count: 0,
-          message: "",
+          message: {
+            cipher: "",
+            nonce: "",
+          },
           status: REDEEMSTATUS.IDLE,
           recurring: asset.recurring,
           time: asset.time,
           from: asset.from,
           until: asset.until,
-          limit: asset.limit,
+          limit: asset.redeemLimit,
         },
         rarity: RARITY.UNDEFINED,
         journey: [
           {
             activity: JOURNEYACTIVITY.CREATED,
             date: asset.timestamp,
-            subject: senderAddress,
+            by: senderAddress,
             from: "",
             message: "",
             amount: 0,
           },
         ],
-        value: asset.price,
+        price: {
+          amount: asset.price.amount,
+          currency: asset.price.currency,
+        },
         onSale: false,
         royalty: {
-          origin: "0",
-          staker: "0",
+          origin: asset.royalty.origin,
+          staker: asset.royalty.staker,
         },
       };
       allNFT.push(nft);
@@ -129,9 +145,12 @@ class CreateOneKindNFTAsset extends BaseAsset {
       allNFT: allNFT,
       NFTSold: [],
       availableItem: allNFT,
-      mintingExpire: asset.mintingExpire,
+      mintingExpire: asset.mintingExpire === -1 ? -1 : Math.floor(asset.mintingExpire / 10000),
       originAddress: senderAddress,
-      price: asset.price,
+      price: {
+        amount: asset.price.amount,
+        currency: asset.price.currency,
+      },
       name: asset.name,
       description: asset.description,
       packSize: 1,
@@ -141,6 +160,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
     const allNFTContainer = await getAllNFTContainer(stateStore);
     allNFTContainer.push(NFTContainer);
 
+    await setNFTContainerById(stateStore, NFTContainer.id, NFTContainer);
     await setAllNFTContainer(allNFTContainer);
     await setAllNFT(stateStore, allRegisteredNFT);
   }

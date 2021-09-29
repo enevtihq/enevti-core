@@ -1,7 +1,7 @@
 const CreateOneKindNFTAssetSchema = {
   $id: "enevti/redeemable_nft/createOneKindNFT",
   type: "object",
-  required: ["name", "description", "data", "utility", "recurring", "time", "from", "until", "limit", "price", "quantity", "mintingExpire", "timestamp"],
+  required: ["name", "description", "data", "utility", "recurring", "time", "from", "until", "redeemLimit", "royalty", "price", "quantity", "mintingExpire", "timestamp"],
   properties: {
     name: {
       dataType: "string",
@@ -25,6 +25,7 @@ const CreateOneKindNFTAssetSchema = {
     },
     time: {
       type: "object",
+      required: ["day", "date", "month", "year"],
       fieldNumber: 6,
       properties: {
         day: {
@@ -57,9 +58,25 @@ const CreateOneKindNFTAssetSchema = {
       dataType: "uint32",
       fieldNumber: 9,
     },
+    royalty: {
+      type: "object",
+      required: ["origin", "staker"],
+      fieldNumber: 10,
+      properties: {
+        origin: {
+          dataType: "uint32",
+          fieldNumber: 1,
+        },
+        staker: {
+          dataType: "uint32",
+          fieldNumber: 2,
+        },
+      },
+    },
     price: {
       type: "object",
-      fieldNumber: 10,
+      required: ["amount", "currency"],
+      fieldNumber: 11,
       properties: {
         amount: {
           dataType: "uint64",
@@ -73,15 +90,15 @@ const CreateOneKindNFTAssetSchema = {
     },
     quantity: {
       dataType: "uint32",
-      fieldNumber: 11,
+      fieldNumber: 12,
     },
     mintingExpire: {
       dataType: "uint32",
-      fieldNumber: 12,
+      fieldNumber: 13,
     },
     timestamp: {
       dataType: "uint32",
-      fieldNumber: 13,
+      fieldNumber: 14,
     },
   },
 };

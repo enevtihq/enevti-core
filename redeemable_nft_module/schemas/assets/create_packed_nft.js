@@ -1,7 +1,7 @@
 const CreatePackedNFTAssetSchema = {
   $id: "enevti/redeemable_nft/createPackedNFT",
   type: "object",
-  required: [],
+  required: ["name", "description", "price", "packSize", "timestamp", "item"],
   properties: {
     name: {
       dataType: "string",
@@ -13,6 +13,7 @@ const CreatePackedNFTAssetSchema = {
     },
     price: {
       type: "object",
+      required: ["amount", "currency"],
       fieldNumber: 3,
       properties: {
         amount: {
@@ -29,11 +30,16 @@ const CreatePackedNFTAssetSchema = {
       dataType: "uint32",
       fieldNumber: 4,
     },
+    timestamp: {
+      dataType: "uint32",
+      fieldNumber: 5,
+    },
     item: {
       type: "array",
-      fieldNumber: 5,
+      fieldNumber: 6,
       items: {
         type: "object",
+        required: ["data", "utility", "quantity", "partitionSize", "recurring", "time", "from", "until", "redeemLimit", "royalty"],
         properties: {
           data: {
             type: "array",
@@ -60,6 +66,7 @@ const CreatePackedNFTAssetSchema = {
           },
           time: {
             type: "object",
+            required: ["day", "date", "month", "year"],
             fieldNumber: 6,
             properties: {
               day: {
@@ -91,6 +98,21 @@ const CreatePackedNFTAssetSchema = {
           redeemLimit: {
             dataType: "uint32",
             fieldNumber: 9,
+          },
+          royalty: {
+            type: "object",
+            required: ["origin", "staker"],
+            fieldNumber: 10,
+            properties: {
+              origin: {
+                dataType: "uint32",
+                fieldNumber: 1,
+              },
+              staker: {
+                dataType: "uint32",
+                fieldNumber: 2,
+              },
+            },
           },
         },
       },

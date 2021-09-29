@@ -3,6 +3,7 @@ const RECURRING = {
   PERMONTH: "every-month",
   PERYEAR: "every-year",
   ONCE: "once",
+  INSTANT: "instant",
 };
 
 module.exports = RECURRING;

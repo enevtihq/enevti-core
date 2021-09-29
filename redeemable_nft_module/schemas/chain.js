@@ -1,7 +1,8 @@
-const CHAIN_STATE_ALL_NFT = "redeemable_nft:all_nft";
-const CHAIN_STATE_NFT = "redeemable_nft";
+const CHAIN_STATE_ALL_NFT = "redeemable_nft_chain:all_nft";
+const CHAIN_STATE_NFT = "redeemable_nft_chain";
 const CHAIN_STATE_ALL_CONTAINER = "redeemable_nft_container:all_container";
 const CHAIN_STATE_CONTAINER = "redeemable_nft_container";
+const CHAIN_STATE_NFTPACK = "redeemable_nft_pack";
 
 const redeemableNFTSchema = {
   $id: "enevti/redeemable_nft/nft",
@@ -54,6 +55,7 @@ const redeemableNFTSchema = {
     },
     redeem: {
       type: "object",
+      required: ["parts", "partition", "count", "message", "status", "recurring", "time", "from", "until", "limit"],
       fieldNumber: 12,
       properties: {
         parts: {
@@ -72,8 +74,19 @@ const redeemableNFTSchema = {
           fieldNumber: 3,
         },
         message: {
-          dataType: "string",
+          type: "object",
+          required: ["cipher", "nonce"],
           fieldNumber: 4,
+          properties: {
+            cipher: {
+              dataType: "string",
+              fieldNumber: 1,
+            },
+            nonce: {
+              dataType: "string",
+              fieldNumber: 2,
+            },
+          },
         },
         status: {
           dataType: "string",
@@ -135,7 +148,7 @@ const redeemableNFTSchema = {
           dataType: "string",
           fieldNumber: 2,
         },
-        subject: {
+        by: {
           dataType: "bytes",
           fieldNumber: 3,
         },
@@ -153,9 +166,20 @@ const redeemableNFTSchema = {
         },
       },
     },
-    value: {
-      dataType: "uint64",
+    price: {
+      type: "object",
+      required: ["amount", "currency"],
       fieldNumber: 15,
+      properties: {
+        amount: {
+          dataType: "uint64",
+          fieldNumber: 1,
+        },
+        currency: {
+          dataType: "string",
+          fieldNumber: 2,
+        },
+      },
     },
     onSale: {
       dataType: "boolean",
@@ -165,11 +189,11 @@ const redeemableNFTSchema = {
       type: "object",
       properties: {
         origin: {
-          dataType: "string",
+          dataType: "uint32",
           fieldNumber: 1,
         },
         staker: {
-          dataType: "string",
+          dataType: "uin32",
           fieldNumber: 2,
         },
       },
@@ -255,7 +279,7 @@ const NFTContainerSchema = {
 const NFTPackSchema = {
   $id: "enevti/redeemable_nft/nft_pack",
   type: "object",
-  required: ["id", "NFTItem"],
+  required: ["id", "NFTItem", "parentContainer", "boughtBy"],
   properties: {
     id: {
       dataType: "bytes",
@@ -267,6 +291,14 @@ const NFTPackSchema = {
       items: {
         dataType: "bytes",
       },
+    },
+    parentContainer: {
+      dataType: "bytes",
+      fieldNumber: 3,
+    },
+    boughtBy: {
+      dataType: "bytes",
+      fieldNumber: 4,
     },
   },
 };
@@ -311,4 +343,5 @@ module.exports = {
   CHAIN_STATE_NFT,
   CHAIN_STATE_ALL_CONTAINER,
   CHAIN_STATE_CONTAINER,
+  CHAIN_STATE_NFTPACK,
 };

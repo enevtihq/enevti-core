@@ -1,5 +1,16 @@
 const { codec, cryptography } = require("lisk-sdk");
-const { CHAIN_STATE_ALL_NFT, allNFTSchema, CHAIN_STATE_NFT, redeemableNFTSchema, CHAIN_STATE_ALL_CONTAINER, allNFTContainerSchema, CHAIN_STATE_CONTAINER, NFTContainerSchema } = require("../schemas/chain");
+const {
+  CHAIN_STATE_ALL_NFT,
+  allNFTSchema,
+  CHAIN_STATE_NFT,
+  redeemableNFTSchema,
+  CHAIN_STATE_ALL_CONTAINER,
+  allNFTContainerSchema,
+  CHAIN_STATE_CONTAINER,
+  NFTContainerSchema,
+  CHAIN_STATE_NFTPACK,
+  NFTPackSchema,
+} = require("../schemas/chain");
 
 const generateID = (source, nonce) => {
   const nonceBuffer = Buffer.alloc(8);
@@ -72,6 +83,19 @@ const setNFTContainerById = async (stateStore, id, nftcontainer) => {
   await stateStore.chain.set(CHAIN_STATE_CONTAINER.concat(":", id), codec.encode(NFTContainerSchema, nftcontainer));
 };
 
+const getNFTPackById = async (stateStore, id) => {
+  const nftPackBuffer = await stateStore.chain.get(CHAIN_STATE_NFTPACK.concat(":", id));
+  if (!nftPackBuffer) {
+    return null;
+  }
+
+  return codec.decode(NFTPackSchema, nftPackBuffer);
+};
+
+const setNFTPackById = async (stateStore, id, nftpack) => {
+  await stateStore.chain.set(CHAIN_STATE_NFTPACK.concat(":", id), codec.encode(NFTPackSchema, nftpack));
+};
+
 module.exports = {
   generateID,
   getAllNFT,
@@ -82,4 +106,6 @@ module.exports = {
   setAllNFTContainer,
   getNFTContainerById,
   setNFTContainerById,
+  getNFTPackById,
+  setNFTPackById,
 };
