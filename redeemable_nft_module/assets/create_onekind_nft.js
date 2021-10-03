@@ -48,6 +48,12 @@ class CreateOneKindNFTAsset extends BaseAsset {
     if (asset.quantity <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
+    if (asset.from.hour < 0) {
+      throw new Error(`asset.from.hour can't be negative`);
+    }
+    if (asset.from.minute < 0) {
+      throw new Error(`asset.from.minute can't be negative`);
+    }
     if (asset.until <= BigInt(0)) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
@@ -97,7 +103,10 @@ class CreateOneKindNFTAsset extends BaseAsset {
           status: REDEEMSTATUS.IDLE,
           recurring: asset.recurring,
           time: asset.time,
-          from: asset.from,
+          from: {
+            hour: asset.from.hour,
+            minute: asset.from.minute,
+          },
           until: asset.until,
           limit: asset.redeemLimit,
         },
@@ -123,7 +132,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
         },
       };
       allNFT.push(nft);
-      allRegisteredNFT.push(nft.id);
+      allRegisteredNFT.allNFT.push(nft.id);
     }
 
     asyncForEach(allNFT, async (item) => {
@@ -149,7 +158,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
     };
 
     const allNFTContainer = await getAllNFTContainer(stateStore);
-    allNFTContainer.push(NFTContainer);
+    allNFTContainer.allNFTContainer.push(NFTContainer);
 
     await setNFTContainerById(stateStore, NFTContainer.id, NFTContainer);
     await setAllNFTContainer(allNFTContainer);

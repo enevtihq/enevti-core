@@ -10,6 +10,8 @@ const {
   NFTContainerSchema,
   CHAIN_STATE_NFTPACK,
   NFTPackSchema,
+  CHAIN_STATE_REDEEM_STATUS_MONITOR,
+  redeemMonitorSchema,
 } = require("../schemas/chain");
 
 const generateID = (source, nonce) => {
@@ -22,7 +24,7 @@ const generateID = (source, nonce) => {
 const getAllNFT = async (stateStore) => {
   const registeredTokensBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_NFT);
   if (!registeredTokensBuffer) {
-    return [];
+    return null;
   }
 
   const registeredTokens = codec.decode(allNFTSchema, registeredTokensBuffer);
@@ -32,7 +34,7 @@ const getAllNFT = async (stateStore) => {
 
 const setAllNFT = async (stateStore, NFT) => {
   const registeredTokens = {
-    allNFT: NFT.sort((a, b) => a.id.compare(b.id)),
+    allNFT: NFT.allNFT.sort((a, b) => a.id.compare(b.id)),
   };
 
   await stateStore.chain.set(CHAIN_STATE_ALL_NFT, codec.encode(allNFTSchema, registeredTokens));
@@ -54,7 +56,7 @@ const setNFTById = async (stateStore, id, nft) => {
 const getAllNFTContainer = async (stateStore) => {
   const nftContainerBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_CONTAINER);
   if (!nftContainerBuffer) {
-    return [];
+    return null;
   }
 
   const nftContainer = codec.decode(allNFTContainerSchema, nftContainerBuffer);
@@ -64,7 +66,7 @@ const getAllNFTContainer = async (stateStore) => {
 
 const setAllNFTContainer = async (stateStore, NFTContainer) => {
   const nftContainer = {
-    allNFTContainer: NFTContainer.sort((a, b) => a.id.compare(b.id)),
+    allNFTContainer: NFTContainer.allNFTContainer.sort((a, b) => a.id.compare(b.id)),
   };
 
   await stateStore.chain.set(CHAIN_STATE_ALL_CONTAINER, codec.encode(allNFTContainerSchema, nftContainer));
@@ -96,6 +98,19 @@ const setNFTPackById = async (stateStore, id, nftpack) => {
   await stateStore.chain.set(CHAIN_STATE_NFTPACK.concat(":", id), codec.encode(NFTPackSchema, nftpack));
 };
 
+const getRedeemMonitor = async (stateStore) => {
+  const redeemMonitorBuffer = await stateStore.chain.get(CHAIN_STATE_REDEEM_STATUS_MONITOR);
+  if (!redeemMonitorBuffer) {
+    return null;
+  }
+
+  return codec.decode(redeemMonitorSchema, redeemMonitorBuffer);
+};
+
+const setRedeemMonitor = async (stateStore, redeemMonitor) => {
+  await stateStore.chain.set(CHAIN_STATE_REDEEM_STATUS_MONITOR, codec.encode(redeemMonitorSchema, redeemMonitor));
+};
+
 module.exports = {
   generateID,
   getAllNFT,
@@ -108,4 +123,6 @@ module.exports = {
   setNFTContainerById,
   getNFTPackById,
   setNFTPackById,
+  getRedeemMonitor,
+  setRedeemMonitor,
 };

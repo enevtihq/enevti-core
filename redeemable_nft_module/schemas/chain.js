@@ -3,6 +3,7 @@ const CHAIN_STATE_NFT = "redeemable_nft_chain";
 const CHAIN_STATE_ALL_CONTAINER = "redeemable_nft_container:all_container";
 const CHAIN_STATE_CONTAINER = "redeemable_nft_container";
 const CHAIN_STATE_NFTPACK = "redeemable_nft_pack";
+const CHAIN_STATE_REDEEM_STATUS_MONITOR = "redeemable_nft_monitor";
 
 const redeemableNFTSchema = {
   $id: "enevti/redeemable_nft/nft",
@@ -119,8 +120,19 @@ const redeemableNFTSchema = {
           },
         },
         from: {
-          dataType: "string",
+          type: "object",
+          required: ["hour", "minute"],
           fieldNumber: 8,
+          properties: {
+            hour: {
+              dataType: "uint32",
+              fieldNumber: 1,
+            },
+            minute: {
+              dataType: "uint32",
+              fieldNumber: 2,
+            },
+          },
         },
         until: {
           dataType: "uint64",
@@ -333,15 +345,48 @@ const allNFTContainerSchema = {
   },
 };
 
+const redeemMonitorSchema = {
+  $id: "enevti/redeemable_nft/redeem_monitor",
+  type: "object",
+  required: ["checkpoint", "all"],
+  properties: {
+    checkpoint: {
+      type: "object",
+      required: ["time", "nft"],
+      fieldNumber: 1,
+      properties: {
+        time: {
+          dataType: "uint64",
+          fieldNumber: 1,
+        },
+        nft: {
+          type: "array",
+          fieldNumber: 2,
+          items: {
+            dataType: "bytes",
+          },
+        },
+      },
+    },
+    all: {
+      type: "array",
+      fieldNumber: 2,
+      items: redeemableNFTSchema,
+    },
+  },
+};
+
 module.exports = {
   redeemableNFTSchema,
   NFTContainerSchema,
   NFTPackSchema,
   allNFTSchema,
   allNFTContainerSchema,
+  redeemMonitorSchema,
   CHAIN_STATE_ALL_NFT,
   CHAIN_STATE_NFT,
   CHAIN_STATE_ALL_CONTAINER,
   CHAIN_STATE_CONTAINER,
   CHAIN_STATE_NFTPACK,
+  CHAIN_STATE_REDEEM_STATUS_MONITOR,
 };

@@ -84,8 +84,19 @@ const CreatePackedNFTAssetSchema = {
             },
           },
           from: {
-            dataType: "string",
+            type: "object",
+            required: ["hour", "minute"],
             fieldNumber: 7,
+            properties: {
+              hour: {
+                dataType: "uint32",
+                fieldNumber: 1,
+              },
+              minute: {
+                dataType: "uint32",
+                fieldNumber: 2,
+              },
+            },
           },
           until: {
             dataType: "uint64",

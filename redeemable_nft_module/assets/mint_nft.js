@@ -21,7 +21,9 @@ class MintNFTAsset extends BaseAsset {
   async apply({ asset, stateStore, reducerHandler, transaction }) {
     let container = await getNFTContainerById(stateStore, asset.containerId);
     const senderAddress = transaction.senderAddress;
+    const originAddress = container.originAddress;
     const senderAccount = await stateStore.account.get(senderAddress);
+    const originAccount = await stateStore.account.get(originAddress);
     const timestampInSec = await stateStore.chain.lastBlockHeaders[0].timestamp;
     const rng = seedrandom(transaction.nonce);
 
@@ -79,6 +81,9 @@ class MintNFTAsset extends BaseAsset {
       await stateStore.account.set(senderAddress, senderAccount);
       await setNFTById(stateStore, nft.id, nft);
     });
+
+    originAccount.redeemableNFT.creator.minted += item.length;
+    await stateStore.account.set(originAddress, originAccount);
 
     await setNFTContainerById(stateStore, container.id, container);
 
