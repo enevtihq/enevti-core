@@ -10,7 +10,6 @@ const RARITY = require("../constants/rarity");
 const JOURNEYACTIVITY = require("../constants/journey_activity");
 const REDEEMSTATUS = require("../constants/redeem_status");
 const { asyncForEach } = require("../utils/helper");
-const INSTANTUTILITY = require("../constants/instant_utility");
 const CreateOneKindNFTValidator = require("../external-validator/create_onekind_nft");
 
 class CreateOneKindNFTAsset extends BaseAsset {
@@ -28,26 +27,17 @@ class CreateOneKindNFTAsset extends BaseAsset {
     if (!Object.values(RECURRING).includes(asset.recurring)) {
       throw new Error(`asset.recurring is unknown`);
     }
-    if (asset.recurring !== RECURRING.INSTANT) {
-      if (asset.recurring === RECURRING.PERWEEK && asset.time.day < 0) {
-        throw new Error(`asset.time.day is required on recurring perweek`);
-      }
-      if (asset.recurring === RECURRING.PERMONTH && asset.time.date <= 0) {
-        throw new Error(`asset.time.date is required on recurring permonth`);
-      }
-      if (asset.recurring === RECURRING.PERYEAR && (asset.time.date <= 0 || asset.time.month <= 0)) {
-        throw new Error(`asset.time.date and asset.time.month are required on recurring peryear`);
-      }
-      if (asset.recurring === RECURRING.ONCE && (asset.time.date <= 0 || asset.time.month <= 0 || asset.time.year <= 0)) {
-        throw new Error(`asset.time.date, asset.time.month, and asset.time.year are required on recurring once`);
-      }
-    } else {
-      if (!Object.values(INSTANTUTILITY).includes(asset.utility)) {
-        throw new Error(`recurring instant and asset.utility doesn't match`);
-      }
-      if (asset.time.day !== -1 || asset.time.date !== -1 || asset.time.month !== -1 || asset.time.year !== -1) {
-        throw new Error(`asset.time.day, asset.time.date, asset.time.month, and asset.time.year must be -1 on recurring instant`);
-      }
+    if (asset.recurring === RECURRING.PERWEEK && asset.time.day < 0) {
+      throw new Error(`asset.time.day is required on recurring perweek`);
+    }
+    if (asset.recurring === RECURRING.PERMONTH && asset.time.date <= 0) {
+      throw new Error(`asset.time.date is required on recurring permonth`);
+    }
+    if (asset.recurring === RECURRING.PERYEAR && (asset.time.date <= 0 || asset.time.month <= 0)) {
+      throw new Error(`asset.time.date and asset.time.month are required on recurring peryear`);
+    }
+    if (asset.recurring === RECURRING.ONCE && (asset.time.date <= 0 || asset.time.month <= 0 || asset.time.year <= 0)) {
+      throw new Error(`asset.time.date, asset.time.month, and asset.time.year are required on recurring once`);
     }
     if (asset.redeemLimit <= 0) {
       throw new Error(`asset.redeemLimit must be greater than 0`);
@@ -55,14 +45,14 @@ class CreateOneKindNFTAsset extends BaseAsset {
     if (asset.price <= 0) {
       throw new Error(`asset.price must be greater than 0`);
     }
-    if (asset.quantity <= 1) {
+    if (asset.quantity <= 0) {
+      throw new Error(`asset.quantity must be greater than 0`);
+    }
+    if (asset.until <= BigInt(0)) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
     if (asset.mintingExpire !== -1 && asset.mintingExpire <= 10000) {
-      throw new Error(`valid asset.mintingExpire must be greater than 10000 (10 sec)`);
-    }
-    if (asset.timestamp > Date.now()) {
-      throw new Error(`asset.timestamp can't be in the future`);
+      throw new Error(`valid asset.mintingExpire is in milliseconds and must be greater than 10000 (10 sec)`);
     }
     if (asset.royalty.origin <= 0) {
       throw new Error(`asset.royalty.origin must be greater than 0`);
@@ -75,6 +65,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
   async apply({ asset, stateStore, reducerHandler, transaction }) {
     const senderAddress = transaction.senderAddress;
     const allRegisteredNFT = await getAllNFT(stateStore);
+    const timestampInSec = await stateStore.chain.lastBlockHeaders[0].timestamp;
 
     const externalValidation = CreateOneKindNFTValidator(asset, stateStore, reducerHandler, transaction);
     if (externalValidation.status !== true) {
@@ -88,7 +79,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
         serial: asset.name + "-" + i.toString(),
         name: asset.name,
         description: asset.description,
-        createdOn: asset.timestamp,
+        createdOn: timestampInSec,
         data: asset.data,
         ownerAddress: "",
         originAddress: senderAddress,
@@ -114,7 +105,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
         journey: [
           {
             activity: JOURNEYACTIVITY.CREATED,
-            date: asset.timestamp,
+            date: timestampInSec,
             by: senderAddress,
             from: "",
             message: "",
@@ -145,7 +136,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
       allNFT: allNFT,
       NFTSold: [],
       availableItem: allNFT,
-      mintingExpire: asset.mintingExpire === -1 ? -1 : Math.floor(asset.mintingExpire / 10000),
+      mintingExpire: asset.mintingExpire === -1 ? -1 : Math.floor(asset.mintingExpire / 1000),
       originAddress: senderAddress,
       price: {
         amount: asset.price.amount,
@@ -154,7 +145,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
       name: asset.name,
       description: asset.description,
       packSize: 1,
-      createdOn: asset.timestamp,
+      createdOn: timestampInSec,
     };
 
     const allNFTContainer = await getAllNFTContainer(stateStore);

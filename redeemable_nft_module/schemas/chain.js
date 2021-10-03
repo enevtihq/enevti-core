@@ -123,7 +123,7 @@ const redeemableNFTSchema = {
           fieldNumber: 8,
         },
         until: {
-          dataType: "string",
+          dataType: "uint64",
           fieldNumber: 9,
         },
         limit: {
@@ -236,7 +236,7 @@ const NFTContainerSchema = {
       },
     },
     mintingExpire: {
-      dataType: "uint32",
+      dataType: "uint64",
       fieldNumber: 6,
     },
     originAddress: {

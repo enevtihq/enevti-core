@@ -11,10 +11,6 @@ const MintNFTAssetSchema = {
       dataType: "uint32",
       fieldNumber: 2,
     },
-    timestamp: {
-      dataType: "uint32",
-      fieldNumber: 3,
-    },
   },
 };
 

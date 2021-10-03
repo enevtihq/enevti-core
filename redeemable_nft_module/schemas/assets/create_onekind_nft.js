@@ -1,7 +1,7 @@
 const CreateOneKindNFTAssetSchema = {
   $id: "enevti/redeemable_nft/createOneKindNFT",
   type: "object",
-  required: ["name", "description", "data", "utility", "recurring", "time", "from", "until", "redeemLimit", "royalty", "price", "quantity", "mintingExpire", "timestamp"],
+  required: ["name", "description", "data", "utility", "recurring", "time", "from", "until", "redeemLimit", "royalty", "price", "quantity", "mintingExpire"],
   properties: {
     name: {
       dataType: "string",
@@ -51,7 +51,7 @@ const CreateOneKindNFTAssetSchema = {
       fieldNumber: 7,
     },
     until: {
-      dataType: "string",
+      dataType: "uint64",
       fieldNumber: 8,
     },
     redeemLimit: {
@@ -93,12 +93,8 @@ const CreateOneKindNFTAssetSchema = {
       fieldNumber: 12,
     },
     mintingExpire: {
-      dataType: "uint32",
+      dataType: "uint64",
       fieldNumber: 13,
-    },
-    timestamp: {
-      dataType: "uint32",
-      fieldNumber: 14,
     },
   },
 };

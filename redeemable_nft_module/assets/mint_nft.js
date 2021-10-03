@@ -16,15 +16,13 @@ class MintNFTAsset extends BaseAsset {
     if (asset.quantity <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
-    if (asset.timestamp > Date.now()) {
-      throw new Error(`asset.timestamp can't be in the future`);
-    }
   }
 
   async apply({ asset, stateStore, reducerHandler, transaction }) {
     let container = await getNFTContainerById(stateStore, asset.containerId);
     const senderAddress = transaction.senderAddress;
     const senderAccount = await stateStore.account.get(senderAddress);
+    const timestampInSec = await stateStore.chain.lastBlockHeaders[0].timestamp;
     const rng = seedrandom(transaction.nonce);
 
     if (!container) {
@@ -32,8 +30,7 @@ class MintNFTAsset extends BaseAsset {
     }
 
     if (container.mintingExpire !== -1) {
-      const blockHeight = await stateStore.chain.lastBlockHeaders.height;
-      if (container.mintingExpire < blockHeight) {
+      if (timestampInSec > container.mintingExpire) {
         throw new Error("minting expired");
       }
     }
@@ -46,10 +43,6 @@ class MintNFTAsset extends BaseAsset {
     for (let i = 0; i < asset.quantity; i++) {
       switch (container.containerType) {
         case NFTTYPE.ONEKIND:
-          boughtItem.unshift(container.availableItem[0]);
-          container.NFTSold.push(container.availableItem[0]);
-          container.availableItem.shift();
-          break;
         case NFTTYPE.UPGRADABLE:
           boughtItem.unshift(container.availableItem[0]);
           container.NFTSold.push(container.availableItem[0]);
@@ -76,7 +69,7 @@ class MintNFTAsset extends BaseAsset {
       nft.ownerAddress = senderAddress;
       nft.journey.unshift({
         activity: JOURNEYACTIVITY.MINTED,
-        date: asset.timestamp,
+        date: timestampInSec,
         by: senderAddress,
         from: container.originAddress,
         message: `${container.name} Pack`,
