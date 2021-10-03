@@ -1,6 +1,8 @@
 const { BaseModule, codec } = require("lisk-sdk");
 const CreateOneKindNFTAsset = require("./assets/create_onekind_nft");
+const DeliverRedeemAsset = require("./assets/deliver_redeem");
 const MintNFTAsset = require("./assets/mint_nft");
+const RejectRedeemAsset = require("./assets/reject_redeem");
 const RequestRedeemAsset = require("./assets/request_redeem");
 const { REDEEMABLE_NFT_MODULE_ID, REDEEMABLE_NFT_REQUEST_REDEEM, REDEEMABLE_NFT_DELIVER_REDEEM, REDEEMBALE_NFT_REJECT_REDEEM } = require("./constants/id");
 const { RedeemableNFTAccountSchema } = require("./schemas/account");
@@ -14,7 +16,7 @@ class RedeemableNFTModule extends BaseModule {
   id = REDEEMABLE_NFT_MODULE_ID;
   accountSchema = RedeemableNFTAccountSchema;
 
-  transactionAssets = [new CreateOneKindNFTAsset(), new MintNFTAsset(), new RequestRedeemAsset()];
+  transactionAssets = [new CreateOneKindNFTAsset(), new MintNFTAsset(), new RequestRedeemAsset(), new DeliverRedeemAsset(), new RejectRedeemAsset()];
   events = ["requested", "rejected", "delivered"];
 
   async afterTransactionApply({ transaction, stateStore, reducerHandler }) {

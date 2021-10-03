@@ -355,27 +355,30 @@ const redeemMonitorSchema = {
   required: ["checkpoint", "all"],
   properties: {
     checkpoint: {
-      type: "object",
-      required: ["time", "nft"],
+      dataType: "uint32",
       fieldNumber: 1,
-      properties: {
-        time: {
-          dataType: "uint32",
-          fieldNumber: 1,
-        },
-        nft: {
-          type: "array",
-          fieldNumber: 2,
-          items: {
-            dataType: "bytes",
-          },
-        },
-      },
     },
     all: {
       type: "array",
       fieldNumber: 2,
-      items: redeemableNFTSchema,
+      items: {
+        type: "object",
+        required: ["time", "nft", "status"],
+        properties: {
+          time: {
+            dataType: "uint32",
+            fieldNumber: 1,
+          },
+          nft: {
+            dataType: "bytes",
+            fieldNumber: 2,
+          },
+          status: {
+            dataType: "string",
+            fieldNumber: 3,
+          },
+        },
+      },
     },
   },
 };

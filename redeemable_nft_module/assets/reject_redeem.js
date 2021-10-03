@@ -1,14 +1,14 @@
 const { BaseAsset } = require("lisk-sdk");
-const { REDEEMABLE_NFT_DELIVER_REDEEM } = require("../constants/id");
+const { REDEEMBALE_NFT_REJECT_REDEEM } = require("../constants/id");
 const REDEEMSTATUS = require("../constants/redeem_status");
 const { getNFTById, setNFTById, getRedeemMonitor, setRedeemMonitor } = require("../utils/chain_state");
 const JOURNEYACTIVITY = require("../constants/journey_activity");
-const DeliverRedeemAssetSchema = require("../schemas/assets/deliever_redeem");
+const RejectRedeemAssetSchema = require("../schemas/assets/reject_redeem");
 
-class DeliverRedeemAsset extends BaseAsset {
-  name = "deliverRedeemAsset";
-  id = REDEEMABLE_NFT_DELIVER_REDEEM;
-  schema = DeliverRedeemAssetSchema;
+class RejectRedeemAsset extends BaseAsset {
+  name = "rejectRedeemAsset";
+  id = REDEEMBALE_NFT_REJECT_REDEEM;
+  schema = RejectRedeemAssetSchema;
 
   async apply({ asset, stateStore, reducerHandler, transaction }) {
     const senderAddress = transaction.senderAddress;
@@ -32,13 +32,10 @@ class DeliverRedeemAsset extends BaseAsset {
       throw new Error("NFT status is not requested");
     }
 
-    nft.redeem.status = REDEEMSTATUS.READY;
-    nft.redeem.count++;
-    nft.redeem.message.cipher = asset.cipher;
-    nft.redeem.message.nonce = asset.nonce;
+    nft.redeem.status = REDEEMSTATUS.IDLE;
 
     nft.journey.unshift({
-      activity: JOURNEYACTIVITY.DELIVERED,
+      activity: JOURNEYACTIVITY.REJECTED,
       date: timestampInSec,
       by: nft.ownerAddress,
       from: senderAddress,
@@ -47,15 +44,25 @@ class DeliverRedeemAsset extends BaseAsset {
     });
 
     nft.redeem.touched = timestampInSec;
-    senderAccount.redeemableNFT.creator.delivered++;
+    senderAccount.redeemableNFT.creator.rejected++;
     const senderRequestIndex = senderAccount.redeemableNFT.creator.requestQueue.findIndex((a) => a.equals(nft.id));
     senderAccount.redeemableNFT.creator.requestQueue.splice(senderRequestIndex, 1);
 
     const redeemMonitor = await getRedeemMonitor(stateStore);
+
     const redeemMonitorItemIndex = redeemMonitor.all.findIndex((a) => {
       a.nft.equals(nft.id);
     });
-    redeemMonitor.all[redeemMonitorItemIndex].status = REDEEMSTATUS.READY;
+    redeemMonitor.all.splice(redeemMonitorItemIndex, 1);
+
+    if (redeemMonitor.all.length > 0) {
+      redeemMonitor.all.sort((a, b) => a - b);
+      if (redeemMonitor.checkpoint > redeemMonitor.all[0].time) {
+        redeemMonitor.checkpoint = redeemMonitor.all[0].time;
+      }
+    } else {
+      redeemMonitor.checkpoint = 0;
+    }
 
     await setNFTById(stateStore, nft.id, nft);
     await stateStore.account.set(senderAddress, senderAccount);
@@ -63,4 +70,4 @@ class DeliverRedeemAsset extends BaseAsset {
   }
 }
 
-module.exports = DeliverRedeemAsset;
+module.exports = RejectRedeemAsset;
