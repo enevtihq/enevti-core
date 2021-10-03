@@ -17,6 +17,8 @@ class RequestRedeemAsset extends BaseAsset {
     const timestampInSec = await stateStore.chain.lastBlockHeaders[0].timestamp;
     const blockDate = new Date(timestampInSec * 1000);
     const nft = await getNFTById(stateStore, asset.nftId);
+    const redeemHourMinute = new Date(blockDate);
+    redeemHourMinute.setHours(nft.redeem.from.hour, nft.redeem.from.minute);
 
     if (!nft) {
       throw new Error("NFT doesn't exist");
@@ -34,12 +36,8 @@ class RequestRedeemAsset extends BaseAsset {
       throw new Error("NFT redeem count exceet limit");
     }
 
-    if (new Date(blockDate).getUTCHours() !== nft.redeem.from.hour) {
-      throw new Error("Its not the hour to redeem!");
-    }
-
-    if (new Date(blockDate).getUTCMinutes() !== nft.redeem.from.minute) {
-      throw new Error("Its not the minute to redeem!");
+    if (blockDate < redeemHourMinute) {
+      throw new Error("Its not the hour or minute to redeem!");
     }
 
     let baseTime;
