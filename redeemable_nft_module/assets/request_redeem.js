@@ -13,6 +13,7 @@ class RequestRedeemAsset extends BaseAsset {
 
   async apply({ asset, stateStore, reducerHandler, transaction }) {
     const senderAddress = transaction.senderAddress;
+    const senderAccount = await stateStore.account.get(senderAddress);
     const timestampInSec = await stateStore.chain.lastBlockHeaders[0].timestamp;
     const blockDate = new Date(timestampInSec * 1000);
     const nft = await getNFTById(stateStore, asset.nftId);
@@ -108,8 +109,22 @@ class RequestRedeemAsset extends BaseAsset {
       amount: FEE.REDEEM,
     });
 
+    senderAccount.redeemableNFT.collector.redeemed.total++;
+    const redeemOriginIndex = senderAccount.redeemableNFT.collector.redeemed.detail.findIndex((a) => {
+      a.originAddress.equals(originAddress);
+    });
+    if (redeemOriginIndex !== -1) {
+      senderAccount.redeemableNFT.collector.redeemed.detail[redeemOriginIndex].count++;
+    } else {
+      senderAccount.redeemableNFT.collector.redeemed.detail.push({
+        originAddress: originAddress,
+        count: 1,
+      });
+    }
+
     await setNFTById(stateStore, nft.id, nft);
     await stateStore.account.set(originAddress, originAccount);
+    await stateStore.account.set(senderAddress, senderAccount);
     await setRedeemMonitor(stateStore, redeemMonitor);
   }
 }

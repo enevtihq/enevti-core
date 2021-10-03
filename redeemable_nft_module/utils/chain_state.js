@@ -41,7 +41,7 @@ const setAllNFT = async (stateStore, NFT) => {
 };
 
 const getNFTById = async (stateStore, id) => {
-  const NFTBuffer = await stateStore.chain.get(CHAIN_STATE_NFT.concat(":", id));
+  const NFTBuffer = await stateStore.chain.get(CHAIN_STATE_NFT.concat(":", id.toString("hex")));
   if (!NFTBuffer) {
     return null;
   }
@@ -50,7 +50,7 @@ const getNFTById = async (stateStore, id) => {
 };
 
 const setNFTById = async (stateStore, id, nft) => {
-  await stateStore.chain.set(CHAIN_STATE_NFT.concat(":", id), codec.encode(redeemableNFTSchema, nft));
+  await stateStore.chain.set(CHAIN_STATE_NFT.concat(":", id.toString("hex")), codec.encode(redeemableNFTSchema, nft));
 };
 
 const getAllNFTContainer = async (stateStore) => {
@@ -73,7 +73,7 @@ const setAllNFTContainer = async (stateStore, NFTContainer) => {
 };
 
 const getNFTContainerById = async (stateStore, id) => {
-  const nftContainerBuffer = await stateStore.chain.get(CHAIN_STATE_CONTAINER.concat(":", id));
+  const nftContainerBuffer = await stateStore.chain.get(CHAIN_STATE_CONTAINER.concat(":", id.toString("hex")));
   if (!nftContainerBuffer) {
     return null;
   }
@@ -82,11 +82,11 @@ const getNFTContainerById = async (stateStore, id) => {
 };
 
 const setNFTContainerById = async (stateStore, id, nftcontainer) => {
-  await stateStore.chain.set(CHAIN_STATE_CONTAINER.concat(":", id), codec.encode(NFTContainerSchema, nftcontainer));
+  await stateStore.chain.set(CHAIN_STATE_CONTAINER.concat(":", id.toString("hex")), codec.encode(NFTContainerSchema, nftcontainer));
 };
 
 const getNFTPackById = async (stateStore, id) => {
-  const nftPackBuffer = await stateStore.chain.get(CHAIN_STATE_NFTPACK.concat(":", id));
+  const nftPackBuffer = await stateStore.chain.get(CHAIN_STATE_NFTPACK.concat(":", id.toString("hex")));
   if (!nftPackBuffer) {
     return null;
   }
@@ -95,7 +95,7 @@ const getNFTPackById = async (stateStore, id) => {
 };
 
 const setNFTPackById = async (stateStore, id, nftpack) => {
-  await stateStore.chain.set(CHAIN_STATE_NFTPACK.concat(":", id), codec.encode(NFTPackSchema, nftpack));
+  await stateStore.chain.set(CHAIN_STATE_NFTPACK.concat(":", id.toString("hex")), codec.encode(NFTPackSchema, nftpack));
 };
 
 const getRedeemMonitor = async (stateStore) => {
