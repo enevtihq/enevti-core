@@ -22,7 +22,7 @@ class RedeemableNFTModule extends BaseModule {
       const requestAsset = codec.decode(RequestRedeemAssetSchema, transaction.asset);
       const nft = await getNFTById(stateStore, requestAsset.nftId);
       this._channel.publish("redeemableNFT:requested", {
-        sender: transaction._senderAddress.toString("hex"),
+        from: transaction._senderAddress.toString("hex"),
         nft: nft.id.toString("hex"),
         to: nft.originAddress.toString("hex"),
       });
@@ -31,7 +31,7 @@ class RedeemableNFTModule extends BaseModule {
       const deliverAsset = codec.decode(DeliverRedeemAssetSchema, transaction.asset);
       const nft = await getNFTById(stateStore, deliverAsset.nftId);
       this._channel.publish("redeemableNFT:delivered", {
-        sender: transaction._senderAddress.toString("hex"),
+        from: transaction._senderAddress.toString("hex"),
         nft: nft.id.toString("hex"),
         to: nft.originAddress.toString("hex"),
         cipher: deliverAsset.cipher,
@@ -42,7 +42,7 @@ class RedeemableNFTModule extends BaseModule {
       const rejectAsset = codec.decode(RejectRedeemAssetSchema, transaction.asset);
       const nft = await getNFTById(stateStore, rejectAsset.nftId);
       this._channel.publish("redeemableNFT:rejected", {
-        sender: transaction._senderAddress.toString("hex"),
+        from: transaction._senderAddress.toString("hex"),
         nft: nft.id.toString("hex"),
         to: nft.originAddress.toString("hex"),
       });
