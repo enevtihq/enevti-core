@@ -1,5 +1,5 @@
 const FEE = {
-  REDEEM: 1000,
+  REDEEM: 600000,
 };
 
 module.exports = FEE;
