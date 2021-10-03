@@ -91,7 +91,7 @@ class RedeemableNFTModule extends BaseModule {
         nft.redeem.touched = block.header.timestamp;
         await setNFTById(stateStore, nft.id, nft);
       });
-      for (let i = index.length - 1; i >= 0; i--) redeemMonitor.all.splice(i, 1);
+      for (let i = index.length; i > 0; i--) redeemMonitor.all.splice(i, 1);
       if (redeemMonitor.all.length > 0) {
         redeemMonitor.all.sort((a, b) => a - b);
         if (redeemMonitor.checkpoint > redeemMonitor.all[0].time) {
