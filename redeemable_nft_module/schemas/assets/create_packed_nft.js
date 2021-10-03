@@ -99,7 +99,7 @@ const CreatePackedNFTAssetSchema = {
             },
           },
           until: {
-            dataType: "uint64",
+            dataType: "uint32",
             fieldNumber: 8,
           },
           redeemLimit: {

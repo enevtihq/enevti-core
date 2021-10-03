@@ -54,11 +54,11 @@ class CreateOneKindNFTAsset extends BaseAsset {
     if (asset.from.minute < 0) {
       throw new Error(`asset.from.minute can't be negative`);
     }
-    if (asset.until <= BigInt(0)) {
+    if (asset.until <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
-    if (asset.mintingExpire !== -1 && asset.mintingExpire <= 10000) {
-      throw new Error(`valid asset.mintingExpire is in milliseconds and must be greater than 10000 (10 sec)`);
+    if (asset.mintingExpire !== -1 && asset.mintingExpire <= 10) {
+      throw new Error(`valid asset.mintingExpire is in milliseconds and must be greater than 10 (sec)`);
     }
     if (asset.royalty.origin <= 0) {
       throw new Error(`asset.royalty.origin must be greater than 0`);
@@ -109,6 +109,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
           },
           until: asset.until,
           limit: asset.redeemLimit,
+          touched: timestampInSec,
         },
         rarity: RARITY.UNDEFINED,
         journey: [
@@ -145,7 +146,7 @@ class CreateOneKindNFTAsset extends BaseAsset {
       allNFT: allNFT,
       NFTSold: [],
       availableItem: allNFT,
-      mintingExpire: asset.mintingExpire === -1 ? -1 : Math.floor(asset.mintingExpire / 1000),
+      mintingExpire: asset.mintingExpire === -1 ? -1 : asset.mintingExpire,
       originAddress: senderAddress,
       price: {
         amount: asset.price.amount,

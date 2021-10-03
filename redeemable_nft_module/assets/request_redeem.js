@@ -81,18 +81,20 @@ class RequestRedeemAsset extends BaseAsset {
     }
 
     const redeemMonitor = await getRedeemMonitor(stateStore);
-    const checkpointTime = BigInt(baseTime) + nft.redeem.until;
-    if (BigInt(redeemMonitor.checkpoint.time) > checkpointTime) {
+    const checkpointTime = baseTime + nft.redeem.until;
+    if (redeemMonitor.checkpoint.time > checkpointTime) {
       redeemMonitor.checkpoint.time = checkpointTime;
       redeemMonitor.checkpoint.nft = [nft.id];
     }
-    if (BigInt(redeemMonitor.checkpoint.time) === checkpointTime) {
+    if (redeemMonitor.checkpoint.time === checkpointTime) {
       redeemMonitor.checkpoint.nft.push(nft.id);
     }
+    redeemMonitor.all.push(nft);
 
     const originAddress = nft.originAddress;
     const originAccount = await stateStore.account.get(originAddress);
     nft.redeem.status = REDEEMSTATUS.REQUESTED;
+    nft.redeem.touched = checkpointTime;
     originAccount.redeemableNFT.creator.requestQueue.push(nft.id);
 
     await reducerHandler.invoke("token:debit", {

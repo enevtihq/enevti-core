@@ -56,7 +56,7 @@ const redeemableNFTSchema = {
     },
     redeem: {
       type: "object",
-      required: ["parts", "partition", "count", "message", "status", "recurring", "time", "from", "until", "limit"],
+      required: ["parts", "partition", "count", "message", "status", "recurring", "time", "from", "until", "limit", "touched"],
       fieldNumber: 12,
       properties: {
         parts: {
@@ -135,12 +135,16 @@ const redeemableNFTSchema = {
           },
         },
         until: {
-          dataType: "uint64",
+          dataType: "uint32",
           fieldNumber: 9,
         },
         limit: {
           dataType: "uint32",
           fieldNumber: 10,
+        },
+        touched: {
+          dataType: "uint32",
+          fieldNumber: 11,
         },
       },
     },
@@ -157,7 +161,7 @@ const redeemableNFTSchema = {
           fieldNumber: 1,
         },
         date: {
-          dataType: "string",
+          dataType: "uint32",
           fieldNumber: 2,
         },
         by: {
@@ -248,7 +252,7 @@ const NFTContainerSchema = {
       },
     },
     mintingExpire: {
-      dataType: "uint64",
+      dataType: "uint32",
       fieldNumber: 6,
     },
     originAddress: {
@@ -356,7 +360,7 @@ const redeemMonitorSchema = {
       fieldNumber: 1,
       properties: {
         time: {
-          dataType: "uint64",
+          dataType: "uint32",
           fieldNumber: 1,
         },
         nft: {

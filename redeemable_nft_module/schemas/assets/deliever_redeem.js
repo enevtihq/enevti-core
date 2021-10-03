@@ -7,9 +7,13 @@ const DeliverRedeemAssetSchema = {
       dataType: "bytes",
       fieldNumber: 1,
     },
-    resource: {
+    cipher: {
       dataType: "string",
       fieldNumber: 2,
+    },
+    nonce: {
+      dataType: "string",
+      fieldNumber: 3,
     },
   },
 };

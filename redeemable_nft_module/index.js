@@ -34,7 +34,8 @@ class RedeemableNFTModule extends BaseModule {
         sender: transaction._senderAddress.toString("hex"),
         nft: nft.id.toString("hex"),
         to: nft.originAddress.toString("hex"),
-        resource: deliverAsset.resource,
+        cipher: deliverAsset.cipher,
+        nonce: deliverAsset.nonce,
       });
     }
     if (transaction.moduleID === this.id && transaction.assetID === REDEEMBALE_NFT_REJECT_REDEEM) {

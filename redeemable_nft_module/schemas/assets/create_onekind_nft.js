@@ -62,7 +62,7 @@ const CreateOneKindNFTAssetSchema = {
       },
     },
     until: {
-      dataType: "uint64",
+      dataType: "uint32",
       fieldNumber: 8,
     },
     redeemLimit: {
@@ -104,7 +104,7 @@ const CreateOneKindNFTAssetSchema = {
       fieldNumber: 12,
     },
     mintingExpire: {
-      dataType: "uint64",
+      dataType: "uint32",
       fieldNumber: 13,
     },
   },

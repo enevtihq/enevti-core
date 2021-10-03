@@ -1,7 +1,10 @@
 const JOURNEYACTIVITY = {
   CREATED: "created",
   MINTED: "minted",
-  REDEEMED: "redeemed",
+  PRESERVED: "preserved",
+  DELIVERED: "delivered",
+  REJECTED: "rejected",
+  TIMEOUT: "timeout",
   BOUGHT: "bought",
   FREEZED: "freezed",
 };
