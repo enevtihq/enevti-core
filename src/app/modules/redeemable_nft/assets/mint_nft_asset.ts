@@ -1,4 +1,5 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import * as seedrandom from 'seedrandom';
 import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { MintNFTProps } from '../../../../types/core/asset/redeemable_nft/mint_nft_asset';
@@ -10,9 +11,6 @@ import { CollectionAsset } from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { addActivityNFT } from '../utils/activity';
-
-// eslint-disable-next-line import/order
-import seedrandom = require('seedrandom');
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);

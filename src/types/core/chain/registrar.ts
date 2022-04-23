@@ -1,13 +1,17 @@
 import { NFTIdAsset } from './id';
 
 export type RegisteredNameAsset = {
-  id: NFTIdAsset[];
+  id: NFTIdAsset;
 };
 
 export type RegisteredSymbolAsset = {
-  id: NFTIdAsset[];
+  id: NFTIdAsset;
 };
 
 export type RegisteredSerialAsset = {
-  id: NFTIdAsset[];
+  id: NFTIdAsset;
+};
+
+export type RegisteredUsernameAsset = {
+  address: Buffer;
 };

@@ -1,14 +1,14 @@
 import { BaseAsset, ApplyAssetContext } from 'lisk-sdk';
 import { PersonaAccountProps } from '../../../../types/core/account/persona';
-import { ChangePhotoProps } from '../../../../types/core/asset/persona/change_photo_asset';
-import { changePhotoAssetSchema } from '../schema/asset/change_photo_asset';
+import { ChangeTwitterProps } from '../../../../types/core/asset/persona/change_twitter_asset';
+import { changeTwitterAssetSchema } from '../schema/asset/change_twitter_asset';
 
-export class ChangePhotoAsset extends BaseAsset<ChangePhotoProps> {
-  public name = 'changePhoto';
-  public id = 0;
+export class ChangeTwitterAsset extends BaseAsset {
+  public name = 'changeTwitter';
+  public id = 1;
 
   // Define schema for asset
-  public schema = changePhotoAssetSchema;
+  public schema = changeTwitterAssetSchema;
 
   public validate(): void {
     // Validate your asset
@@ -19,10 +19,10 @@ export class ChangePhotoAsset extends BaseAsset<ChangePhotoProps> {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<ChangePhotoProps>): Promise<void> {
+  }: ApplyAssetContext<ChangeTwitterProps>): Promise<void> {
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<PersonaAccountProps>(senderAddress);
-    senderAccount.persona.photo = asset.photo;
+    senderAccount.persona.social.twitter = asset.twitter;
     await stateStore.account.set(senderAddress, senderAccount);
   }
 }

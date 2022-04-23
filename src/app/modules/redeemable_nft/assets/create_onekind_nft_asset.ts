@@ -23,6 +23,7 @@ import {
   getRegisteredName,
   getRegisteredSymbol,
   setRegisteredName,
+  setRegisteredSerial,
   setRegisteredSymbol,
 } from '../utils/registrar';
 import {
@@ -179,7 +180,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
         id: generateID(senderAddress, transaction.nonce + BigInt(i + 1)),
         collectionId: collection.id,
         symbol: asset.symbol,
-        serial: '',
+        serial: i.toString(),
         name: asset.name,
         description: asset.description,
         createdOn: timestamp,
@@ -269,6 +270,13 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
     await setCollectionById(stateStore, collection.id.toString('hex'), collection);
     await setRegisteredName(stateStore, collection.name, collection.id.toString('hex'));
     await setRegisteredSymbol(stateStore, collection.symbol, collection.id.toString('hex'));
+    await asyncForEach(nftsInThisCollection, async item => {
+      await setRegisteredSerial(
+        stateStore,
+        `${item.symbol}#${item.serial}`,
+        item.id.toString('hex'),
+      );
+    });
 
     const activity: CollectionActivityChainItems = {
       transaction: transaction.id,

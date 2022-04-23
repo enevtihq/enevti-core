@@ -1,14 +1,24 @@
 /* eslint-disable class-methods-use-this */
 
 import {
+  RegisterTransactionAsset,
+  RegisterTransactionAssetContext,
+} from 'lisk-framework/dist-node/modules/dpos';
+import {
   AfterBlockApplyContext,
   AfterGenesisBlockApplyContext,
   BaseModule,
   BeforeBlockApplyContext,
+  codec,
+  StateStore,
   TransactionApplyContext,
 } from 'lisk-sdk';
+import { PersonaAccountProps } from '../../../types/core/account/persona';
+import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
+import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
+import { getRegisteredUsername, setRegisteredUsername } from './utils/username';
 
 export class PersonaModule extends BaseModule {
   public actions = {
@@ -17,21 +27,19 @@ export class PersonaModule extends BaseModule {
     // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
   };
   public reducers = {
-    // Example below
-    // getBalance: async (
-    // 	params: Record<string, unknown>,
-    // 	stateStore: StateStore,
-    // ): Promise<bigint> => {
-    // 	const { address } = params;
-    // 	if (!Buffer.isBuffer(address)) {
-    // 		throw new Error('Address must be a buffer');
-    // 	}
-    // 	const account = await stateStore.account.getOrDefault<TokenAccount>(address);
-    // 	return account.token.balance;
-    // },
+    getAccount: async (params, stateStore: StateStore) => {
+      const { address } = params as Record<string, string>;
+      return stateStore.account.getOrDefault<RedeemableNFTAccountProps>(
+        Buffer.from(address, 'hex'),
+      );
+    },
+    getAddressByUsername: async (params, stateStore: StateStore) => {
+      const { username } = params as Record<string, string>;
+      return getRegisteredUsername(stateStore, username);
+    },
   };
   public name = 'persona';
-  public transactionAssets = [new ChangePhotoAsset()];
+  public transactionAssets = [new ChangePhotoAsset(), new ChangeTwitterAsset()];
   public events = [
     // Example below
     // 'persona:newBlock',
@@ -62,8 +70,22 @@ export class PersonaModule extends BaseModule {
   }
 
   public async afterTransactionApply(_input: TransactionApplyContext) {
-    // Get any data from stateStore using transaction info, below is an example
-    // const sender = await _input.stateStore.account.getOrDefault<TokenAccount>(_input.transaction.senderAddress);
+    if (_input.transaction.moduleID === 5 && _input.transaction.assetID === 0) {
+      const registerAsset = codec.decode<RegisterTransactionAssetContext>(
+        new RegisterTransactionAsset().schema,
+        _input.transaction.asset,
+      );
+      const senderAccount = await _input.stateStore.account.getOrDefault<PersonaAccountProps>(
+        _input.transaction.senderAddress,
+      );
+      senderAccount.persona.username = registerAsset.username;
+      await _input.stateStore.account.set(_input.transaction.senderAddress, senderAccount);
+      await setRegisteredUsername(
+        _input.stateStore,
+        registerAsset.username,
+        _input.transaction.senderAddress.toString('hex'),
+      );
+    }
   }
 
   public async afterGenesisBlockApply(_input: AfterGenesisBlockApplyContext) {
