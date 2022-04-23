@@ -11,9 +11,10 @@ import {
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
   codec,
+  StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
-import { addStakeByAddress, subtractStakeByAddress } from './utils/stake';
+import { addStakeByAddress, getStakerByAddress, subtractStakeByAddress } from './utils/stake';
 
 export class CreatorFinanceModule extends BaseModule {
   public actions = {
@@ -22,18 +23,10 @@ export class CreatorFinanceModule extends BaseModule {
     // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
   };
   public reducers = {
-    // Example below
-    // getBalance: async (
-    // 	params: Record<string, unknown>,
-    // 	stateStore: StateStore,
-    // ): Promise<bigint> => {
-    // 	const { address } = params;
-    // 	if (!Buffer.isBuffer(address)) {
-    // 		throw new Error('Address must be a buffer');
-    // 	}
-    // 	const account = await stateStore.account.getOrDefault<TokenAccount>(address);
-    // 	return account.token.balance;
-    // },
+    getStakerByAddress: async (params, stateStore: StateStore) => {
+      const { address } = params as Record<string, string>;
+      return getStakerByAddress(stateStore, address);
+    },
   };
   public name = 'creatorFinance';
   public transactionAssets = [];

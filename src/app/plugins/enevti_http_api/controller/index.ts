@@ -8,6 +8,10 @@ import getNFTBySerial from './getNFTBySerial';
 import getNFTTemplateById from './getNFTTemplateById';
 import getAllNFTTemplate from './getAllNFTTemplate';
 import getProfile from './getProfile';
+import getPersonaByAddress from './getPersonaByAddress';
+import getPersonaByUsername from './getPersonaByUsername';
+import getStakePoolByAddress from './getStakePoolByAddress';
+import getStakePoolByUsername from './getStakePoolByUsername';
 
 export default {
   getAllCollection,
@@ -20,4 +24,8 @@ export default {
   getNFTTemplateById,
   getAllNFTTemplate,
   getProfile,
+  getPersonaByAddress,
+  getPersonaByUsername,
+  getStakePoolByAddress,
+  getStakePoolByUsername,
 };

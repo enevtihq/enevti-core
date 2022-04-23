@@ -116,7 +116,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
     const symbolRegistrar = await getRegisteredSymbol(stateStore, asset.symbol);
     if (symbolRegistrar) throw new Error('symbol already exist on chain!');
 
-    const senderAccount = await stateStore.account.getOrDefault<
+    const senderAccount = await stateStore.account.get<
       DPOSAccountProps & RedeemableNFTAccountProps
     >(senderAddress);
     if (

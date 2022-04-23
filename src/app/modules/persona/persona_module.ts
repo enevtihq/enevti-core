@@ -29,9 +29,7 @@ export class PersonaModule extends BaseModule {
   public reducers = {
     getAccount: async (params, stateStore: StateStore) => {
       const { address } = params as Record<string, string>;
-      return stateStore.account.getOrDefault<RedeemableNFTAccountProps>(
-        Buffer.from(address, 'hex'),
-      );
+      return stateStore.account.get<RedeemableNFTAccountProps>(Buffer.from(address, 'hex'));
     },
     getAddressByUsername: async (params, stateStore: StateStore) => {
       const { username } = params as Record<string, string>;
