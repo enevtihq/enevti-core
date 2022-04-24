@@ -49,7 +49,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const profile: Profile = {
       balance: account.token.balance.toString(),
       stake: account.dpos.delegate.totalVotesReceived.toString(),
-      social: { twitter: { link: '', stat: 0 } },
+      social: { twitter: { link: account.persona.social.twitter, stat: 0 } },
       nftSold: account.redeemableNft.nftSold,
       treasuryAct: account.redeemableNft.treasuryAct,
       serveRate: account.redeemableNft.serveRate,
