@@ -39,6 +39,7 @@ export const collectionSchema: RSchemaWithDefault = {
     'minting',
     'minted',
     'social',
+    'promoted',
   ],
   properties: {
     id: {
@@ -162,6 +163,10 @@ export const collectionSchema: RSchemaWithDefault = {
         },
       },
     },
+    promoted: {
+      dataType: 'boolean',
+      fieldNumber: 16,
+    },
   },
   default: {
     id: Buffer.alloc(0),
@@ -206,5 +211,6 @@ export const collectionSchema: RSchemaWithDefault = {
     social: {
       twitter: '',
     },
+    promoted: false,
   },
 };

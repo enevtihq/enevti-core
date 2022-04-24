@@ -60,6 +60,7 @@ export interface Collection extends CollectionBase {
   minted: NFTBase[];
   creator: Persona;
   activity: CollectionActivity[];
+  promoted: boolean;
 }
 
 export interface CollectionAsset

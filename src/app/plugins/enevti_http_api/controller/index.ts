@@ -12,6 +12,7 @@ import getPersonaByAddress from './getPersonaByAddress';
 import getPersonaByUsername from './getPersonaByUsername';
 import getStakePoolByAddress from './getStakePoolByAddress';
 import getStakePoolByUsername from './getStakePoolByUsername';
+import getFeeds from './getFeeds';
 
 export default {
   getAllCollection,
@@ -28,4 +29,5 @@ export default {
   getPersonaByUsername,
   getStakePoolByAddress,
   getStakePoolByUsername,
+  getFeeds,
 };

@@ -171,6 +171,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
       social: {
         twitter: '',
       },
+      promoted: false,
     };
 
     const nftsInThisCollection: NFTAsset[] = [];
