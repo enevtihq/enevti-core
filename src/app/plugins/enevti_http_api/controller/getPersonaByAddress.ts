@@ -16,8 +16,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       username: account.persona.username,
     };
 
-    res.status(200).json({ data: persona, meta: {} });
+    res.status(200).json({ data: persona, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json(err);
+    res.status(409).json({ data: err, meta: req.params });
   }
 };

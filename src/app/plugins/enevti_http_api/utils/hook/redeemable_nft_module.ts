@@ -85,10 +85,10 @@ export const invokeGetNFTTemplateById = async (
 export const invokeGetActivityNFT = async (
   channel: BaseChannel,
   id: string,
-): Promise<NFTActivityChain | undefined> => channel.invoke('redeemableNft:getActivityNFT', { id });
+): Promise<NFTActivityChain> => channel.invoke('redeemableNft:getActivityNFT', { id });
 
 export const invokeGetActivityCollection = async (
   channel: BaseChannel,
   id: string,
-): Promise<CollectionActivityChain | undefined> =>
+): Promise<CollectionActivityChain> =>
   channel.invoke('redeemableNft:getActivityCollection', { id });

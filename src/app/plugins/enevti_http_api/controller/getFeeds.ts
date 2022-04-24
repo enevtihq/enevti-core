@@ -23,7 +23,13 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
           const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
           const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
           const nft = await Promise.all(
-            item.minting.total.map(async (nftid): Promise<NFT> => idBufferToNFT(channel, nftid)),
+            item.minting.total.map(
+              async (nftid): Promise<NFT> => {
+                const nftItem = await idBufferToNFT(channel, nftid);
+                if (!nftItem) throw new Error('NFT not found while iterating collection.minting');
+                return nftItem;
+              },
+            ),
           );
           return {
             type: item.collectionType,
@@ -46,8 +52,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     );
 
-    res.status(200).json({ data: feeds, meta: {} });
+    res.status(200).json({ data: feeds, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json(err);
+    res.status(409).json({ data: err, meta: req.params });
   }
 };

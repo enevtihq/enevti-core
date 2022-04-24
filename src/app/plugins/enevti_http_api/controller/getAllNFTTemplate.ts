@@ -11,8 +11,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       parseInt(limit, 10),
     );
 
-    res.status(200).json({ data: template, meta: {} });
+    res.status(200).json({ data: template, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json(err);
+    res.status(409).json({ data: err, meta: req.params });
   }
 };

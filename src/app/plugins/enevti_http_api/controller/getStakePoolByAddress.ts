@@ -9,7 +9,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const { address } = req.params;
     const stakerChain = await invokeGetStakerByAddress(channel, address);
     if (!stakerChain) {
-      res.status(404).json('Not Found');
+      res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;
     }
     const staker = await Promise.all(
@@ -30,8 +30,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       staker,
     };
 
-    res.status(200).json({ data: stake, meta: {} });
+    res.status(200).json({ data: stake, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json(err);
+    res.status(409).json({ data: err, meta: req.params });
   }
 };

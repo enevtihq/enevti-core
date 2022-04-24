@@ -127,21 +127,18 @@ export class RedeemableNftModule extends BaseModule {
       const template = await getNFTTemplateById(stateStore, id);
       return template ?? undefined;
     },
-    getActivityNFT: async (
-      params,
-      stateStore: StateStore,
-    ): Promise<NFTActivityChain | undefined> => {
+    getActivityNFT: async (params, stateStore: StateStore): Promise<NFTActivityChain> => {
       const { id } = params as Record<string, string>;
       const activity = await getActivityNFT(stateStore, id);
-      return activity ?? undefined;
+      return activity;
     },
     getActivityCollection: async (
       params,
       stateStore: StateStore,
-    ): Promise<CollectionActivityChain | undefined> => {
+    ): Promise<CollectionActivityChain> => {
       const { id } = params as Record<string, string>;
       const activity = await getActivityCollection(stateStore, id);
-      return activity ?? undefined;
+      return activity;
     },
   };
   public name = 'redeemableNft';

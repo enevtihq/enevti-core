@@ -7,12 +7,12 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const { id } = req.params;
     const template = await invokeGetNFTTemplateById(channel, id);
     if (!template) {
-      res.status(404).json('Not Found');
+      res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;
     }
 
-    res.status(200).json({ data: template, meta: {} });
+    res.status(200).json({ data: template, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json(err);
+    res.status(409).json({ data: err, meta: req.params });
   }
 };
