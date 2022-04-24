@@ -13,6 +13,10 @@ import getPersonaByUsername from './getPersonaByUsername';
 import getStakePoolByAddress from './getStakePoolByAddress';
 import getStakePoolByUsername from './getStakePoolByUsername';
 import getFeeds from './getFeeds';
+import isNameExists from './isNameExists';
+import isSymbolExists from './isSymbolExists';
+import isSerialExists from './isSerialExists';
+import isUsernameExists from './isUsernameExists';
 
 export default {
   getAllCollection,
@@ -30,4 +34,8 @@ export default {
   getStakePoolByAddress,
   getStakePoolByUsername,
   getFeeds,
+  isNameExists,
+  isSymbolExists,
+  isSerialExists,
+  isUsernameExists,
 };

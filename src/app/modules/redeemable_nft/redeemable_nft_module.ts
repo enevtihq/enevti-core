@@ -140,6 +140,21 @@ export class RedeemableNftModule extends BaseModule {
       const activity = await getActivityCollection(stateStore, id);
       return activity;
     },
+    isNameExists: async (params, stateStore: StateStore): Promise<boolean> => {
+      const { name } = params as Record<string, string>;
+      const nameRegistrar = await getRegisteredName(stateStore, name);
+      return !!nameRegistrar;
+    },
+    isSymbolExists: async (params, stateStore: StateStore): Promise<boolean> => {
+      const { symbol } = params as Record<string, string>;
+      const symbolRegistrar = await getRegisteredSymbol(stateStore, symbol);
+      return !!symbolRegistrar;
+    },
+    isSerialExists: async (params, stateStore: StateStore): Promise<boolean> => {
+      const { serial } = params as Record<string, string>;
+      const serialRegistrar = await getRegisteredSerial(stateStore, serial);
+      return !!serialRegistrar;
+    },
   };
   public name = 'redeemableNft';
   public transactionAssets = [

@@ -35,6 +35,11 @@ export class PersonaModule extends BaseModule {
       const { username } = params as Record<string, string>;
       return getRegisteredUsername(stateStore, username);
     },
+    isUsernameExists: async (params, stateStore: StateStore) => {
+      const { username } = params as Record<string, string>;
+      const usernameRegistrar = await getRegisteredUsername(stateStore, username);
+      return !!usernameRegistrar;
+    },
   };
   public name = 'persona';
   public transactionAssets = [new ChangePhotoAsset(), new ChangeTwitterAsset()];

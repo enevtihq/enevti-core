@@ -92,3 +92,16 @@ export const invokeGetActivityCollection = async (
   id: string,
 ): Promise<CollectionActivityChain> =>
   channel.invoke('redeemableNft:getActivityCollection', { id });
+
+export const invokeIsNameExists = async (channel: BaseChannel, name: string): Promise<boolean> =>
+  channel.invoke('redeemableNft:isNameExists', { name });
+
+export const invokeIsSymbolExists = async (
+  channel: BaseChannel,
+  symbol: string,
+): Promise<boolean> => channel.invoke('redeemableNft:isSymbolExists', { symbol });
+
+export const invokeIsSerialExists = async (
+  channel: BaseChannel,
+  serial: string,
+): Promise<boolean> => channel.invoke('redeemableNft:isSerialExists', { serial });

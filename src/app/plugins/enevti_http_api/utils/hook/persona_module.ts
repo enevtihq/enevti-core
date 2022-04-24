@@ -18,3 +18,8 @@ export const invokeGetAddressByUsername = async (
   username: string,
 ): Promise<RegisteredUsernameAsset | undefined> =>
   channel.invoke('persona:getAddressByUsername', { username });
+
+export const invokeIsUsernameExists = async (
+  channel: BaseChannel,
+  username: string,
+): Promise<boolean> => channel.invoke('persona:isUsernameExists', { username });
