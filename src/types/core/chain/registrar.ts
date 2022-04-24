@@ -1,11 +1,11 @@
-import { NFTIdAsset } from './id';
+import { CollectionIdAsset, NFTIdAsset } from './id';
 
 export type RegisteredNameAsset = {
-  id: NFTIdAsset;
+  id: CollectionIdAsset;
 };
 
 export type RegisteredSymbolAsset = {
-  id: NFTIdAsset;
+  id: CollectionIdAsset;
 };
 
 export type RegisteredSerialAsset = {

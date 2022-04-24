@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFTAsset } from '../../../../types/core/chain/nft';
+import { invokeGetNFT, invokeGetNFTIdFromSerial } from '../utils/hook/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { serial } = req.params;
-
-    const id = await channel.invoke<Buffer | undefined>('redeemableNft:getNFTIdFromSerial', {
-      serial,
-    });
-
-    const nft = await channel.invoke<NFTAsset | undefined>('redeemableNft:getNFT', {
-      id,
-    });
+    const id = await invokeGetNFTIdFromSerial(channel, serial);
+    if (!id) {
+      res.status(404).json('Not Found');
+      return;
+    }
+    const nft = await invokeGetNFT(channel, id.toString('hex'));
 
     res.status(200).json({ data: nft, meta: {} });
   } catch (err: unknown) {

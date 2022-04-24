@@ -3,7 +3,11 @@ import { CHAIN_STATE_ALL_NFT_TEMPLATE, CHAIN_STATE_NFT_TEMPLATE } from '../const
 import { allNFTTemplateSchema, nftTemplateSchema } from '../schemas/chain/nft_template';
 import { AllNFTTemplate, NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
 
-export const getAllNFTTemplate = async (stateStore: StateStore): Promise<AllNFTTemplate> => {
+export const getAllNFTTemplate = async (
+  stateStore: StateStore,
+  offset = 0,
+  limit?: number,
+): Promise<AllNFTTemplate> => {
   const registeredTemplateBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_NFT_TEMPLATE);
   if (!registeredTemplateBuffer) {
     return { items: [] };
@@ -12,6 +16,8 @@ export const getAllNFTTemplate = async (stateStore: StateStore): Promise<AllNFTT
     allNFTTemplateSchema,
     registeredTemplateBuffer,
   );
+  const l = limit ?? allNftTemplate.items.length - offset;
+  allNftTemplate.items.slice(offset, l);
   return allNftTemplate;
 };
 

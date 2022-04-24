@@ -1,20 +1,17 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { DPOSAccountProps } from 'lisk-framework/dist-node/modules/dpos';
-import { TokenAccount } from 'lisk-framework/dist-node/modules/token/types';
 
-import { Profile, RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
+import { Profile } from '../../../../types/core/account/profile';
 import { NFT } from '../../../../types/core/chain/nft';
 import { Collection } from '../../../../types/core/chain/collection';
 import idBufferToNFT from '../utils/idBufferToNFT';
 import idBufferToCollection from '../utils/idBufferToCollection';
+import { invokeGetAccount } from '../utils/hook/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const account = await channel.invoke<
-      RedeemableNFTAccountProps & TokenAccount & DPOSAccountProps
-    >('persona:getAccount', { address });
+    const account = await invokeGetAccount(channel, address);
 
     const ownedAsset = await Promise.all(
       account.redeemableNft.owned.map(async (item): Promise<NFT> => idBufferToNFT(channel, item)),

@@ -1,19 +1,18 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
-import { Persona, PersonaAccountProps } from '../../../../types/core/account/persona';
-import { RegisteredUsernameAsset } from '../../../../types/core/chain/registrar';
+import { Persona } from '../../../../types/core/account/persona';
+import { invokeGetAccount, invokeGetAddressByUsername } from '../utils/hook/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
-    const usernameRegistrar = await channel.invoke<RegisteredUsernameAsset>(
-      'persona:getAddressByUsername',
-      { username },
-    );
-    const account = await channel.invoke<PersonaAccountProps>('persona:getAccount', {
-      address: usernameRegistrar.address.toString('hex'),
-    });
+    const usernameRegistrar = await invokeGetAddressByUsername(channel, username);
+    if (!usernameRegistrar) {
+      res.status(404).json('Not Found');
+      return;
+    }
+    const account = await invokeGetAccount(channel, usernameRegistrar.address.toString('hex'));
 
     const persona: Persona = {
       address: usernameRegistrar.address.toString('hex'),

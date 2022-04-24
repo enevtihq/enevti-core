@@ -21,9 +21,11 @@ import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
 import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { NFTAsset } from '../../../types/core/chain/nft';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
-import { CollectionAsset } from '../../../types/core/chain/collection';
+import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
 import { collectionSchema } from './schemas/chain/collection';
 import { getActivityCollection, getActivityNFT } from './utils/activity';
+import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
+import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
@@ -32,25 +34,36 @@ export class RedeemableNftModule extends BaseModule {
     // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
   };
   public reducers = {
-    getCollectionIdFromName: async (params, stateStore: StateStore) => {
+    getCollectionIdFromName: async (
+      params,
+      stateStore: StateStore,
+    ): Promise<CollectionIdAsset | undefined> => {
       const { name } = params as Record<string, string>;
       const nameRegistrar = await getRegisteredName(stateStore, name);
       return nameRegistrar ? nameRegistrar.id : undefined;
     },
-    getCollectionIdFromSymbol: async (params, stateStore: StateStore) => {
+    getCollectionIdFromSymbol: async (
+      params,
+      stateStore: StateStore,
+    ): Promise<CollectionIdAsset | undefined> => {
       const { symbol } = params as Record<string, string>;
       const symbolRegistrar = await getRegisteredSymbol(stateStore, symbol);
       return symbolRegistrar ? symbolRegistrar.id : undefined;
     },
-    getNFTIdFromSerial: async (params, stateStore: StateStore) => {
+    getNFTIdFromSerial: async (params, stateStore: StateStore): Promise<NFTIdAsset | undefined> => {
       const { serial } = params as Record<string, string>;
       const serialRegistrar = await getRegisteredSerial(stateStore, serial);
       return serialRegistrar ? serialRegistrar.id : undefined;
     },
-    getAllCollectionId: async (_, stateStore: StateStore) =>
-      (await getAllCollection(stateStore)).items,
-    getAllCollection: async (_, stateStore: StateStore) => {
-      const collections = await getAllCollection(stateStore);
+    getAllCollectionId: async (params, stateStore: StateStore): Promise<CollectionIdAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const l = limit ?? 10;
+      const o = offset ?? 0;
+      return (await getAllCollection(stateStore, o, l)).items;
+    },
+    getAllCollection: async (params, stateStore: StateStore): Promise<CollectionAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const collections = await getAllCollection(stateStore, offset, limit);
       return Promise.all(
         collections.items.map(
           async (item): Promise<CollectionAsset> => {
@@ -60,14 +73,20 @@ export class RedeemableNftModule extends BaseModule {
         ),
       );
     },
-    getCollection: async (params, stateStore: StateStore) => {
+    getCollection: async (params, stateStore: StateStore): Promise<CollectionAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const collection = await getCollectionById(stateStore, id);
       return collection ?? undefined;
     },
-    getAllNFTId: async (_, stateStore: StateStore) => (await getAllNFT(stateStore)).items,
-    getAllNFTT: async (_, stateStore: StateStore) => {
-      const nfts = await getAllNFT(stateStore);
+    getAllNFTId: async (params, stateStore: StateStore): Promise<NFTIdAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const l = limit ?? 10;
+      const o = offset ?? 0;
+      return (await getAllNFT(stateStore, o, l)).items;
+    },
+    getAllNFT: async (params, stateStore: StateStore): Promise<NFTAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const nfts = await getAllNFT(stateStore, limit, offset);
       return Promise.all(
         nfts.items.map(
           async (item): Promise<NFTAsset> => {
@@ -77,15 +96,20 @@ export class RedeemableNftModule extends BaseModule {
         ),
       );
     },
-    getNFT: async (params, stateStore: StateStore) => {
+    getNFT: async (params, stateStore: StateStore): Promise<NFTAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const nft = await getNFTById(stateStore, id);
-      return nft ?? nft;
+      return nft ?? undefined;
     },
-    getAllNFTTemplateId: async (_, stateStore: StateStore) =>
-      (await getAllNFTTemplate(stateStore)).items,
-    getAllNFTTemplate: async (_, stateStore: StateStore) => {
-      const templates = await getAllNFTTemplate(stateStore);
+    getAllNFTTemplateId: async (params, stateStore: StateStore): Promise<TemplateIdAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const l = limit ?? 10;
+      const o = offset ?? 0;
+      return (await getAllNFTTemplate(stateStore, o, l)).items;
+    },
+    getAllNFTTemplate: async (params, stateStore: StateStore): Promise<NFTTemplateAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const templates = await getAllNFTTemplate(stateStore, offset, limit);
       return Promise.all(
         templates.items.map(
           async (item): Promise<NFTTemplateAsset> => {
@@ -95,20 +119,29 @@ export class RedeemableNftModule extends BaseModule {
         ),
       );
     },
-    getNFTTemplateById: async (params, stateStore: StateStore) => {
+    getNFTTemplateById: async (
+      params,
+      stateStore: StateStore,
+    ): Promise<NFTTemplateAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const template = await getNFTTemplateById(stateStore, id);
       return template ?? undefined;
     },
-    getActivityNFT: async (params, stateStore: StateStore) => {
+    getActivityNFT: async (
+      params,
+      stateStore: StateStore,
+    ): Promise<NFTActivityChain | undefined> => {
       const { id } = params as Record<string, string>;
       const activity = await getActivityNFT(stateStore, id);
-      return activity ?? activity;
+      return activity ?? undefined;
     },
-    getActivityCollection: async (params, stateStore: StateStore) => {
+    getActivityCollection: async (
+      params,
+      stateStore: StateStore,
+    ): Promise<CollectionActivityChain | undefined> => {
       const { id } = params as Record<string, string>;
       const activity = await getActivityCollection(stateStore, id);
-      return activity ?? activity;
+      return activity ?? undefined;
     },
   };
   public name = 'redeemableNft';

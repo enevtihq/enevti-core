@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
+import { invokeGetAllCollection } from '../utils/hook/redeemable_nft_module';
 
-export default (channel: BaseChannel) => async (_: Request, res: Response) => {
+export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const collections = await channel.invoke('redeemableNft:getAllCollection');
+    const { offset, limit } = req.params;
+    const collections = await invokeGetAllCollection(
+      channel,
+      parseInt(offset, 10),
+      parseInt(limit, 10),
+    );
 
     res.status(200).json({ data: collections, meta: {} });
   } catch (err: unknown) {

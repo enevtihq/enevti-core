@@ -3,12 +3,18 @@ import { allRedeemableNFTSchema, redeemableNFTSchema } from '../schemas/chain/re
 import { CHAIN_STATE_ALL_NFT, CHAIN_STATE_NFT } from '../constants/codec';
 import { AllNFT, NFTAsset } from '../../../../types/core/chain/nft';
 
-export const getAllNFT = async (stateStore: StateStore): Promise<AllNFT> => {
+export const getAllNFT = async (
+  stateStore: StateStore,
+  offset = 0,
+  limit?: number,
+): Promise<AllNFT> => {
   const allNFTBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_NFT);
   if (!allNFTBuffer) {
     return { items: [] };
   }
   const allNFT = codec.decode<AllNFT>(allRedeemableNFTSchema, allNFTBuffer);
+  const l = limit ?? allNFT.items.length - offset;
+  allNFT.items.slice(offset, l);
   return allNFT;
 };
 

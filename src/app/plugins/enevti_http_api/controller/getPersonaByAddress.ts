@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
-import { Persona, PersonaAccountProps } from '../../../../types/core/account/persona';
+import { Persona } from '../../../../types/core/account/persona';
+import { invokeGetAccount } from '../utils/hook/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const account = await channel.invoke<PersonaAccountProps>('persona:getAccount', { address });
+    const account = await invokeGetAccount(channel, address);
 
     const persona: Persona = {
       address,

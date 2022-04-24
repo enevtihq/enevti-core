@@ -3,7 +3,11 @@ import { allCollectionSchema, collectionSchema } from '../schemas/chain/collecti
 import { CHAIN_STATE_ALL_COLLECTION, CHAIN_STATE_COLLECTION } from '../constants/codec';
 import { AllCollection, CollectionAsset } from '../../../../types/core/chain/collection';
 
-export const getAllCollection = async (stateStore: StateStore): Promise<AllCollection> => {
+export const getAllCollection = async (
+  stateStore: StateStore,
+  offset = 0,
+  limit?: number,
+): Promise<AllCollection> => {
   const collectionBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_COLLECTION);
   if (!collectionBuffer) {
     return {
@@ -12,6 +16,8 @@ export const getAllCollection = async (stateStore: StateStore): Promise<AllColle
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
+  const l = limit ?? allCollection.items.length - offset;
+  allCollection.items.slice(offset, l);
   return allCollection;
 };
 
