@@ -13,16 +13,14 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       return;
     }
     const staker = await Promise.all(
-      stakerChain.items.map(
-        async (item): Promise<StakerItem> => {
-          const persona = await addressBufferToPersona(channel, item.persona);
-          return {
-            ...item,
-            persona,
-            stake: item.stake.toString(),
-          };
-        },
-      ),
+      stakerChain.items.map(async (item): Promise<StakerItem> => {
+        const persona = await addressBufferToPersona(channel, item.persona);
+        return {
+          ...item,
+          persona,
+          stake: item.stake.toString(),
+        };
+      }),
     );
 
     const stake: StakePoolData = {

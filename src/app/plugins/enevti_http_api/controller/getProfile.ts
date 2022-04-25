@@ -14,36 +14,28 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const account = await invokeGetAccount(channel, address);
 
     const ownedAsset = await Promise.all(
-      account.redeemableNft.owned.map(
-        async (item): Promise<NFT> => {
-          const nft = await idBufferToNFT(channel, item);
-          if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.owned');
-          return nft;
-        },
-      ),
+      account.redeemableNft.owned.map(async (item): Promise<NFT> => {
+        const nft = await idBufferToNFT(channel, item);
+        if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.owned');
+        return nft;
+      }),
     );
 
     const onSaleAsset = await Promise.all(
-      account.redeemableNft.onSale.map(
-        async (item): Promise<NFT> => {
-          const nft = await idBufferToNFT(channel, item);
-          if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.onSale');
-          return nft;
-        },
-      ),
+      account.redeemableNft.onSale.map(async (item): Promise<NFT> => {
+        const nft = await idBufferToNFT(channel, item);
+        if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.onSale');
+        return nft;
+      }),
     );
 
     const collectionAsset = await Promise.all(
-      account.redeemableNft.collection.map(
-        async (item): Promise<Collection> => {
-          const collection = await idBufferToCollection(channel, item);
-          if (!collection)
-            throw new Error(
-              'Collection not found while iterating account.redeemableNft.collection',
-            );
-          return collection;
-        },
-      ),
+      account.redeemableNft.collection.map(async (item): Promise<Collection> => {
+        const collection = await idBufferToCollection(channel, item);
+        if (!collection)
+          throw new Error('Collection not found while iterating account.redeemableNft.collection');
+        return collection;
+      }),
     );
 
     const profile: Profile = {

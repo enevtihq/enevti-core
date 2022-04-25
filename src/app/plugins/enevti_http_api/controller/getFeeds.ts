@@ -17,39 +17,35 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     );
 
     const feeds: Feeds = await Promise.all(
-      collections.map(
-        async (item): Promise<FeedItem> => {
-          const owner = await addressBufferToPersona(channel, item.creator);
-          const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
-          const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
-          const nft = await Promise.all(
-            item.minting.total.map(
-              async (nftid): Promise<NFT> => {
-                const nftItem = await idBufferToNFT(channel, nftid);
-                if (!nftItem) throw new Error('NFT not found while iterating collection.minting');
-                return nftItem;
-              },
-            ),
-          );
-          return {
-            type: item.collectionType,
-            id: item.id.toString('hex'),
-            like: item.like,
-            comment: item.comment,
-            price: {
-              amount: item.minting.price.amount.toString(),
-              currency: item.minting.price.currency,
-            },
-            name: item.name,
-            description: item.description,
-            promoted: item.promoted,
-            owner,
-            stake,
-            delegate: !!ownerAccount.dpos.delegate.username,
-            nft,
-          };
-        },
-      ),
+      collections.map(async (item): Promise<FeedItem> => {
+        const owner = await addressBufferToPersona(channel, item.creator);
+        const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
+        const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
+        const nft = await Promise.all(
+          item.minting.total.map(async (nftid): Promise<NFT> => {
+            const nftItem = await idBufferToNFT(channel, nftid);
+            if (!nftItem) throw new Error('NFT not found while iterating collection.minting');
+            return nftItem;
+          }),
+        );
+        return {
+          type: item.collectionType,
+          id: item.id.toString('hex'),
+          like: item.like,
+          comment: item.comment,
+          price: {
+            amount: item.minting.price.amount.toString(),
+            currency: item.minting.price.currency,
+          },
+          name: item.name,
+          description: item.description,
+          promoted: item.promoted,
+          owner,
+          stake,
+          delegate: !!ownerAccount.dpos.delegate.username,
+          nft,
+        };
+      }),
     );
 
     res.status(200).json({ data: feeds, meta: req.params });

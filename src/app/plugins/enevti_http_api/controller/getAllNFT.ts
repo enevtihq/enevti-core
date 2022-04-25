@@ -11,17 +11,15 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const nfts = await invokeGetAllNFT(channel, parseInt(offset, 10), parseInt(limit, 10));
 
     const response: NFT[] = await Promise.all(
-      nfts.map(
-        async (item): Promise<NFT> => {
-          const activity = await idBufferToActivityNFT(channel, item.id);
-          const restNFT = await nftChainToUI(channel, item);
-          return {
-            ...item,
-            ...restNFT,
-            activity,
-          };
-        },
-      ),
+      nfts.map(async (item): Promise<NFT> => {
+        const activity = await idBufferToActivityNFT(channel, item.id);
+        const restNFT = await nftChainToUI(channel, item);
+        return {
+          ...item,
+          ...restNFT,
+          activity,
+        };
+      }),
     );
 
     res.status(200).json({ data: response, meta: req.params });

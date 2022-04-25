@@ -15,17 +15,15 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     );
 
     const response: Collection[] = await Promise.all(
-      collections.map(
-        async (item): Promise<Collection> => {
-          const activity = await idBufferToActivityCollection(channel, item.id);
-          const restCollection = await collectionChainToUI(channel, item);
-          return {
-            ...item,
-            ...restCollection,
-            activity,
-          };
-        },
-      ),
+      collections.map(async (item): Promise<Collection> => {
+        const activity = await idBufferToActivityCollection(channel, item.id);
+        const restCollection = await collectionChainToUI(channel, item);
+        return {
+          ...item,
+          ...restCollection,
+          activity,
+        };
+      }),
     );
 
     res.status(200).json({ data: response, meta: req.params });
