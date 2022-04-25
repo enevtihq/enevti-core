@@ -1,6 +1,6 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 
-export const allNFTTemplateSchema: RSchemaWithDefault = {
+export const allNFTTemplateSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/allNftTemplate',
   type: 'object',
   required: ['items'],
@@ -13,18 +13,15 @@ export const allNFTTemplateSchema: RSchemaWithDefault = {
       },
     },
   },
-  default: {
-    items: [],
-  },
 };
 
-export const nftTemplateSchema: RSchemaWithDefault = {
+export const nftTemplateSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/template',
   type: 'object',
   required: ['id', 'name', 'description', 'data'],
   properties: {
     id: {
-      dataType: 'bytes',
+      dataType: 'string',
       fieldNumber: 1,
     },
     name: {
@@ -81,16 +78,48 @@ export const nftTemplateSchema: RSchemaWithDefault = {
             },
           },
         },
+        thumbnail: {
+          fieldNumber: 2,
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['type', 'args'],
+            properties: {
+              type: {
+                dataType: 'string',
+                fieldNumber: 1,
+              },
+              args: {
+                fieldNumber: 2,
+                type: 'object',
+                required: ['x', 'y', 'width', 'height', 'rotate'],
+                properties: {
+                  x: {
+                    dataType: 'string',
+                    fieldNumber: 1,
+                  },
+                  y: {
+                    dataType: 'string',
+                    fieldNumber: 2,
+                  },
+                  width: {
+                    dataType: 'string',
+                    fieldNumber: 3,
+                  },
+                  height: {
+                    dataType: 'string',
+                    fieldNumber: 4,
+                  },
+                  rotate: {
+                    dataType: 'string',
+                    fieldNumber: 5,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-    },
-  },
-  default: {
-    id: Buffer.alloc(0),
-    name: '',
-    description: '',
-    data: {
-      main: [],
-      thumbnail: [],
     },
   },
 };

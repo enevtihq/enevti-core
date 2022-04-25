@@ -1,7 +1,7 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 import { priceSchema } from './deps/price';
 
-export const activityNFTSchema: RSchemaWithDefault = {
+export const activityNFTSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/activityNft',
   type: 'object',
   required: ['items'],
@@ -31,12 +31,9 @@ export const activityNFTSchema: RSchemaWithDefault = {
       },
     },
   },
-  default: {
-    items: [],
-  },
 };
 
-export const activityCollectionSchema: RSchemaWithDefault = {
+export const activityCollectionSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/activityCollection',
   type: 'object',
   required: ['items'],
@@ -72,8 +69,5 @@ export const activityCollectionSchema: RSchemaWithDefault = {
         },
       },
     },
-  },
-  default: {
-    items: [],
   },
 };

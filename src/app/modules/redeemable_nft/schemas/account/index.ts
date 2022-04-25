@@ -1,9 +1,7 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { AccountSchema } from 'lisk-framework';
 
-export const redeemableNftAccountSchema: RSchemaWithDefault = {
-  $id: 'enevti/redeemableNft/account',
+export const redeemableNftAccountSchema: AccountSchema = {
   type: 'object',
-  required: ['nftSold', 'treasuryAct', 'serveRate', 'owned', 'onSale', 'collection'],
   properties: {
     nftSold: {
       dataType: 'uint32',

@@ -43,3 +43,6 @@ config.local.json
 
 # Build Directory
 dist
+
+# Lisk Secret Config
+config/*/accounts.json

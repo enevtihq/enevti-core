@@ -1,9 +1,7 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { AccountSchema } from 'lisk-framework';
 
-export const personaAccountSchema: RSchemaWithDefault = {
-  $id: 'enevti/persona/account',
+export const personaAccountSchema: AccountSchema = {
   type: 'object',
-  required: ['photo', 'username', 'social'],
   properties: {
     photo: {
       dataType: 'string',

@@ -57,7 +57,7 @@ export const addNFTTemplate = async (stateStore: StateStore, template: NFTTempla
   }
 
   const allTemplateName = await getAllNFTTemplate(stateStore);
-  allTemplateName.items.push(template.name);
+  allTemplateName.items.push(template.id);
   await setAllNFTTemplate(stateStore, allTemplateName);
   await setNFTTemplateById(stateStore, template.id, template);
 };

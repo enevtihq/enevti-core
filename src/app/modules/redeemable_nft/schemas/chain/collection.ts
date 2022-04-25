@@ -1,8 +1,8 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 import { contentSchema } from './deps/content';
 import { priceSchema } from './deps/price';
 
-export const allCollectionSchema: RSchemaWithDefault = {
+export const allCollectionSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/allCollection',
   type: 'object',
   required: ['items'],
@@ -15,12 +15,9 @@ export const allCollectionSchema: RSchemaWithDefault = {
       },
     },
   },
-  default: {
-    items: [],
-  },
 };
 
-export const collectionSchema: RSchemaWithDefault = {
+export const collectionSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/collection',
   type: 'object',
   required: [
@@ -167,50 +164,5 @@ export const collectionSchema: RSchemaWithDefault = {
       dataType: 'boolean',
       fieldNumber: 16,
     },
-  },
-  default: {
-    id: Buffer.alloc(0),
-    collectionType: '',
-    cover: {
-      cid: '',
-      mime: '',
-      extension: '',
-      size: 0,
-    },
-    name: '',
-    description: '',
-    symbol: '',
-    creator: Buffer.alloc(0),
-    createdOn: 0,
-    like: 0,
-    comment: 0,
-    packSize: 0,
-    stat: {
-      minted: 0,
-      owner: [],
-      redeemed: 0,
-      floor: {
-        amount: '',
-        currency: '',
-      },
-      volume: {
-        amount: '',
-        currency: '',
-      },
-    },
-    minting: {
-      total: [],
-      available: [],
-      expire: 0,
-      price: {
-        amount: '',
-        currency: '',
-      },
-    },
-    minted: [],
-    social: {
-      twitter: '',
-    },
-    promoted: false,
   },
 };

@@ -1,6 +1,6 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 
-export const registeredNameSchema: RSchemaWithDefault = {
+export const registeredNameSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/registeredName',
   type: 'object',
   required: ['id'],
@@ -10,12 +10,9 @@ export const registeredNameSchema: RSchemaWithDefault = {
       fieldNumber: 1,
     },
   },
-  default: {
-    id: Buffer.alloc(0),
-  },
 };
 
-export const registeredSymbolSchema: RSchemaWithDefault = {
+export const registeredSymbolSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/registeredSymbol',
   type: 'object',
   required: ['id'],
@@ -25,12 +22,9 @@ export const registeredSymbolSchema: RSchemaWithDefault = {
       fieldNumber: 1,
     },
   },
-  default: {
-    id: Buffer.alloc(0),
-  },
 };
 
-export const registeredSerialSchema: RSchemaWithDefault = {
+export const registeredSerialSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/registeredSerial',
   type: 'object',
   required: ['id'],
@@ -39,8 +33,5 @@ export const registeredSerialSchema: RSchemaWithDefault = {
       dataType: 'bytes',
       fieldNumber: 1,
     },
-  },
-  default: {
-    id: Buffer.alloc(0),
   },
 };

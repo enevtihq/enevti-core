@@ -1,6 +1,6 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 
-export const stakerSchema: RSchemaWithDefault = {
+export const stakerSchema: SchemaWithDefault = {
   $id: 'enevti/creatorFinance/staker',
   type: 'object',
   required: ['total', 'items'],
@@ -35,9 +35,5 @@ export const stakerSchema: RSchemaWithDefault = {
         },
       },
     },
-  },
-  default: {
-    total: '0',
-    items: [],
   },
 };

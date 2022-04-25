@@ -1,8 +1,8 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 import { contentSchema, nftContentSecureSchema } from './deps/content';
 import { priceSchema } from './deps/price';
 
-export const allRedeemableNFTSchema: RSchemaWithDefault = {
+export const allRedeemableNFTSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/allNft',
   type: 'object',
   required: ['items'],
@@ -15,12 +15,9 @@ export const allRedeemableNFTSchema: RSchemaWithDefault = {
       },
     },
   },
-  default: {
-    items: [],
-  },
 };
 
-export const redeemableNFTSchema: RSchemaWithDefault = {
+export const redeemableNFTSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/nft',
   type: 'object',
   required: [
@@ -295,84 +292,6 @@ export const redeemableNFTSchema: RSchemaWithDefault = {
           fieldNumber: 2,
         },
       },
-    },
-  },
-  default: {
-    id: Buffer.alloc(0),
-    collectionId: Buffer.alloc(0),
-    symbol: '',
-    serial: '',
-    name: '',
-    description: '',
-    createdOn: 0,
-    networkIdentifier: '',
-    like: 0,
-    comment: 0,
-    owner: Buffer.alloc(0),
-    creator: Buffer.alloc(0),
-    data: {
-      cid: '',
-      mime: '',
-      extension: '',
-      size: 0,
-    },
-    template: '',
-    NFTType: '',
-    utility: '',
-    rarity: {
-      stat: {
-        rank: 0,
-        percent: 0,
-      },
-      trait: [],
-    },
-    partition: {
-      parts: [],
-      upgradeMaterial: 0,
-    },
-    redeem: {
-      status: '',
-      count: 0,
-      limit: 0,
-      touched: 0,
-      secret: {
-        cipher: '',
-        signature: '',
-        sender: Buffer.alloc(0),
-        recipient: Buffer.alloc(0),
-      },
-      content: {
-        cid: '',
-        mime: '',
-        extension: '',
-        size: 0,
-        iv: '',
-        salt: '',
-        version: 0,
-      },
-      schedule: {
-        recurring: '',
-        time: {
-          day: 0,
-          date: 0,
-          month: 0,
-          year: 0,
-        },
-        from: {
-          hour: 0,
-          minute: 0,
-        },
-        until: 0,
-      },
-    },
-    price: {
-      amount: '',
-      currency: '',
-    },
-    onSale: false,
-    royalty: {
-      creator: 0,
-      staker: 0,
     },
   },
 };

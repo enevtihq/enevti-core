@@ -45,7 +45,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
             promoted: item.promoted,
             owner,
             stake,
-            delegate: false,
+            delegate: !!ownerAccount.dpos.delegate.username,
             nft,
           };
         },

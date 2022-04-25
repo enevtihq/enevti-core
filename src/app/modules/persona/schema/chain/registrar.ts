@@ -1,6 +1,6 @@
-import { RSchemaWithDefault } from '../../../../../types/core/chain/schema';
+import { SchemaWithDefault } from 'lisk-framework';
 
-export const registeredUsernameSchema: RSchemaWithDefault = {
+export const registeredUsernameSchema: SchemaWithDefault = {
   $id: 'enevti/persona/registeredUsername',
   type: 'object',
   required: ['address'],
@@ -9,8 +9,5 @@ export const registeredUsernameSchema: RSchemaWithDefault = {
       dataType: 'bytes',
       fieldNumber: 1,
     },
-  },
-  default: {
-    id: Buffer.alloc(0),
   },
 };
