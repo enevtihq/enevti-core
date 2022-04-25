@@ -1,6 +1,8 @@
 import { NFTContentSecure } from './NFTContent';
 import { NFTSecret, NFTSecretAsset } from './NFTSecret';
 
+export type NFTRecurring = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'once' | 'anytime' | '';
+
 export type NFTRedeem = {
   status: 'ready' | 'pending-secret' | 'limit-exceeded' | '';
   count: number;
@@ -9,7 +11,7 @@ export type NFTRedeem = {
   secret: NFTSecret;
   content: NFTContentSecure;
   schedule: {
-    recurring: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'once' | 'instant';
+    recurring: NFTRecurring;
     time: {
       day: number;
       date: number;

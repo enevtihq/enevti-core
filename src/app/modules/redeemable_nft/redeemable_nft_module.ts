@@ -57,10 +57,12 @@ export class RedeemableNftModule extends BaseModule {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const collections = await accessAllCollection(this._dataAccess, offset, limit);
       return Promise.all(
-        collections.items.map(async (item): Promise<CollectionAsset> => {
-          const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
-          return collection ?? (collectionSchema.default as unknown as CollectionAsset);
-        }),
+        collections.items.map(
+          async (item): Promise<CollectionAsset> => {
+            const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
+            return collection ?? ((collectionSchema.default as unknown) as CollectionAsset);
+          },
+        ),
       );
     },
     getCollection: async (params): Promise<CollectionAsset | undefined> => {
@@ -78,10 +80,12 @@ export class RedeemableNftModule extends BaseModule {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const nfts = await accessAllNFT(this._dataAccess, limit, offset);
       return Promise.all(
-        nfts.items.map(async (item): Promise<NFTAsset> => {
-          const nft = await accessNFTById(this._dataAccess, item.toString('hex'));
-          return nft ?? (redeemableNFTSchema.default as unknown as NFTAsset);
-        }),
+        nfts.items.map(
+          async (item): Promise<NFTAsset> => {
+            const nft = await accessNFTById(this._dataAccess, item.toString('hex'));
+            return nft ?? ((redeemableNFTSchema.default as unknown) as NFTAsset);
+          },
+        ),
       );
     },
     getNFT: async (params): Promise<NFTAsset | undefined> => {
@@ -99,10 +103,12 @@ export class RedeemableNftModule extends BaseModule {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const templates = await accessAllNFTTemplate(this._dataAccess, offset, limit);
       return Promise.all(
-        templates.items.map(async (item): Promise<NFTTemplateAsset> => {
-          const template = await accessNFTTemplateById(this._dataAccess, item);
-          return template ?? (nftTemplateSchema.default as NFTTemplateAsset);
-        }),
+        templates.items.map(
+          async (item): Promise<NFTTemplateAsset> => {
+            const template = await accessNFTTemplateById(this._dataAccess, item);
+            return template ?? (nftTemplateSchema.default as NFTTemplateAsset);
+          },
+        ),
       );
     },
     getNFTTemplateById: async (params): Promise<NFTTemplateAsset | undefined> => {

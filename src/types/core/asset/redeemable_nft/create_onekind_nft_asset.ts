@@ -1,4 +1,4 @@
-import { NFTRedeem } from '../../chain/nft/NFTRedeem';
+import { NFTRecurring } from '../../chain/nft/NFTRedeem';
 import { NFTUtility } from '../../chain/nft/NFTUtility';
 
 export type CreateNFTOneKindNFTProps = {
@@ -24,7 +24,7 @@ export type CreateNFTOneKindNFTProps = {
   contentIv: string;
   contentSalt: string;
   contentSecurityVersion: number;
-  recurring: NFTRedeem['schedule']['recurring'];
+  recurring: NFTRecurring;
   time: {
     day: number;
     date: number;
