@@ -11,5 +11,6 @@ export const ACTIVITY: {
   },
   COLLECTION: {
     CREATED: 'created',
+    MINTED: 'minted',
   },
 };

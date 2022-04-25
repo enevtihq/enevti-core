@@ -283,7 +283,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
       transaction: transaction.id,
       name: ACTIVITY.COLLECTION.CREATED,
       date: timestamp,
-      nft: Buffer.alloc(0),
+      nfts: [],
       to: senderAddress,
       value: {
         amount: BigInt(0),

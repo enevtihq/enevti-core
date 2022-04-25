@@ -11,18 +11,18 @@ export type AllCollection = {
   items: CollectionIdAsset[];
 };
 
-export type CollectionActivityName = 'created';
+export type CollectionActivityName = 'created' | 'minted';
 
 export type CollectionActivity = Omit<NFTActivity, 'name'> & {
   name: CollectionActivityName;
-  nft: NFTBase;
+  nfts: NFTBase[];
 };
 
 export type CollectionActivityAsset = Buffer;
 
 export type CollectionActivityChainItems = Omit<NFTActivityChainItems, 'name'> & {
   name: CollectionActivityName;
-  nft: NFTIdAsset;
+  nfts: NFTIdAsset[];
 };
 
 export type CollectionActivityChain = {

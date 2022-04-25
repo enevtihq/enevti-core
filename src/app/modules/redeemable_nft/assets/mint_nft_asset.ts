@@ -7,10 +7,13 @@ import { getCollectionById, setCollectionById } from '../utils/collection';
 import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
 import { NFTTYPE } from '../constants/nft_type';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { CollectionAsset } from '../../../../types/core/chain/collection';
+import {
+  CollectionActivityChainItems,
+  CollectionAsset,
+} from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
-import { addActivityNFT } from '../utils/activity';
+import { addActivityCollection, addActivityNFT } from '../utils/activity';
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);
@@ -121,6 +124,20 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
     });
 
     creatorAccount.redeemableNft.nftSold += boughtItem.length;
+
+    const collectionActivity: CollectionActivityChainItems = {
+      transaction: transaction.id,
+      date: timestamp,
+      name: ACTIVITY.COLLECTION.MINTED,
+      to: senderAddress,
+      value: {
+        amount: collection.minting.price.amount,
+        currency: collection.minting.price.currency,
+      },
+      nfts: boughtItem,
+    };
+    await addActivityCollection(stateStore, collection.id.toString('hex'), collectionActivity);
+
     await setCollectionById(stateStore, collection.id.toString('hex'), collection);
     await stateStore.account.set(creatorAddress, creatorAccount);
     await stateStore.account.set(senderAddress, senderAccount);
