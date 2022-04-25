@@ -6,6 +6,7 @@ import getAllNFT from './getAllNFT';
 import getNFTById from './getNFTById';
 import getNFTBySerial from './getNFTBySerial';
 import getNFTTemplateById from './getNFTTemplateById';
+import getAllNFTTemplateGenesis from './getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './getAllNFTTemplate';
 import getProfile from './getProfile';
 import getPersonaByAddress from './getPersonaByAddress';
@@ -27,6 +28,7 @@ export default {
   getNFTById,
   getNFTBySerial,
   getNFTTemplateById,
+  getAllNFTTemplateGenesis,
   getAllNFTTemplate,
   getProfile,
   getPersonaByAddress,

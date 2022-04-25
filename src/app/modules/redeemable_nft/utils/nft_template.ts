@@ -1,7 +1,57 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { CHAIN_STATE_ALL_NFT_TEMPLATE, CHAIN_STATE_NFT_TEMPLATE } from '../constants/codec';
+import {
+  CHAIN_STATE_ALL_NFT_TEMPLATE,
+  CHAIN_STATE_NFT_TEMPLATE,
+  GENESIS_STATE_ALL_NFT_TEMPLATE,
+} from '../constants/codec';
 import { allNFTTemplateSchema, nftTemplateSchema } from '../schemas/chain/nft_template';
 import { AllNFTTemplate, NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
+
+export const accessAllNFTTemplateGenesis = async (
+  dataAccess: BaseModuleDataAccess,
+  offset = 0,
+  limit?: number,
+): Promise<AllNFTTemplate> => {
+  const registeredTemplateBuffer = await dataAccess.getChainState(GENESIS_STATE_ALL_NFT_TEMPLATE);
+  if (!registeredTemplateBuffer) {
+    return { items: [] };
+  }
+  const allNftTemplate = codec.decode<AllNFTTemplate>(
+    allNFTTemplateSchema,
+    registeredTemplateBuffer,
+  );
+  const l = limit ?? allNftTemplate.items.length - offset;
+  allNftTemplate.items.slice(offset, l);
+  return allNftTemplate;
+};
+
+export const getAllNFTTemplateGenesis = async (
+  stateStore: StateStore,
+  offset = 0,
+  limit?: number,
+): Promise<AllNFTTemplate> => {
+  const registeredTemplateBuffer = await stateStore.chain.get(GENESIS_STATE_ALL_NFT_TEMPLATE);
+  if (!registeredTemplateBuffer) {
+    return { items: [] };
+  }
+  const allNftTemplate = codec.decode<AllNFTTemplate>(
+    allNFTTemplateSchema,
+    registeredTemplateBuffer,
+  );
+  const l = limit ?? allNftTemplate.items.length - offset;
+  allNftTemplate.items.slice(offset, l);
+  return allNftTemplate;
+};
+
+export const setAllNFTTemplateGenesis = async (
+  stateStore: StateStore,
+  allNFTTemplate: AllNFTTemplate,
+) => {
+  await stateStore.chain.set(
+    GENESIS_STATE_ALL_NFT_TEMPLATE,
+    codec.encode(allNFTTemplateSchema, allNFTTemplate),
+  );
+};
 
 export const accessAllNFTTemplate = async (
   dataAccess: BaseModuleDataAccess,
@@ -88,5 +138,17 @@ export const addNFTTemplate = async (stateStore: StateStore, template: NFTTempla
   const allTemplateName = await getAllNFTTemplate(stateStore);
   allTemplateName.items.push(template.id);
   await setAllNFTTemplate(stateStore, allTemplateName);
+  await setNFTTemplateById(stateStore, template.id, template);
+};
+
+export const addNFTTemplateGenesis = async (stateStore: StateStore, template: NFTTemplateAsset) => {
+  const templateById = await getNFTTemplateById(stateStore, template.id);
+  if (templateById) {
+    throw new Error('template already exist');
+  }
+
+  const allTemplateName = await getAllNFTTemplateGenesis(stateStore);
+  allTemplateName.items.push(template.id);
+  await setAllNFTTemplateGenesis(stateStore, allTemplateName);
   await setNFTTemplateById(stateStore, template.id, template);
 };

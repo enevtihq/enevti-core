@@ -13,7 +13,12 @@ import { MintNftAsset } from './assets/mint_nft_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
 import { accessAllCollection, accessCollectionById } from './utils/collection';
-import { accessAllNFTTemplate, accessNFTTemplateById, addNFTTemplate } from './utils/nft_template';
+import {
+  accessAllNFTTemplate,
+  accessAllNFTTemplateGenesis,
+  accessNFTTemplateById,
+  addNFTTemplateGenesis,
+} from './utils/nft_template';
 import { accessAllNFT, accessNFTById } from './utils/redeemable_nft';
 import {
   accessRegisteredName,
@@ -111,6 +116,24 @@ export class RedeemableNftModule extends BaseModule {
         ),
       );
     },
+    getAllNFTTemplateGenesisId: async (params): Promise<TemplateIdAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const l = limit ?? 10;
+      const o = offset ?? 0;
+      return (await accessAllNFTTemplateGenesis(this._dataAccess, o, l)).items;
+    },
+    getAllNFTTemplateGenesis: async (params): Promise<NFTTemplateAsset[]> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const templates = await accessAllNFTTemplateGenesis(this._dataAccess, offset, limit);
+      return Promise.all(
+        templates.items.map(
+          async (item): Promise<NFTTemplateAsset> => {
+            const template = await accessNFTTemplateById(this._dataAccess, item);
+            return template ?? (nftTemplateSchema.default as NFTTemplateAsset);
+          },
+        ),
+      );
+    },
     getNFTTemplateById: async (params): Promise<NFTTemplateAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const template = await accessNFTTemplateById(this._dataAccess, id);
@@ -186,7 +209,7 @@ export class RedeemableNftModule extends BaseModule {
   public async afterGenesisBlockApply(_input: AfterGenesisBlockApplyContext) {
     // Get any data from genesis block, for example get all genesis accounts
     // const genesisAccounts = genesisBlock.header.asset.accounts;
-    await addNFTTemplate(_input.stateStore, EnevtiNFTTemplate);
-    await addNFTTemplate(_input.stateStore, BlankNFTTemplate);
+    await addNFTTemplateGenesis(_input.stateStore, EnevtiNFTTemplate);
+    await addNFTTemplateGenesis(_input.stateStore, BlankNFTTemplate);
   }
 }

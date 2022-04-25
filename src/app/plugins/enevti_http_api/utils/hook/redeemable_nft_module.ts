@@ -62,6 +62,20 @@ export const invokeGetNFT = async (
   id: string,
 ): Promise<NFTAsset | undefined> => channel.invoke('redeemableNft:getNFT', { id });
 
+export const invokeGetAllNFTTemplateGenesisId = async (
+  channel: BaseChannel,
+  offset: number,
+  limit: number,
+): Promise<TemplateIdAsset[]> =>
+  channel.invoke('redeemableNft:getAllNFTTemplateGenesisId', { offset, limit });
+
+export const invokeGetAllNFTTemplateGenesis = async (
+  channel: BaseChannel,
+  offset: number,
+  limit: number,
+): Promise<NFTTemplateAsset[]> =>
+  channel.invoke('redeemableNft:getAllNFTTemplateGenesis', { offset, limit });
+
 export const invokeGetAllNFTTemplateId = async (
   channel: BaseChannel,
   offset: number,
