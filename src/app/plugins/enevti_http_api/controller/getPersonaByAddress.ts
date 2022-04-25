@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
 import { Persona } from '../../../../types/core/account/persona';
+import { BASE32_PREFIX } from '../constant/base32prefix';
 import { invokeGetAccount } from '../utils/hook/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
@@ -11,7 +12,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const persona: Persona = {
       address,
-      base32: Lisk.cryptography.getBase32AddressFromAddress(Buffer.from(address, 'hex')),
+      base32: Lisk.cryptography.getBase32AddressFromAddress(
+        Buffer.from(address, 'hex'),
+        BASE32_PREFIX,
+      ),
       photo: account.persona.photo,
       username: account.persona.username,
     };

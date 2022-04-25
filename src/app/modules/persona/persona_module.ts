@@ -17,15 +17,21 @@ import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
+import { getDefaultAccount } from './utils/account';
 import { accessRegisteredUsername, setRegisteredUsername } from './utils/username';
 
 export class PersonaModule extends BaseModule {
   public actions = {
     getAccount: async params => {
       const { address } = params as Record<string, string>;
-      return this._dataAccess.getAccountByAddress<RedeemableNFTAccountProps>(
-        Buffer.from(address, 'hex'),
-      );
+      try {
+        const ret = await this._dataAccess.getAccountByAddress<RedeemableNFTAccountProps>(
+          Buffer.from(address, 'hex'),
+        );
+        return ret;
+      } catch {
+        return getDefaultAccount(address);
+      }
     },
     getAddressByUsername: async params => {
       const { username } = params as Record<string, string>;
