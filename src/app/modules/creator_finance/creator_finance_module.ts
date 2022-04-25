@@ -11,23 +11,18 @@ import {
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
   codec,
-  StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
-import { addStakeByAddress, getStakerByAddress, subtractStakeByAddress } from './utils/stake';
+import { accessStakerByAddress, addStakeByAddress, subtractStakeByAddress } from './utils/stake';
 
 export class CreatorFinanceModule extends BaseModule {
   public actions = {
-    // Example below
-    // getBalance: async (params) => this._dataAccess.account.get(params.address).token.balance,
-    // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
-  };
-  public reducers = {
-    getStakerByAddress: async (params, stateStore: StateStore) => {
+    getStakerByAddress: async params => {
       const { address } = params as Record<string, string>;
-      return getStakerByAddress(stateStore, address);
+      return accessStakerByAddress(this._dataAccess, address);
     },
   };
+  public reducers = {};
   public name = 'creatorFinance';
   public transactionAssets = [];
   public events = [

@@ -1,7 +1,25 @@
-import { codec, StateStore } from 'lisk-sdk';
+import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import { CHAIN_STATE_ALL_NFT_TEMPLATE, CHAIN_STATE_NFT_TEMPLATE } from '../constants/codec';
 import { allNFTTemplateSchema, nftTemplateSchema } from '../schemas/chain/nft_template';
 import { AllNFTTemplate, NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
+
+export const accessAllNFTTemplate = async (
+  dataAccess: BaseModuleDataAccess,
+  offset = 0,
+  limit?: number,
+): Promise<AllNFTTemplate> => {
+  const registeredTemplateBuffer = await dataAccess.getChainState(CHAIN_STATE_ALL_NFT_TEMPLATE);
+  if (!registeredTemplateBuffer) {
+    return { items: [] };
+  }
+  const allNftTemplate = codec.decode<AllNFTTemplate>(
+    allNFTTemplateSchema,
+    registeredTemplateBuffer,
+  );
+  const l = limit ?? allNftTemplate.items.length - offset;
+  allNftTemplate.items.slice(offset, l);
+  return allNftTemplate;
+};
 
 export const getAllNFTTemplate = async (
   stateStore: StateStore,
@@ -26,6 +44,17 @@ export const setAllNFTTemplate = async (stateStore: StateStore, allNFTTemplate: 
     CHAIN_STATE_ALL_NFT_TEMPLATE,
     codec.encode(allNFTTemplateSchema, allNFTTemplate),
   );
+};
+
+export const accessNFTTemplateById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<NFTTemplateAsset | undefined> => {
+  const templateBuffer = await dataAccess.getChainState(`${CHAIN_STATE_NFT_TEMPLATE}:${id}`);
+  if (!templateBuffer) {
+    return undefined;
+  }
+  return codec.decode<NFTTemplateAsset>(nftTemplateSchema, templateBuffer);
 };
 
 export const getNFTTemplateById = async (

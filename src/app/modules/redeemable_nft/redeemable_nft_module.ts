@@ -6,156 +6,143 @@ import {
   BaseModule,
   BeforeBlockApplyContext,
   TransactionApplyContext,
-  StateStore,
 } from 'lisk-sdk';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
-import { getAllCollection, getCollectionById } from './utils/collection';
-import { addNFTTemplate, getAllNFTTemplate, getNFTTemplateById } from './utils/nft_template';
-import { getAllNFT, getNFTById } from './utils/redeemable_nft';
-import { getRegisteredName, getRegisteredSerial, getRegisteredSymbol } from './utils/registrar';
+import { accessAllCollection, accessCollectionById } from './utils/collection';
+import { accessAllNFTTemplate, accessNFTTemplateById, addNFTTemplate } from './utils/nft_template';
+import { accessAllNFT, accessNFTById } from './utils/redeemable_nft';
+import {
+  accessRegisteredName,
+  accessRegisteredSerial,
+  accessRegisteredSymbol,
+} from './utils/registrar';
 import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
 import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { NFTAsset } from '../../../types/core/chain/nft';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
 import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
 import { collectionSchema } from './schemas/chain/collection';
-import { getActivityCollection, getActivityNFT } from './utils/activity';
+import { accessActivityCollection, accessActivityNFT } from './utils/activity';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
 import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
-    // Example below
-    // getBalance: async (params) => this._dataAccess.account.get(params.address).token.balance,
-    // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
-  };
-  public reducers = {
-    getCollectionIdFromName: async (
-      params,
-      stateStore: StateStore,
-    ): Promise<CollectionIdAsset | undefined> => {
+    getCollectionIdFromName: async (params): Promise<CollectionIdAsset | undefined> => {
       const { name } = params as Record<string, string>;
-      const nameRegistrar = await getRegisteredName(stateStore, name);
+      const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
       return nameRegistrar ? nameRegistrar.id : undefined;
     },
-    getCollectionIdFromSymbol: async (
-      params,
-      stateStore: StateStore,
-    ): Promise<CollectionIdAsset | undefined> => {
+    getCollectionIdFromSymbol: async (params): Promise<CollectionIdAsset | undefined> => {
       const { symbol } = params as Record<string, string>;
-      const symbolRegistrar = await getRegisteredSymbol(stateStore, symbol);
+      const symbolRegistrar = await accessRegisteredSymbol(this._dataAccess, symbol);
       return symbolRegistrar ? symbolRegistrar.id : undefined;
     },
-    getNFTIdFromSerial: async (params, stateStore: StateStore): Promise<NFTIdAsset | undefined> => {
+    getNFTIdFromSerial: async (params): Promise<NFTIdAsset | undefined> => {
       const { serial } = params as Record<string, string>;
-      const serialRegistrar = await getRegisteredSerial(stateStore, serial);
+      const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
       return serialRegistrar ? serialRegistrar.id : undefined;
     },
-    getAllCollectionId: async (params, stateStore: StateStore): Promise<CollectionIdAsset[]> => {
+    getAllCollectionId: async (params): Promise<CollectionIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
-      return (await getAllCollection(stateStore, o, l)).items;
+      return (await accessAllCollection(this._dataAccess, o, l)).items;
     },
-    getAllCollection: async (params, stateStore: StateStore): Promise<CollectionAsset[]> => {
+    getAllCollection: async (params): Promise<CollectionAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
-      const collections = await getAllCollection(stateStore, offset, limit);
+      const collections = await accessAllCollection(this._dataAccess, offset, limit);
       return Promise.all(
         collections.items.map(
           async (item): Promise<CollectionAsset> => {
-            const collection = await getCollectionById(stateStore, item.toString('hex'));
+            const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
             return collection ?? ((collectionSchema.default as unknown) as CollectionAsset);
           },
         ),
       );
     },
-    getCollection: async (params, stateStore: StateStore): Promise<CollectionAsset | undefined> => {
+    getCollection: async (params): Promise<CollectionAsset | undefined> => {
       const { id } = params as Record<string, string>;
-      const collection = await getCollectionById(stateStore, id);
+      const collection = await accessCollectionById(this._dataAccess, id);
       return collection ?? undefined;
     },
-    getAllNFTId: async (params, stateStore: StateStore): Promise<NFTIdAsset[]> => {
+    getAllNFTId: async (params): Promise<NFTIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
-      return (await getAllNFT(stateStore, o, l)).items;
+      return (await accessAllNFT(this._dataAccess, o, l)).items;
     },
-    getAllNFT: async (params, stateStore: StateStore): Promise<NFTAsset[]> => {
+    getAllNFT: async (params): Promise<NFTAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
-      const nfts = await getAllNFT(stateStore, limit, offset);
+      const nfts = await accessAllNFT(this._dataAccess, limit, offset);
       return Promise.all(
         nfts.items.map(
           async (item): Promise<NFTAsset> => {
-            const nft = await getNFTById(stateStore, item.toString('hex'));
+            const nft = await accessNFTById(this._dataAccess, item.toString('hex'));
             return nft ?? ((redeemableNFTSchema.default as unknown) as NFTAsset);
           },
         ),
       );
     },
-    getNFT: async (params, stateStore: StateStore): Promise<NFTAsset | undefined> => {
+    getNFT: async (params): Promise<NFTAsset | undefined> => {
       const { id } = params as Record<string, string>;
-      const nft = await getNFTById(stateStore, id);
+      const nft = await accessNFTById(this._dataAccess, id);
       return nft ?? undefined;
     },
-    getAllNFTTemplateId: async (params, stateStore: StateStore): Promise<TemplateIdAsset[]> => {
+    getAllNFTTemplateId: async (params): Promise<TemplateIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
-      return (await getAllNFTTemplate(stateStore, o, l)).items;
+      return (await accessAllNFTTemplate(this._dataAccess, o, l)).items;
     },
-    getAllNFTTemplate: async (params, stateStore: StateStore): Promise<NFTTemplateAsset[]> => {
+    getAllNFTTemplate: async (params): Promise<NFTTemplateAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
-      const templates = await getAllNFTTemplate(stateStore, offset, limit);
+      const templates = await accessAllNFTTemplate(this._dataAccess, offset, limit);
       return Promise.all(
         templates.items.map(
           async (item): Promise<NFTTemplateAsset> => {
-            const template = await getNFTTemplateById(stateStore, item);
+            const template = await accessNFTTemplateById(this._dataAccess, item);
             return template ?? (nftTemplateSchema.default as NFTTemplateAsset);
           },
         ),
       );
     },
-    getNFTTemplateById: async (
-      params,
-      stateStore: StateStore,
-    ): Promise<NFTTemplateAsset | undefined> => {
+    getNFTTemplateById: async (params): Promise<NFTTemplateAsset | undefined> => {
       const { id } = params as Record<string, string>;
-      const template = await getNFTTemplateById(stateStore, id);
+      const template = await accessNFTTemplateById(this._dataAccess, id);
       return template ?? undefined;
     },
-    getActivityNFT: async (params, stateStore: StateStore): Promise<NFTActivityChain> => {
+    getActivityNFT: async (params): Promise<NFTActivityChain> => {
       const { id } = params as Record<string, string>;
-      const activity = await getActivityNFT(stateStore, id);
+      const activity = await accessActivityNFT(this._dataAccess, id);
       return activity;
     },
-    getActivityCollection: async (
-      params,
-      stateStore: StateStore,
-    ): Promise<CollectionActivityChain> => {
+    getActivityCollection: async (params): Promise<CollectionActivityChain> => {
       const { id } = params as Record<string, string>;
-      const activity = await getActivityCollection(stateStore, id);
+      const activity = await accessActivityCollection(this._dataAccess, id);
       return activity;
     },
-    isNameExists: async (params, stateStore: StateStore): Promise<boolean> => {
+    isNameExists: async (params): Promise<boolean> => {
       const { name } = params as Record<string, string>;
-      const nameRegistrar = await getRegisteredName(stateStore, name);
+      const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
       return !!nameRegistrar;
     },
-    isSymbolExists: async (params, stateStore: StateStore): Promise<boolean> => {
+    isSymbolExists: async (params): Promise<boolean> => {
       const { symbol } = params as Record<string, string>;
-      const symbolRegistrar = await getRegisteredSymbol(stateStore, symbol);
+      const symbolRegistrar = await accessRegisteredSymbol(this._dataAccess, symbol);
       return !!symbolRegistrar;
     },
-    isSerialExists: async (params, stateStore: StateStore): Promise<boolean> => {
+    isSerialExists: async (params): Promise<boolean> => {
       const { serial } = params as Record<string, string>;
-      const serialRegistrar = await getRegisteredSerial(stateStore, serial);
+      const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
       return !!serialRegistrar;
     },
   };
+  public reducers = {};
   public name = 'redeemableNft';
   public transactionAssets = [
     new CreateOnekindNftAsset(),

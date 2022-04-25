@@ -10,7 +10,6 @@ import {
   BaseModule,
   BeforeBlockApplyContext,
   codec,
-  StateStore,
   TransactionApplyContext,
 } from 'lisk-sdk';
 import { PersonaAccountProps } from '../../../types/core/account/persona';
@@ -18,29 +17,27 @@ import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
-import { getRegisteredUsername, setRegisteredUsername } from './utils/username';
+import { accessRegisteredUsername, setRegisteredUsername } from './utils/username';
 
 export class PersonaModule extends BaseModule {
   public actions = {
-    // Example below
-    // getBalance: async (params) => this._dataAccess.account.get(params.address).token.balance,
-    // getBlockByID: async (params) => this._dataAccess.blocks.get(params.id),
-  };
-  public reducers = {
-    getAccount: async (params, stateStore: StateStore) => {
+    getAccount: async params => {
       const { address } = params as Record<string, string>;
-      return stateStore.account.get<RedeemableNFTAccountProps>(Buffer.from(address, 'hex'));
+      return this._dataAccess.getAccountByAddress<RedeemableNFTAccountProps>(
+        Buffer.from(address, 'hex'),
+      );
     },
-    getAddressByUsername: async (params, stateStore: StateStore) => {
+    getAddressByUsername: async params => {
       const { username } = params as Record<string, string>;
-      return getRegisteredUsername(stateStore, username);
+      return accessRegisteredUsername(this._dataAccess, username);
     },
-    isUsernameExists: async (params, stateStore: StateStore) => {
+    isUsernameExists: async params => {
       const { username } = params as Record<string, string>;
-      const usernameRegistrar = await getRegisteredUsername(stateStore, username);
+      const usernameRegistrar = await accessRegisteredUsername(this._dataAccess, username);
       return !!usernameRegistrar;
     },
   };
+  public reducers = {};
   public name = 'persona';
   public transactionAssets = [new ChangePhotoAsset(), new ChangeTwitterAsset()];
   public events = [

@@ -1,4 +1,4 @@
-import { codec, StateStore } from 'lisk-sdk';
+import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import {
   CHAIN_STATE_REGISTRAR_NAME,
   CHAIN_STATE_REGISTRAR_SERIAL,
@@ -14,6 +14,19 @@ import {
   RegisteredSerialAsset,
   RegisteredSymbolAsset,
 } from '../../../../types/core/chain/registrar';
+
+export const accessRegisteredName = async (
+  dataAccess: BaseModuleDataAccess,
+  name: string,
+): Promise<RegisteredNameAsset | undefined> => {
+  const registeredNameBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_REGISTRAR_NAME}:${name}`,
+  );
+  if (!registeredNameBuffer) {
+    return undefined;
+  }
+  return codec.decode<RegisteredNameAsset>(registeredNameSchema, registeredNameBuffer);
+};
 
 export const getRegisteredName = async (
   stateStore: StateStore,
@@ -31,6 +44,19 @@ export const setRegisteredName = async (stateStore: StateStore, name: string, id
     `${CHAIN_STATE_REGISTRAR_NAME}:${name}`,
     codec.encode(registeredNameSchema, { id: Buffer.from(id, 'hex') }),
   );
+};
+
+export const accessRegisteredSymbol = async (
+  dataAccess: BaseModuleDataAccess,
+  symbol: string,
+): Promise<RegisteredSymbolAsset | undefined> => {
+  const registeredSymbolBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_REGISTRAR_SYMBOL}:${symbol}`,
+  );
+  if (!registeredSymbolBuffer) {
+    return undefined;
+  }
+  return codec.decode<RegisteredSymbolAsset>(registeredSymbolSchema, registeredSymbolBuffer);
 };
 
 export const getRegisteredSymbol = async (
@@ -51,6 +77,19 @@ export const setRegisteredSymbol = async (stateStore: StateStore, symbol: string
     `${CHAIN_STATE_REGISTRAR_SYMBOL}:${symbol}`,
     codec.encode(registeredSymbolSchema, { id: Buffer.from(id, 'hex') }),
   );
+};
+
+export const accessRegisteredSerial = async (
+  dataAccess: BaseModuleDataAccess,
+  serial: string,
+): Promise<RegisteredSerialAsset | undefined> => {
+  const registeredSerialBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_REGISTRAR_SERIAL}:${serial}`,
+  );
+  if (!registeredSerialBuffer) {
+    return undefined;
+  }
+  return codec.decode<RegisteredSerialAsset>(registeredSerialSchema, registeredSerialBuffer);
 };
 
 export const getRegisteredSerial = async (
