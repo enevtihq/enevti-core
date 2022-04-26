@@ -1,23 +1,25 @@
-import getAllCollection from './getAllCollection';
-import getCollectionById from './getCollectionById';
-import getCollectionByName from './getCollectionByName';
-import getCollectionBySymbol from './getCollectionBySymbol';
-import getAllNFT from './getAllNFT';
-import getNFTById from './getNFTById';
-import getNFTBySerial from './getNFTBySerial';
-import getNFTTemplateById from './getNFTTemplateById';
-import getAllNFTTemplateGenesis from './getAllNFTTemplateGenesis';
-import getAllNFTTemplate from './getAllNFTTemplate';
-import getProfile from './getProfile';
-import getPersonaByAddress from './getPersonaByAddress';
-import getPersonaByUsername from './getPersonaByUsername';
-import getStakePoolByAddress from './getStakePoolByAddress';
-import getStakePoolByUsername from './getStakePoolByUsername';
-import getFeeds from './getFeeds';
-import isNameExists from './isNameExists';
-import isSymbolExists from './isSymbolExists';
-import isSerialExists from './isSerialExists';
-import isUsernameExists from './isUsernameExists';
+import getAllCollection from './collection/getAllCollection';
+import getCollectionById from './collection/getCollectionById';
+import getCollectionByName from './collection/getCollectionByName';
+import getCollectionBySymbol from './collection/getCollectionBySymbol';
+import getAllNFT from './nft/getAllNFT';
+import getNFTById from './nft/getNFTById';
+import getNFTBySerial from './nft/getNFTBySerial';
+import getNFTTemplateById from './nft/getNFTTemplateById';
+import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
+import getAllNFTTemplate from './nft/getAllNFTTemplate';
+import getProfile from './profile/getProfile';
+import getPersonaByAddress from './persona/getPersonaByAddress';
+import getPersonaByUsername from './persona/getPersonaByUsername';
+import getStakePoolByAddress from './stake/getStakePoolByAddress';
+import getStakePoolByUsername from './stake/getStakePoolByUsername';
+import getFeeds from './feeds/getFeeds';
+import isNameExists from './registrar/isNameExists';
+import isSymbolExists from './registrar/isSymbolExists';
+import isSerialExists from './registrar/isSerialExists';
+import isUsernameExists from './registrar/isUsernameExists';
+import getNodeInfo from './node/getNodeInfo';
+import getAssetSchema from './schema/getAssetSchema';
 
 export default {
   getAllCollection,
@@ -40,4 +42,6 @@ export default {
   isSymbolExists,
   isSerialExists,
   isUsernameExists,
+  getNodeInfo,
+  getAssetSchema,
 };

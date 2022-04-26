@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFT } from '../../../../types/core/chain/nft';
-import { invokeGetAllNFT } from '../utils/hook/redeemable_nft_module';
-import idBufferToActivityNFT from '../utils/transformer/idBufferToActivityNFT';
-import nftChainToUI from '../utils/transformer/nftChainToUI';
+import { NFT } from '../../../../../types/core/chain/nft';
+import { invokeGetAllNFT } from '../../utils/hook/redeemable_nft_module';
+import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
+import nftChainToUI from '../../utils/transformer/nftChainToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

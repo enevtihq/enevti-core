@@ -10,8 +10,9 @@
   },
   "rpc": {
     "enable": false,
-    "mode": "ipc",
-    "port": 8080
+    "mode": "ws",
+    "port": 8082,
+    "host": "0.0.0.0"
   },
   "genesisConfig": {
     "blockTime": 10,

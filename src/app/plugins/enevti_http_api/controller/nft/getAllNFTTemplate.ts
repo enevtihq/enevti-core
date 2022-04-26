@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetAllNFTTemplate } from '../utils/hook/redeemable_nft_module';
+import { invokeGetAllNFTTemplate } from '../../utils/hook/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

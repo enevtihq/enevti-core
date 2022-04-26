@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
-import { Profile } from '../../../../types/core/account/profile';
-import { NFT } from '../../../../types/core/chain/nft';
-import { Collection } from '../../../../types/core/chain/collection';
-import idBufferToNFT from '../utils/transformer/idBufferToNFT';
-import idBufferToCollection from '../utils/transformer/idBufferToCollection';
-import { invokeGetAccount } from '../utils/hook/persona_module';
-import { validateAddress } from '../utils/validation/address';
+import { Profile } from '../../../../../types/core/account/profile';
+import { NFT } from '../../../../../types/core/chain/nft';
+import { Collection } from '../../../../../types/core/chain/collection';
+import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
+import idBufferToCollection from '../../utils/transformer/idBufferToCollection';
+import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { validateAddress } from '../../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

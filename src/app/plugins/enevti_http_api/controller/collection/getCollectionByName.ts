@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Collection } from '../../../../types/core/chain/collection';
-import collectionChainToUI from '../utils/transformer/collectionChainToUI';
+import { Collection } from '../../../../../types/core/chain/collection';
+import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
 import {
   invokeGetCollection,
-  invokeGetCollectionIdFromSymbol,
-} from '../utils/hook/redeemable_nft_module';
-import idBufferToActivityCollection from '../utils/transformer/idBufferToActivityCollection';
+  invokeGetCollectionIdFromName,
+} from '../../utils/hook/redeemable_nft_module';
+import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const { symbol } = req.params;
-    const id = await invokeGetCollectionIdFromSymbol(channel, symbol);
+    const { name } = req.params;
+    const id = await invokeGetCollectionIdFromName(channel, name);
     if (!id) {
       res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;

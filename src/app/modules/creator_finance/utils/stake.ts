@@ -30,6 +30,10 @@ export const setStakerByAddress = async (
   );
 };
 
+export const initStakeByAddress = async (stateStore: StateStore, address: string) => {
+  await setStakerByAddress(stateStore, address, { total: BigInt(0), items: [] });
+};
+
 export const addStakeByAddress = async (
   stateStore: StateStore,
   address: string,

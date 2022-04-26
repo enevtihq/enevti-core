@@ -13,7 +13,12 @@ import {
   codec,
   // GenesisConfig
 } from 'lisk-sdk';
-import { accessStakerByAddress, addStakeByAddress, subtractStakeByAddress } from './utils/stake';
+import {
+  accessStakerByAddress,
+  addStakeByAddress,
+  initStakeByAddress,
+  subtractStakeByAddress,
+} from './utils/stake';
 
 export class CreatorFinanceModule extends BaseModule {
   public actions = {
@@ -78,6 +83,9 @@ export class CreatorFinanceModule extends BaseModule {
           });
         }
       }
+    }
+    if (_input.transaction.moduleID === 5 && _input.transaction.assetID === 0) {
+      await initStakeByAddress(_input.stateStore, _input.transaction.senderAddress.toString('hex'));
     }
   }
 

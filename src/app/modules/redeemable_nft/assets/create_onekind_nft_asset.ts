@@ -291,5 +291,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
       },
     };
     await addActivityCollection(stateStore, collection.id.toString('hex'), activity);
+
+    senderAccount.redeemableNft.collection.unshift(collection.id);
+    await stateStore.account.set(senderAddress, senderAccount);
   }
 }
