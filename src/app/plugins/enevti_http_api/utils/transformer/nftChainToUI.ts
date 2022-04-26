@@ -1,7 +1,7 @@
 import { BaseChannel } from 'lisk-framework';
-import { NFT, NFTAsset } from '../../../../types/core/chain/nft';
+import { NFT, NFTAsset } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
-import { invokeGetNFTTemplateById } from './hook/redeemable_nft_module';
+import { invokeGetNFTTemplateById } from '../hook/redeemable_nft_module';
 
 export default async function nftChainToUI(channel: BaseChannel, nft: NFTAsset) {
   const redeem: NFT['redeem'] = {

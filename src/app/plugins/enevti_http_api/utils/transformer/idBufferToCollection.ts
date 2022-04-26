@@ -1,7 +1,7 @@
 import { BaseChannel } from 'lisk-framework';
-import { Collection } from '../../../../types/core/chain/collection';
+import { Collection } from '../../../../../types/core/chain/collection';
 import collectionChainToUI from './collectionChainToUI';
-import { invokeGetCollection } from './hook/redeemable_nft_module';
+import { invokeGetCollection } from '../hook/redeemable_nft_module';
 import idBufferToActivityCollection from './idBufferToActivityCollection';
 
 export default async function idBufferToCollection(

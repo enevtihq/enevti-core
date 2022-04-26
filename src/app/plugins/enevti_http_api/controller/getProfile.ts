@@ -4,38 +4,48 @@ import { BaseChannel } from 'lisk-framework';
 import { Profile } from '../../../../types/core/account/profile';
 import { NFT } from '../../../../types/core/chain/nft';
 import { Collection } from '../../../../types/core/chain/collection';
-import idBufferToNFT from '../utils/idBufferToNFT';
-import idBufferToCollection from '../utils/idBufferToCollection';
+import idBufferToNFT from '../utils/transformer/idBufferToNFT';
+import idBufferToCollection from '../utils/transformer/idBufferToCollection';
 import { invokeGetAccount } from '../utils/hook/persona_module';
+import { validateAddress } from '../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
+    validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
     const ownedAsset = await Promise.all(
-      account.redeemableNft.owned.map(async (item): Promise<NFT> => {
-        const nft = await idBufferToNFT(channel, item);
-        if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.owned');
-        return nft;
-      }),
+      account.redeemableNft.owned.map(
+        async (item): Promise<NFT> => {
+          const nft = await idBufferToNFT(channel, item);
+          if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.owned');
+          return nft;
+        },
+      ),
     );
 
     const onSaleAsset = await Promise.all(
-      account.redeemableNft.onSale.map(async (item): Promise<NFT> => {
-        const nft = await idBufferToNFT(channel, item);
-        if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.onSale');
-        return nft;
-      }),
+      account.redeemableNft.onSale.map(
+        async (item): Promise<NFT> => {
+          const nft = await idBufferToNFT(channel, item);
+          if (!nft) throw new Error('NFT not found while iterating account.redeemableNft.onSale');
+          return nft;
+        },
+      ),
     );
 
     const collectionAsset = await Promise.all(
-      account.redeemableNft.collection.map(async (item): Promise<Collection> => {
-        const collection = await idBufferToCollection(channel, item);
-        if (!collection)
-          throw new Error('Collection not found while iterating account.redeemableNft.collection');
-        return collection;
-      }),
+      account.redeemableNft.collection.map(
+        async (item): Promise<Collection> => {
+          const collection = await idBufferToCollection(channel, item);
+          if (!collection)
+            throw new Error(
+              'Collection not found while iterating account.redeemableNft.collection',
+            );
+          return collection;
+        },
+      ),
     );
 
     const profile: Profile = {

@@ -4,10 +4,12 @@ import * as Lisk from 'lisk-sdk';
 import { Persona } from '../../../../types/core/account/persona';
 import { BASE32_PREFIX } from '../constant/base32prefix';
 import { invokeGetAccount } from '../utils/hook/persona_module';
+import { validateAddress } from '../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
+    validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
     const persona: Persona = {

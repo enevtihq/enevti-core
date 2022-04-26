@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
-import { CollectionAsset } from '../../../../types/core/chain/collection';
-import { NFT } from '../../../../types/core/chain/nft';
+import { CollectionAsset } from '../../../../../types/core/chain/collection';
+import { NFT } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
 import idBufferToNFT from './idBufferToNFT';
 
@@ -15,11 +15,13 @@ export default async function collectionChainToUI(
     },
   };
   const minted = await Promise.all(
-    collection.minted.map(async (item): Promise<NFT> => {
-      const nft = await idBufferToNFT(channel, item);
-      if (!nft) throw new Error('NFT not found while processing minted');
-      return nft;
-    }),
+    collection.minted.map(
+      async (item): Promise<NFT> => {
+        const nft = await idBufferToNFT(channel, item);
+        if (!nft) throw new Error('NFT not found while processing minted');
+        return nft;
+      },
+    ),
   );
   const creator = await addressBufferToPersona(channel, collection.creator);
   const stat = {

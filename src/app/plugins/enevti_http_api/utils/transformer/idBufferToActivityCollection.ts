@@ -1,8 +1,8 @@
 import { BaseChannel } from 'lisk-framework';
-import { CollectionActivity } from '../../../../types/core/chain/collection';
-import { NFT } from '../../../../types/core/chain/nft';
+import { CollectionActivity } from '../../../../../types/core/chain/collection';
+import { NFT } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
-import { invokeGetActivityCollection } from './hook/redeemable_nft_module';
+import { invokeGetActivityCollection } from '../hook/redeemable_nft_module';
 import idBufferToNFT from './idBufferToNFT';
 
 export default async function idBufferToActivityCollection(channel: BaseChannel, id: Buffer) {

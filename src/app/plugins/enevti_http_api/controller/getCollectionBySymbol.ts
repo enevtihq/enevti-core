@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection } from '../../../../types/core/chain/collection';
-import collectionChainToUI from '../utils/collectionChainToUI';
+import collectionChainToUI from '../utils/transformer/collectionChainToUI';
 import {
   invokeGetCollection,
   invokeGetCollectionIdFromSymbol,
 } from '../utils/hook/redeemable_nft_module';
-import idBufferToActivityCollection from '../utils/idBufferToActivityCollection';
+import idBufferToActivityCollection from '../utils/transformer/idBufferToActivityCollection';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
