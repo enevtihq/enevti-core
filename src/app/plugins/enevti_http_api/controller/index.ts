@@ -18,8 +18,7 @@ import isNameExists from './registrar/isNameExists';
 import isSymbolExists from './registrar/isSymbolExists';
 import isSerialExists from './registrar/isSerialExists';
 import isUsernameExists from './registrar/isUsernameExists';
-import getNodeInfo from './node/getNodeInfo';
-import getAssetSchema from './schema/getAssetSchema';
+import getTransactionFee from './transaction/getTransactionFee';
 
 export default {
   getAllCollection,
@@ -42,6 +41,5 @@ export default {
   isSymbolExists,
   isSerialExists,
   isUsernameExists,
-  getNodeInfo,
-  getAssetSchema,
+  getTransactionFee,
 };

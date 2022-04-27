@@ -10,7 +10,11 @@ export const invokeGetAccount = async (
   channel: BaseChannel,
   address: string,
 ): Promise<
-  PersonaAccountProps & Account & DPOSAccountProps & RedeemableNFTAccountProps & TokenAccount
+  PersonaAccountProps &
+    Account &
+    DPOSAccountProps &
+    RedeemableNFTAccountProps &
+    TokenAccount & { sequence: { nonce: bigint } }
 > => channel.invoke('persona:getAccount', { address });
 
 export const invokeGetAddressByUsername = async (
