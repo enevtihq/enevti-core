@@ -11,6 +11,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     });
     res.status(200).json({ data: authorize, meta: req.body as Record<string, string> });
   } catch (err: unknown) {
-    res.status(409).json({ data: err, meta: req.body as Record<string, string> });
+    res
+      .status(409)
+      .json({ data: (err as string).toString(), meta: req.body as Record<string, string> });
   }
 };

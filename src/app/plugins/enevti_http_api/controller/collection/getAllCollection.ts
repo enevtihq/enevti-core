@@ -7,7 +7,7 @@ import idBufferToActivityCollection from '../../utils/transformer/idBufferToActi
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const { offset, limit } = req.params;
+    const { offset, limit } = req.query as Record<string, string>;
     const collections = await invokeGetAllCollection(
       channel,
       parseInt(offset, 10),
@@ -28,8 +28,8 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     );
 
-    res.status(200).json({ data: response, meta: req.params });
+    res.status(200).json({ data: response, meta: req.query });
   } catch (err: unknown) {
-    res.status(409).json({ data: err, meta: req.params });
+    res.status(409).json({ data: (err as string).toString(), meta: req.query });
   }
 };
