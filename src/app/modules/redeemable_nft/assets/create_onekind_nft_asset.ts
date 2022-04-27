@@ -8,7 +8,7 @@ import { UTILITY, UTILITY_WITH_SECRET } from '../constants/utility';
 import { VALIDATION } from '../constants/validation';
 import { createOnekindNftAssetSchema } from '../schemas/asset/create_onekind_nft_asset';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { CreateNFTOneKindNFTProps } from '../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
+import { CreateOneKindNFTProps } from '../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
 import {
   CollectionActivityChainItems,
   CollectionAsset,
@@ -33,14 +33,14 @@ import {
   getNetworkIdentifier,
 } from '../utils/transaction';
 
-export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
+export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public name = 'createOnekindNft';
   public id = 0;
 
   // Define schema for asset
   public schema = createOnekindNftAssetSchema;
 
-  public validate({ asset }: ValidateAssetContext<CreateNFTOneKindNFTProps>): void {
+  public validate({ asset }: ValidateAssetContext<CreateOneKindNFTProps>): void {
     if (!Object.values(UTILITY).includes(asset.utility)) {
       throw new Error(`asset.utility is unknown`);
     }
@@ -98,7 +98,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateNFTOneKindNFTProps> {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<CreateNFTOneKindNFTProps>): Promise<void> {
+  }: ApplyAssetContext<CreateOneKindNFTProps>): Promise<void> {
     const { senderAddress } = transaction;
     const timestamp = getBlockTimestamp(stateStore);
     const allCollection = await getAllCollection(stateStore);

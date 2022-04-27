@@ -9,6 +9,7 @@ import getNFTTemplateById from './nft/getNFTTemplateById';
 import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './nft/getAllNFTTemplate';
 import getProfile from './profile/getProfile';
+import getProfileNonce from './profile/getProfileNonce';
 import getPersonaByAddress from './persona/getPersonaByAddress';
 import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
@@ -32,6 +33,7 @@ export default {
   getAllNFTTemplateGenesis,
   getAllNFTTemplate,
   getProfile,
+  getProfileNonce,
   getPersonaByAddress,
   getPersonaByUsername,
   getStakePoolByAddress,
