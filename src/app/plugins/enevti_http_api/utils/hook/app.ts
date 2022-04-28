@@ -5,3 +5,11 @@ export const invokeGetNodeIndo = async (channel: BaseChannel): Promise<Record<st
 
 export const invokeGetSchema = async (channel: BaseChannel): Promise<Record<string, unknown>> =>
   channel.invoke('app:getSchema');
+
+export const invokePostTransaction = async (
+  channel: BaseChannel,
+  transaction: string,
+): Promise<Record<string, string>> =>
+  channel.invoke('app:postTransaction', {
+    transaction,
+  });

@@ -5,7 +5,7 @@ export const registeredUsernameSchema: SchemaWithDefault = {
   type: 'object',
   required: ['address'],
   properties: {
-    id: {
+    address: {
       dataType: 'bytes',
       fieldNumber: 1,
     },

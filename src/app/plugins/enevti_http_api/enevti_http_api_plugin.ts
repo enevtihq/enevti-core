@@ -79,11 +79,12 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/registrar/symbol/:symbol', controller.isSymbolExists(this._channel));
     this._app.get('/registrar/serial/:serial', controller.isSerialExists(this._channel));
     this._app.get('/registrar/username/:username', controller.isUsernameExists(this._channel));
-    this._app.get('/transaction/fee', controller.getTransactionFee(this._channel));
+    this._app.post('/transaction/fee', controller.getTransactionFee(this._channel));
     this._app.get(
       '/transaction/basefee/:moduleID/:assetID',
       controller.getTransactionBaseFee(this._channel),
     );
+    this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
 
     this._server = this._app.listen(8080, '0.0.0.0');
   }
