@@ -46,10 +46,7 @@ export class PersonaModule extends BaseModule {
   public reducers = {};
   public name = 'persona';
   public transactionAssets = [new ChangePhotoAsset(), new ChangeTwitterAsset()];
-  public events = [
-    // Example below
-    // 'persona:newBlock',
-  ];
+  public events = ['newUsername'];
   public id = 1001;
   public accountSchema = personaAccountSchema;
 
@@ -64,10 +61,20 @@ export class PersonaModule extends BaseModule {
     // const generator = await _input.stateStore.account.get<TokenAccount>(generatorAddress);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    // Get any data from stateStore using block info, below is an example getting a generator
-    // const generatorAddress = getAddressFromPublicKey(_input.block.header.generatorPublicKey);
-    // const generator = await _input.stateStore.account.get<TokenAccount>(generatorAddress);
+    for (const payload of _input.block.payload) {
+      if (payload.moduleID === 5 && payload.assetID === 0) {
+        const registerAsset = codec.decode<RegisterTransactionAssetContext>(
+          new RegisterTransactionAsset().schema,
+          payload.asset,
+        );
+        this._channel.publish('persona:newUsername', {
+          address: payload.senderAddress.toString('hex'),
+          username: registerAsset.username,
+        });
+      }
+    }
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {
