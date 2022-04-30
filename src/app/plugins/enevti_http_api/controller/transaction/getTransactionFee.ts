@@ -4,6 +4,7 @@ import { cryptography, transactions } from 'lisk-sdk';
 import { invokeGetNodeIndo } from '../../utils/hook/app';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
+import transformAsset from './transformer';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -37,7 +38,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const tx = transactions.signTransaction(
       schema,
       {
-        ...payload,
+        ...transformAsset(payload),
         fee: BigInt(payload.fee as string),
         nonce: BigInt(account.sequence.nonce),
         senderPublicKey: publicKey,

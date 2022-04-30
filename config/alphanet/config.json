@@ -9,10 +9,8 @@
     "logFileName": "lisk.log"
   },
   "rpc": {
-    "enable": false,
-    "mode": "ws",
-    "port": 8082,
-    "host": "0.0.0.0"
+    "enable": true,
+    "mode": "ipc"
   },
   "genesisConfig": {
     "blockTime": 10,

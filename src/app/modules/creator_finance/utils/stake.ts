@@ -1,4 +1,5 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
+import BigNumber from 'bignumber.js';
 import { StakerChain, StakerItemAsset } from '../../../../types/core/chain/stake';
 import { CHAIN_STATE_STAKER } from '../constant/codec';
 import { stakerSchema } from '../schema/chain/stake';
@@ -44,12 +45,20 @@ export const addStakeByAddress = async (
     throw new Error('staker data for address not found');
   }
   addressStaker.total += stakeItem.stake;
-  addressStaker.items.push(stakeItem);
+  let stakerItems = addressStaker.items.concat(stakeItem);
 
-  addressStaker.items.map(item => ({ ...item, portion: Number(item.stake / addressStaker.total) }));
-  addressStaker.items.sort((a, b) => a.portion - b.portion);
-  addressStaker.items.map((item, index) => ({ ...item, rank: index }));
+  stakerItems = stakerItems.map(item => ({
+    ...item,
+    portion: Number(
+      new BigNumber((item.stake * BigInt(10000)).toString())
+        .div(addressStaker.total.toString())
+        .toFixed(0),
+    ),
+  }));
+  stakerItems.sort((a, b) => b.portion - a.portion);
+  stakerItems = stakerItems.map((item, index) => ({ ...item, rank: index + 1 }));
 
+  addressStaker.items = stakerItems.slice();
   await setStakerByAddress(stateStore, address, addressStaker);
 };
 
@@ -69,11 +78,20 @@ export const subtractStakeByAddress = async (
     throw new Error('stake data is invalid');
   }
   addressStaker.total -= stakeItem.stake;
-  addressStaker.items.splice(index, 1);
+  let stakerItems = [...addressStaker.items];
+  stakerItems.splice(index, 1);
 
-  addressStaker.items.map(item => ({ ...item, portion: Number(item.stake / addressStaker.total) }));
-  addressStaker.items.sort((a, b) => a.portion - b.portion);
-  addressStaker.items.map((item, i) => ({ ...item, rank: i }));
+  stakerItems = stakerItems.map(item => ({
+    ...item,
+    portion: Number(
+      new BigNumber((item.stake * BigInt(10000)).toString())
+        .div(addressStaker.total.toString())
+        .toFixed(0),
+    ),
+  }));
+  stakerItems.sort((a, b) => b.portion - a.portion);
+  stakerItems = stakerItems.map((item, i) => ({ ...item, rank: i }));
 
+  addressStaker.items = stakerItems.slice();
   await setStakerByAddress(stateStore, address, addressStaker);
 };

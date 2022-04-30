@@ -11,8 +11,10 @@ import {
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
   codec,
+  apiClient,
   // GenesisConfig
 } from 'lisk-sdk';
+import { getAssetSchema } from './utils/schema';
 import {
   accessStakerByAddress,
   addStakeByAddress,
@@ -30,15 +32,20 @@ export class CreatorFinanceModule extends BaseModule {
   public reducers = {};
   public name = 'creatorFinance';
   public transactionAssets = [];
-  public events = [
-    // Example below
-    // 'creatorFinance:newBlock',
-  ];
+  public events = ['totalStakePlus'];
   public id = 1002;
+  public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);
   // }
+
+  public async getClient() {
+    if (!this._client) {
+      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
+    }
+    return this._client;
+  }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -48,9 +55,19 @@ export class CreatorFinanceModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    // Get any data from stateStore using block info, below is an example getting a generator
-    // const generatorAddress = getAddressFromPublicKey(_input.block.header.generatorPublicKey);
-    // const generator = await _input.stateStore.account.get<TokenAccount>(generatorAddress);
+    for (const payload of _input.block.payload) {
+      if (payload.moduleID === 5 && payload.assetID === 1) {
+        const client = await this.getClient();
+        const voteSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
+        const voteAsset = codec.decode<Record<string, unknown>>(voteSchema, payload.asset);
+        (voteAsset.votes as Record<string, unknown>[]).forEach(item => {
+          this._channel.publish('creatorFinance:totalStakePlus', {
+            address: (item.delegateAddress as Buffer).toString('hex'),
+            totalStake: item.amount,
+          });
+        });
+      }
+    }
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {
