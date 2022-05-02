@@ -8,6 +8,8 @@ import {
   BeforeBlockApplyContext,
   codec,
   TransactionApplyContext,
+  cryptography,
+  Transaction,
 } from 'lisk-sdk';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
@@ -44,7 +46,7 @@ export class PersonaModule extends BaseModule {
   public reducers = {};
   public name = 'persona';
   public transactionAssets = [new ChangePhotoAsset(), new ChangeTwitterAsset()];
-  public events = ['newUsername', 'balanceMinus', 'balancePlus'];
+  public events = ['usernameChanged', 'balanceChanged'];
   public id = 1001;
   public accountSchema = personaAccountSchema;
   public _client: apiClient.APIClient | undefined = undefined;
@@ -69,44 +71,24 @@ export class PersonaModule extends BaseModule {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    for (const payload of _input.block.payload) {
-      this._channel.publish('persona:balanceMinus', {
-        address: payload.senderAddress.toString('hex'),
-        amount: payload.fee.toString(),
+    const client = await this.getClient();
+    const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
+      payload: Transaction[];
+    };
+    for (const payload of prevBlock.payload) {
+      const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
+      this._channel.publish('persona:balanceChanged', {
+        address: prevBlockSenderAddress.toString('hex'),
       });
       if (payload.moduleID === 5 && payload.assetID === 0) {
-        const client = await this.getClient();
-        const registerSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
-        const registerAsset = codec.decode<Record<string, unknown>>(registerSchema, payload.asset);
-        this._channel.publish('persona:newUsername', {
-          address: payload.senderAddress.toString('hex'),
-          username: registerAsset.username,
-        });
-      }
-      if (payload.moduleID === 5 && payload.assetID === 1) {
-        const client = await this.getClient();
-        const voteSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
-        const voteAsset = codec.decode<{ votes: { delegateAddress: Buffer; amount: bigint }[] }>(
-          voteSchema,
-          payload.asset,
-        );
-        const totalVotesSent: bigint = voteAsset.votes.reduce((a, b) => a + b.amount, BigInt(0));
-        this._channel.publish('persona:balanceMinus', {
-          address: payload.senderAddress.toString('hex'),
-          amount: totalVotesSent.toString(),
+        this._channel.publish('persona:usernameChanged', {
+          address: prevBlockSenderAddress.toString('hex'),
         });
       }
       if (payload.moduleID === 2 && payload.assetID === 0) {
-        const client = await this.getClient();
-        const transferSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
-        const transferAsset = codec.decode<Record<string, unknown>>(transferSchema, payload.asset);
-        this._channel.publish('persona:balanceMinus', {
-          address: payload.senderAddress.toString('hex'),
-          amount: (transferAsset as { amount: bigint }).amount.toString(),
-        });
-        this._channel.publish('persona:balancePlus', {
+        const transferAsset = (payload.asset as unknown) as Record<string, unknown>;
+        this._channel.publish('persona:balanceChanged', {
           address: (transferAsset.recipientAddress as Buffer).toString('hex'),
-          amount: (transferAsset as { amount: bigint }).amount.toString(),
         });
       }
     }

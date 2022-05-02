@@ -86,7 +86,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     );
     this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
 
-    this._server = this._app.listen(8080, '0.0.0.0');
+    this._server = this._app.listen(8880, '0.0.0.0');
   }
 
   public async unload(): Promise<void> {

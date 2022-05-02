@@ -12,6 +12,7 @@ import {
   AfterGenesisBlockApplyContext,
   codec,
   apiClient,
+  Transaction,
   // GenesisConfig
 } from 'lisk-sdk';
 import { getAssetSchema } from './utils/schema';
@@ -32,7 +33,7 @@ export class CreatorFinanceModule extends BaseModule {
   public reducers = {};
   public name = 'creatorFinance';
   public transactionAssets = [];
-  public events = ['totalStakePlus'];
+  public events = ['totalStakeChanged'];
   public id = 1002;
   public _client: apiClient.APIClient | undefined = undefined;
 
@@ -55,15 +56,17 @@ export class CreatorFinanceModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    for (const payload of _input.block.payload) {
+    const client = await this.getClient();
+    const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
+      payload: Transaction[];
+    };
+    for (const payload of prevBlock.payload) {
       if (payload.moduleID === 5 && payload.assetID === 1) {
-        const client = await this.getClient();
         const voteSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
         const voteAsset = codec.decode<Record<string, unknown>>(voteSchema, payload.asset);
         (voteAsset.votes as Record<string, unknown>[]).forEach(item => {
-          this._channel.publish('creatorFinance:totalStakePlus', {
+          this._channel.publish('creatorFinance:totalStakeChanged', {
             address: (item.delegateAddress as Buffer).toString('hex'),
-            totalStake: item.amount,
           });
         });
       }

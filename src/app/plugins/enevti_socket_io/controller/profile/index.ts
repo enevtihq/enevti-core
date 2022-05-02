@@ -1,53 +1,44 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server } from 'socket.io';
+import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server) {
-  channel.subscribe('persona:newUsername', data => {
+  channel.subscribe('persona:usernameChanged', async data => {
     if (data) {
-      const payload = data as { address: string; username: string };
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
       io.emit(`profile:${payload.address}`, {
-        type: 'newUsername',
+        type: 'usernameChanged',
         target: payload.address,
-        payload: payload.username,
+        payload: account.dpos.delegate.username,
       });
     }
   });
 }
 
-export function onBalancePlus(channel: BaseChannel, io: Server) {
-  channel.subscribe('persona:balancePlus', data => {
+export function onBalanceChanged(channel: BaseChannel, io: Server) {
+  channel.subscribe('persona:balanceChanged', async data => {
     if (data) {
-      const payload = data as { address: string; amount: string };
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
       io.emit(`profile:${payload.address}`, {
-        type: 'balancePlus',
+        type: 'balanceChanged',
         target: payload.address,
-        payload: payload.amount,
+        payload: account.token.balance.toString(),
       });
     }
   });
 }
 
-export function onBalanceMinus(channel: BaseChannel, io: Server) {
-  channel.subscribe('persona:balanceMinus', data => {
+export function onTotalStakeChanged(channel: BaseChannel, io: Server) {
+  channel.subscribe('creatorFinance:totalStakeChanged', async data => {
     if (data) {
-      const payload = data as { address: string; amount: string };
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
       io.emit(`profile:${payload.address}`, {
-        type: 'balanceMinus',
+        type: 'totalStakeChanged',
         target: payload.address,
-        payload: payload.amount,
-      });
-    }
-  });
-}
-
-export function onTotalStakePlus(channel: BaseChannel, io: Server) {
-  channel.subscribe('creatorFinance:totalStakePlus', data => {
-    if (data) {
-      const payload = data as { address: string; totalStake: bigint };
-      io.emit(`profile:${payload.address}`, {
-        type: 'totalStakePlus',
-        target: payload.address,
-        payload: payload.totalStake.toString(),
+        payload: account.dpos.delegate.totalVotesReceived.toString(),
       });
     }
   });

@@ -62,7 +62,7 @@ export class EnevtiFaucetApiPlugin extends BasePlugin {
       this._app.post('/faucet', controller.fundToken(this._channel));
       this._app.patch('/faucet/authorize', controller.authorizeFaucet(this._channel));
 
-      this._server = this._app.listen(8081, '0.0.0.0');
+      this._server = this._app.listen(8881, '0.0.0.0');
     } catch (err) {
       this._logger.info('Faucet is disabled');
     }
