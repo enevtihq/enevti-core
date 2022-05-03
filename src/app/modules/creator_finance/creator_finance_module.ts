@@ -13,9 +13,9 @@ import {
   codec,
   apiClient,
   Transaction,
+  cryptography,
   // GenesisConfig
 } from 'lisk-sdk';
-import { getAssetSchema } from './utils/schema';
 import {
   accessStakerByAddress,
   addStakeByAddress,
@@ -33,7 +33,7 @@ export class CreatorFinanceModule extends BaseModule {
   public reducers = {};
   public name = 'creatorFinance';
   public transactionAssets = [];
-  public events = ['totalStakeChanged'];
+  public events = ['totalStakeChanged', 'stakerUpdates'];
   public id = 1002;
   public _client: apiClient.APIClient | undefined = undefined;
 
@@ -62,8 +62,13 @@ export class CreatorFinanceModule extends BaseModule {
     };
     for (const payload of prevBlock.payload) {
       if (payload.moduleID === 5 && payload.assetID === 1) {
-        const voteSchema = await getAssetSchema(client, payload.moduleID, payload.assetID);
-        const voteAsset = codec.decode<Record<string, unknown>>(voteSchema, payload.asset);
+        const voteAsset = (payload.asset as unknown) as Record<string, unknown>;
+        const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(
+          payload.senderPublicKey,
+        );
+        this._channel.publish('creatorFinance:stakerUpdates', {
+          address: prevBlockSenderAddress.toString('hex'),
+        });
         (voteAsset.votes as Record<string, unknown>[]).forEach(item => {
           this._channel.publish('creatorFinance:totalStakeChanged', {
             address: (item.delegateAddress as Buffer).toString('hex'),

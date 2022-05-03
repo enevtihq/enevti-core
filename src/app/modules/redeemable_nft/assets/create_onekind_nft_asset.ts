@@ -124,7 +124,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       BigInt(transactions.convertLSKToBeddows(VALIDATION.MINVOTE))
     ) {
       throw new Error(
-        `Account needs to have a stake above ${VALIDATION.MINVOTE} coins to be able to create NFT`,
+        `Account needs to have a stake minimum ${VALIDATION.MINVOTE} coins to be able to create NFT`,
       );
     }
 
