@@ -4,15 +4,18 @@ import { NFTUtility } from '../../chain/nft/NFTUtility';
 export type CreateOneKindNFTProps = {
   name: string;
   description: string;
+  mintingType: string;
   symbol: string;
   cover: string;
   coverMime: string;
   coverExtension: string;
   coverSize: number;
+  coverProtocol: string;
   data: string;
   dataMime: string;
   dataExtension: string;
   dataSize: number;
+  dataProtocol: string;
   utility: NFTUtility;
   template: string;
   cipher: string;
@@ -21,6 +24,7 @@ export type CreateOneKindNFTProps = {
   contentMime: string;
   contentExtension: string;
   contentSize: number;
+  contentProtocol: string;
   contentIv: string;
   contentSalt: string;
   contentSecurityVersion: number;
@@ -47,4 +51,8 @@ export type CreateOneKindNFTProps = {
   };
   quantity: number;
   mintingExpire: number;
+};
+
+export type CreateOneKindNFTUI = Omit<CreateOneKindNFTProps, 'price'> & {
+  price: { amount: string; currency: string };
 };
