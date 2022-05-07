@@ -1,6 +1,4 @@
-import { DPOSAccountProps } from 'lisk-framework/dist-node/modules/dpos';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext, transactions } from 'lisk-sdk';
-
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
 import { RECURRING } from '../constants/recurring';
@@ -47,25 +45,30 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (!Object.values(RECURRING).includes(asset.recurring)) {
       throw new Error(`asset.recurring is unknown`);
     }
-    if (asset.recurring === RECURRING.WEEKLY && asset.time.day < 0) {
+    if (asset.recurring === RECURRING.WEEKLY && parseInt(asset.time.day, 10) < 0) {
       throw new Error(`asset.time.day is required on recurring perweek`);
     }
-    if (asset.recurring === RECURRING.MONTHLY && asset.time.date <= 0) {
+    if (asset.recurring === RECURRING.MONTHLY && parseInt(asset.time.date, 10) <= 0) {
       throw new Error(`asset.time.date is required on recurring permonth`);
     }
-    if (asset.recurring === RECURRING.YEARLY && (asset.time.date <= 0 || asset.time.month <= 0)) {
+    if (
+      asset.recurring === RECURRING.YEARLY &&
+      (parseInt(asset.time.date, 10) <= 0 || parseInt(asset.time.month, 10) <= 0)
+    ) {
       throw new Error(`asset.time.date and asset.time.month are required on recurring peryear`);
     }
     if (
       asset.recurring === RECURRING.ONCE &&
-      (asset.time.date <= 0 || asset.time.month <= 0 || asset.time.year <= 0)
+      (parseInt(asset.time.date, 10) <= 0 ||
+        parseInt(asset.time.month, 10) <= 0 ||
+        parseInt(asset.time.year, 10) <= 0)
     ) {
       throw new Error(
         `asset.time.date, asset.time.month, and asset.time.year are required on recurring once`,
       );
     }
-    if (asset.redeemLimit <= 0) {
-      throw new Error(`asset.redeemLimit must be greater than 0`);
+    if (asset.recurring !== RECURRING.ANYTIME && asset.redeemLimit <= 0) {
+      throw new Error(`asset.redeemLimit must be greater than 0 for non-anytime recurring`);
     }
     if (BigInt(asset.price.amount) < BigInt(0)) {
       throw new Error(`asset.price.amount can't be negative`);
@@ -73,16 +76,16 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.quantity <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
-    if (asset.from.hour < 0) {
-      throw new Error(`asset.from.hour can't be negative`);
+    if (asset.recurring !== RECURRING.ANYTIME && parseInt(asset.from.hour, 10) < 0) {
+      throw new Error(`asset.from.hour can't be negative for non-anytime recurring`);
     }
-    if (asset.from.minute < 0) {
-      throw new Error(`asset.from.minute can't be negative`);
+    if (asset.recurring !== RECURRING.ANYTIME && parseInt(asset.from.minute, 10) < 0) {
+      throw new Error(`asset.from.minute can't be negative for non-anytime recurring`);
     }
-    if (asset.until <= 0) {
-      throw new Error(`asset.quantity must be greater than 0`);
+    if (asset.recurring !== RECURRING.ANYTIME && asset.until <= 0) {
+      throw new Error(`asset.until must be greater than 0`);
     }
-    if (asset.mintingExpire < -1 || asset.mintingExpire === 0) {
+    if (parseInt(asset.mintingExpire, 10) < -1 || parseInt(asset.mintingExpire, 10) === 0) {
       throw new Error(`asset.mintingExpire can only be -1, or greater than 0`);
     }
     if (asset.royalty.creator < 0) {
@@ -98,6 +101,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     asset,
     transaction,
     stateStore,
+    reducerHandler,
   }: ApplyAssetContext<CreateOneKindNFTProps>): Promise<void> {
     const { senderAddress } = transaction;
     const timestamp = getBlockTimestamp(stateStore);
@@ -116,15 +120,12 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     const symbolRegistrar = await getRegisteredSymbol(stateStore, asset.symbol);
     if (symbolRegistrar) throw new Error('symbol already exist on chain!');
 
-    const senderAccount = await stateStore.account.get<
-      DPOSAccountProps & RedeemableNFTAccountProps
-    >(senderAddress);
-    if (
-      senderAccount.dpos.delegate.totalVotesReceived <
-      BigInt(transactions.convertLSKToBeddows(VALIDATION.MINVOTE))
-    ) {
+    const totalStake = await reducerHandler.invoke('creatorFinance:getTotalStake', {
+      address: senderAddress,
+    });
+    if ((totalStake as BigInt) < BigInt(transactions.convertLSKToBeddows(VALIDATION.MINSTAKE))) {
       throw new Error(
-        `Account needs to have a stake minimum ${VALIDATION.MINVOTE} coins to be able to create NFT`,
+        `Account needs to have a stake minimum ${VALIDATION.MINSTAKE} coins to be able to create NFT`,
       );
     }
 
@@ -163,7 +164,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       minting: {
         total: [],
         available: [],
-        expire: asset.mintingExpire,
+        expire: parseInt(asset.mintingExpire, 10),
         price: {
           amount: asset.price.amount,
           currency: asset.price.currency,
@@ -200,7 +201,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           protocol: asset.dataProtocol,
         },
         template: asset.template,
-        NFTType: NFTTYPE.ONEKIND,
+        nftType: NFTTYPE.ONEKIND,
         utility: asset.utility,
         rarity: {
           stat: { rank: -1, percent: -1 },
@@ -234,14 +235,14 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           schedule: {
             recurring: asset.recurring,
             time: {
-              day: asset.time.day,
-              date: asset.time.date,
-              month: asset.time.month,
-              year: asset.time.year,
+              day: parseInt(asset.time.day, 10),
+              date: parseInt(asset.time.date, 10),
+              month: parseInt(asset.time.month, 10),
+              year: parseInt(asset.time.year, 10),
             },
             from: {
-              hour: asset.from.hour,
-              minute: asset.from.minute,
+              hour: parseInt(asset.from.hour, 10),
+              minute: parseInt(asset.from.minute, 10),
             },
             until: asset.until,
           },
@@ -296,6 +297,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     };
     await addActivityCollection(stateStore, collection.id.toString('hex'), activity);
 
+    const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     senderAccount.redeemableNft.collection.unshift(collection.id);
     await stateStore.account.set(senderAddress, senderAccount);
   }

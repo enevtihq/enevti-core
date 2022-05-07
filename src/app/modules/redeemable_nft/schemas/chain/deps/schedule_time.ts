@@ -5,19 +5,19 @@ export const scheduleTimeSchema: Omit<Schema, '$id'> = {
   required: ['day', 'date', 'month', 'year'],
   properties: {
     day: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 1,
     },
     date: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 2,
     },
     month: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 3,
     },
     year: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 4,
     },
   },

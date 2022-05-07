@@ -1,3 +1,3 @@
 export const VALIDATION = {
-  MINVOTE: '1000',
+  MINSTAKE: '1000',
 };

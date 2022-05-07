@@ -1,6 +1,4 @@
-import { NFTRecurring } from '../../../../types/core/chain/nft/NFTRedeem';
-
-export const RECURRING: Record<string, NFTRecurring> = {
+export const RECURRING = {
   DAILY: 'daily',
   WEEKLY: 'weekly',
   MONTHLY: 'monthly',

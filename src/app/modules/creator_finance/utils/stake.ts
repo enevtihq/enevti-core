@@ -1,8 +1,9 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import BigNumber from 'bignumber.js';
-import { StakerChain, StakerItemAsset } from '../../../../types/core/chain/stake';
+import { StakerChain, StakerItemUtils } from '../../../../types/core/chain/stake';
 import { CHAIN_STATE_STAKER } from '../constant/codec';
 import { stakerSchema } from '../schema/chain/stake';
+import { CreaFiAccountProps } from '../../../../types/core/account/profile';
 
 export const accessStakerByAddress = async (dataAccess: BaseModuleDataAccess, address: string) => {
   const stakerBuffer = await dataAccess.getChainState(`${CHAIN_STATE_STAKER}:${address}`);
@@ -38,14 +39,14 @@ export const initStakeByAddress = async (stateStore: StateStore, address: string
 export const addStakeByAddress = async (
   stateStore: StateStore,
   address: string,
-  stakeItem: StakerItemAsset,
+  stakeItem: StakerItemUtils,
 ) => {
   const addressStaker = await getStakerByAddress(stateStore, address);
   if (!addressStaker) {
     throw new Error('staker data for address not found');
   }
   addressStaker.total += stakeItem.stake;
-  let stakerItems = addressStaker.items.concat(stakeItem);
+  let stakerItems = addressStaker.items.concat({ ...stakeItem, rank: 0, portion: 0 });
 
   stakerItems = stakerItems.map(item => ({
     ...item,
@@ -60,12 +61,18 @@ export const addStakeByAddress = async (
 
   addressStaker.items = stakerItems.slice();
   await setStakerByAddress(stateStore, address, addressStaker);
+
+  const addressAccount = await stateStore.account.get<CreaFiAccountProps>(
+    Buffer.from(address, 'hex'),
+  );
+  addressAccount.creatorFinance.totalStake = addressStaker.total;
+  await stateStore.account.set(Buffer.from(address, 'hex'), addressAccount);
 };
 
 export const subtractStakeByAddress = async (
   stateStore: StateStore,
   address: string,
-  stakeItem: StakerItemAsset,
+  stakeItem: StakerItemUtils,
 ) => {
   const addressStaker = await getStakerByAddress(stateStore, address);
   if (!addressStaker) {
@@ -94,4 +101,10 @@ export const subtractStakeByAddress = async (
 
   addressStaker.items = stakerItems.slice();
   await setStakerByAddress(stateStore, address, addressStaker);
+
+  const addressAccount = await stateStore.account.get<CreaFiAccountProps>(
+    Buffer.from(address, 'hex'),
+  );
+  addressAccount.creatorFinance.totalStake = addressStaker.total;
+  await stateStore.account.set(Buffer.from(address, 'hex'), addressAccount);
 };

@@ -35,7 +35,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
     'creator',
     'data',
     'template',
-    'NFTType',
+    'nftType',
     'utility',
     'rarity',
     'partition',
@@ -101,7 +101,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
       dataType: 'string',
       fieldNumber: 14,
     },
-    NFTType: {
+    nftType: {
       dataType: 'string',
       fieldNumber: 15,
     },

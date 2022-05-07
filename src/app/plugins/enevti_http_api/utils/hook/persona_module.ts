@@ -3,14 +3,18 @@ import { BaseChannel } from 'lisk-framework';
 import { DPOSAccountProps } from 'lisk-framework/dist-node/modules/dpos';
 import { TokenAccount } from 'lisk-framework/dist-node/modules/token/types';
 import { PersonaAccountProps } from '../../../../../types/core/account/persona';
-import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
+import {
+  CreaFiAccountProps,
+  RedeemableNFTAccountProps,
+} from '../../../../../types/core/account/profile';
 import { RegisteredUsernameAsset } from '../../../../../types/core/chain/registrar';
 
 export const invokeGetAccount = async (
   channel: BaseChannel,
   address: string,
 ): Promise<
-  PersonaAccountProps &
+  CreaFiAccountProps &
+    PersonaAccountProps &
     Account &
     DPOSAccountProps &
     RedeemableNFTAccountProps &

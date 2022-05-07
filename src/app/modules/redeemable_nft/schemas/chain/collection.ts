@@ -43,7 +43,7 @@ export const collectionSchema: SchemaWithDefault = {
       dataType: 'bytes',
       fieldNumber: 1,
     },
-    containerType: {
+    collectionType: {
       dataType: 'string',
       fieldNumber: 2,
     },

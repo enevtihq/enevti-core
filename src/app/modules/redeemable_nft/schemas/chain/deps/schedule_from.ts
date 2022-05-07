@@ -5,11 +5,11 @@ export const scheduleFromSchema: Omit<Schema, '$id'> = {
   required: ['hour', 'minute'],
   properties: {
     hour: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 1,
     },
     minute: {
-      dataType: 'uint32',
+      dataType: 'string',
       fieldNumber: 2,
     },
   },

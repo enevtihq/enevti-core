@@ -14,8 +14,11 @@ import {
   apiClient,
   Transaction,
   cryptography,
+  StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
+import { CreaFiAccountProps } from '../../../types/core/account/profile';
+import { creafiAccountSchema } from './schema/account';
 import {
   accessStakerByAddress,
   addStakeByAddress,
@@ -30,11 +33,24 @@ export class CreatorFinanceModule extends BaseModule {
       return accessStakerByAddress(this._dataAccess, address);
     },
   };
-  public reducers = {};
+  public reducers = {
+    getTotalStake: async (
+      params: Record<string, unknown>,
+      stateStore: StateStore,
+    ): Promise<bigint> => {
+      const { address } = params;
+      if (!Buffer.isBuffer(address)) {
+        throw new Error('Address must be a buffer');
+      }
+      const account = await stateStore.account.getOrDefault<CreaFiAccountProps>(address);
+      return account.creatorFinance.totalStake;
+    },
+  };
   public name = 'creatorFinance';
   public transactionAssets = [];
   public events = ['totalStakeChanged', 'stakerUpdates'];
   public id = 1002;
+  public accountSchema = creafiAccountSchema;
   public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
@@ -96,15 +112,11 @@ export class CreatorFinanceModule extends BaseModule {
           await addStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
             persona: _input.transaction.senderAddress,
             stake: vote.amount,
-            rank: 0,
-            portion: 0,
           });
         } else {
           await subtractStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
             persona: _input.transaction.senderAddress,
             stake: vote.amount,
-            rank: 0,
-            portion: 0,
           });
         }
       }

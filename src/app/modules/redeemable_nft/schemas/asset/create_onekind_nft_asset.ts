@@ -10,15 +10,18 @@ export const createOnekindNftAssetSchema = {
   required: [
     'name',
     'description',
+    'mintingType',
     'symbol',
     'cover',
     'coverMime',
     'coverExtension',
     'coverSize',
+    'coverProtocol',
     'data',
     'dataMime',
     'dataExtension',
     'dataSize',
+    'dataProtocol',
     'utility',
     'template',
     'cipher',
@@ -27,6 +30,7 @@ export const createOnekindNftAssetSchema = {
     'contentMime',
     'contentExtension',
     'contentSize',
+    'contentProtocol',
     'contentIv',
     'contentSalt',
     'contentSecurityVersion',
@@ -49,121 +53,137 @@ export const createOnekindNftAssetSchema = {
       dataType: 'string',
       fieldNumber: 2,
     },
-    symbol: {
+    mintingType: {
       dataType: 'string',
       fieldNumber: 3,
     },
-    cover: {
+    symbol: {
       dataType: 'string',
       fieldNumber: 4,
     },
-    coverMime: {
+    cover: {
       dataType: 'string',
       fieldNumber: 5,
     },
-    coverExtension: {
+    coverMime: {
       dataType: 'string',
       fieldNumber: 6,
     },
-    coverSize: {
-      dataType: 'uint32',
+    coverExtension: {
+      dataType: 'string',
       fieldNumber: 7,
     },
-    data: {
-      dataType: 'string',
+    coverSize: {
+      dataType: 'uint32',
       fieldNumber: 8,
     },
-    dataMime: {
+    coverProtocol: {
       dataType: 'string',
       fieldNumber: 9,
     },
-    dataExtension: {
+    data: {
       dataType: 'string',
       fieldNumber: 10,
     },
-    dataSize: {
-      dataType: 'uint32',
+    dataMime: {
+      dataType: 'string',
       fieldNumber: 11,
     },
-    utility: {
+    dataExtension: {
       dataType: 'string',
       fieldNumber: 12,
     },
-    template: {
-      dataType: 'string',
+    dataSize: {
+      dataType: 'uint32',
       fieldNumber: 13,
     },
-    cipher: {
+    dataProtocol: {
       dataType: 'string',
       fieldNumber: 14,
     },
-    signature: {
+    utility: {
       dataType: 'string',
       fieldNumber: 15,
     },
-    content: {
+    template: {
       dataType: 'string',
       fieldNumber: 16,
     },
-    contentMime: {
+    cipher: {
       dataType: 'string',
       fieldNumber: 17,
     },
-    contentExtension: {
+    signature: {
       dataType: 'string',
       fieldNumber: 18,
     },
-    contentSize: {
-      dataType: 'uint32',
+    content: {
+      dataType: 'string',
       fieldNumber: 19,
     },
-    contentIv: {
+    contentMime: {
       dataType: 'string',
       fieldNumber: 20,
     },
-    contentSalt: {
+    contentExtension: {
       dataType: 'string',
       fieldNumber: 21,
     },
-    contentSecurityVersion: {
-      dataType: 'string',
+    contentSize: {
+      dataType: 'uint32',
       fieldNumber: 22,
     },
-    recurring: {
+    contentProtocol: {
       dataType: 'string',
       fieldNumber: 23,
     },
-    time: {
+    contentIv: {
+      dataType: 'string',
       fieldNumber: 24,
+    },
+    contentSalt: {
+      dataType: 'string',
+      fieldNumber: 25,
+    },
+    contentSecurityVersion: {
+      dataType: 'uint32',
+      fieldNumber: 26,
+    },
+    recurring: {
+      dataType: 'string',
+      fieldNumber: 27,
+    },
+    time: {
+      fieldNumber: 28,
       ...scheduleTimeSchema,
     },
     from: {
-      fieldNumber: 25,
+      fieldNumber: 29,
       ...scheduleFromSchema,
     },
     until: {
       dataType: 'uint32',
-      fieldNumber: 26,
+      fieldNumber: 30,
     },
     redeemLimit: {
       dataType: 'uint32',
-      fieldNumber: 27,
+      fieldNumber: 31,
     },
     royalty: {
-      fieldNumber: 28,
+      fieldNumber: 32,
       ...royaltySchema,
     },
     price: {
-      fieldNumber: 29,
+      fieldNumber: 33,
       ...priceSchema,
     },
     quantity: {
       dataType: 'uint32',
-      fieldNumber: 30,
+      fieldNumber: 34,
     },
     mintingExpire: {
-      dataType: 'uint32',
-      fieldNumber: 31,
+      dataType: 'string',
+      fieldNumber: 35,
     },
   },
 };
