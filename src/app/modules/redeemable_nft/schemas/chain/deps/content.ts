@@ -20,6 +20,10 @@ export const contentSchema: Omit<Schema, '$id'> = {
       dataType: 'uint32',
       fieldNumber: 4,
     },
+    protocol: {
+      dataType: 'string',
+      fieldNumber: 5,
+    },
   },
 };
 
@@ -30,15 +34,15 @@ export const nftContentSecureSchema: Omit<Schema, '$id'> = {
     ...contentSchema.properties,
     iv: {
       dataType: 'string',
-      fieldNumber: 5,
+      fieldNumber: 6,
     },
     salt: {
       dataType: 'string',
-      fieldNumber: 6,
+      fieldNumber: 7,
     },
     version: {
       dataType: 'uint32',
-      fieldNumber: 7,
+      fieldNumber: 8,
     },
   },
 };

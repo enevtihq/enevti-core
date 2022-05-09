@@ -54,6 +54,7 @@ export const accessCollectionById = async (
   if (!collectionBuffer) {
     return undefined;
   }
+  // TODO: problem here:
   return codec.decode<CollectionAsset>(collectionSchema, collectionBuffer);
 };
 

@@ -45,23 +45,18 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (!Object.values(RECURRING).includes(asset.recurring)) {
       throw new Error(`asset.recurring is unknown`);
     }
-    if (asset.recurring === RECURRING.WEEKLY && parseInt(asset.time.day, 10) < 0) {
+    if (asset.recurring === RECURRING.WEEKLY && asset.time.day < 0) {
       throw new Error(`asset.time.day is required on recurring perweek`);
     }
-    if (asset.recurring === RECURRING.MONTHLY && parseInt(asset.time.date, 10) <= 0) {
+    if (asset.recurring === RECURRING.MONTHLY && asset.time.date <= 0) {
       throw new Error(`asset.time.date is required on recurring permonth`);
     }
-    if (
-      asset.recurring === RECURRING.YEARLY &&
-      (parseInt(asset.time.date, 10) <= 0 || parseInt(asset.time.month, 10) <= 0)
-    ) {
+    if (asset.recurring === RECURRING.YEARLY && (asset.time.date <= 0 || asset.time.month <= 0)) {
       throw new Error(`asset.time.date and asset.time.month are required on recurring peryear`);
     }
     if (
       asset.recurring === RECURRING.ONCE &&
-      (parseInt(asset.time.date, 10) <= 0 ||
-        parseInt(asset.time.month, 10) <= 0 ||
-        parseInt(asset.time.year, 10) <= 0)
+      (asset.time.date <= 0 || asset.time.month <= 0 || asset.time.year <= 0)
     ) {
       throw new Error(
         `asset.time.date, asset.time.month, and asset.time.year are required on recurring once`,
@@ -76,16 +71,16 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.quantity <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);
     }
-    if (asset.recurring !== RECURRING.ANYTIME && parseInt(asset.from.hour, 10) < 0) {
+    if (asset.recurring !== RECURRING.ANYTIME && asset.from.hour < 0) {
       throw new Error(`asset.from.hour can't be negative for non-anytime recurring`);
     }
-    if (asset.recurring !== RECURRING.ANYTIME && parseInt(asset.from.minute, 10) < 0) {
+    if (asset.recurring !== RECURRING.ANYTIME && asset.from.minute < 0) {
       throw new Error(`asset.from.minute can't be negative for non-anytime recurring`);
     }
     if (asset.recurring !== RECURRING.ANYTIME && asset.until <= 0) {
       throw new Error(`asset.until must be greater than 0`);
     }
-    if (parseInt(asset.mintingExpire, 10) < -1 || parseInt(asset.mintingExpire, 10) === 0) {
+    if (asset.mintingExpire < -1 || asset.mintingExpire === 0) {
       throw new Error(`asset.mintingExpire can only be -1, or greater than 0`);
     }
     if (asset.royalty.creator < 0) {
@@ -164,7 +159,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       minting: {
         total: [],
         available: [],
-        expire: parseInt(asset.mintingExpire, 10),
+        expire: asset.mintingExpire,
         price: {
           amount: asset.price.amount,
           currency: asset.price.currency,
@@ -235,14 +230,14 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           schedule: {
             recurring: asset.recurring,
             time: {
-              day: parseInt(asset.time.day, 10),
-              date: parseInt(asset.time.date, 10),
-              month: parseInt(asset.time.month, 10),
-              year: parseInt(asset.time.year, 10),
+              day: asset.time.day,
+              date: asset.time.date,
+              month: asset.time.month,
+              year: asset.time.year,
             },
             from: {
-              hour: parseInt(asset.from.hour, 10),
-              minute: parseInt(asset.from.minute, 10),
+              hour: asset.from.hour,
+              minute: asset.from.minute,
             },
             until: asset.until,
           },
@@ -264,7 +259,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
 
     await setAllNFT(stateStore, allNFT);
     await asyncForEach<NFTAsset>(nftsInThisCollection, async item => {
-      await setNFTById(stateStore, item.id.toString('hex'), item);
+      await setNFTById(stateStore, item.id.toString('hex'), item); // TODO: problem here
     });
 
     collection.minting.total = nftsIdInThisCollection;
@@ -273,7 +268,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     allCollection.items.unshift(collection.id);
     await setAllCollection(stateStore, allCollection);
 
-    await setCollectionById(stateStore, collection.id.toString('hex'), collection);
+    await setCollectionById(stateStore, collection.id.toString('hex'), collection); // TODO: problem here
     await setRegisteredName(stateStore, collection.name, collection.id.toString('hex'));
     await setRegisteredSymbol(stateStore, collection.symbol, collection.id.toString('hex'));
     await asyncForEach(nftsInThisCollection, async item => {

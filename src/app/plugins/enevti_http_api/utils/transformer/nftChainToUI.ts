@@ -21,9 +21,15 @@ export default async function nftChainToUI(channel: BaseChannel, nft: NFTAsset) 
     amount: nft.price.amount.toString(),
     currency: nft.price.currency,
   };
+  const partition: NFT['partition'] = {
+    parts: nft.partition.parts.map(item => item.toString('hex')),
+    upgradeMaterial: nft.partition.upgradeMaterial,
+  };
   return {
     id: nft.id.toString('hex'),
     collectionId: nft.collectionId.toString('hex'),
+    networkIdentifier: nft.networkIdentifier.toString('hex'),
+    partition,
     redeem,
     owner,
     creator,

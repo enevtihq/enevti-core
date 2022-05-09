@@ -1,3 +1,5 @@
+import getActivityCollection from './activity/getActivityCollection';
+import getActivityNFT from './activity/getActivityNFT';
 import getAllCollection from './collection/getAllCollection';
 import getCollectionById from './collection/getCollectionById';
 import getCollectionByName from './collection/getCollectionByName';
@@ -24,6 +26,8 @@ import getTransactionBaseFee from './transaction/getTransactionBaseFee';
 import postTransaction from './transaction/postTransaction';
 
 export default {
+  getActivityCollection,
+  getActivityNFT,
   getAllCollection,
   getCollectionById,
   getCollectionByName,

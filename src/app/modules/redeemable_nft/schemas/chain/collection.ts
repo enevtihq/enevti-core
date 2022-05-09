@@ -23,6 +23,7 @@ export const collectionSchema: SchemaWithDefault = {
   required: [
     'id',
     'collectionType',
+    'mintingType',
     'cover',
     'name',
     'description',
@@ -47,44 +48,48 @@ export const collectionSchema: SchemaWithDefault = {
       dataType: 'string',
       fieldNumber: 2,
     },
+    mintingType: {
+      dataType: 'string',
+      fieldNumber: 3,
+    },
     cover: {
       ...contentSchema,
-      fieldNumber: 3,
+      fieldNumber: 4,
     },
     name: {
       dataType: 'string',
-      fieldNumber: 4,
+      fieldNumber: 5,
     },
     description: {
       dataType: 'string',
-      fieldNumber: 5,
+      fieldNumber: 6,
     },
     symbol: {
       dataType: 'string',
-      fieldNumber: 6,
+      fieldNumber: 7,
     },
     creator: {
       dataType: 'bytes',
-      fieldNumber: 7,
+      fieldNumber: 8,
     },
     createdOn: {
       dataType: 'uint32',
-      fieldNumber: 8,
+      fieldNumber: 9,
     },
     like: {
       dataType: 'uint32',
-      fieldNumber: 9,
+      fieldNumber: 10,
     },
     comment: {
       dataType: 'uint32',
-      fieldNumber: 10,
+      fieldNumber: 11,
     },
     packSize: {
       dataType: 'uint32',
-      fieldNumber: 11,
+      fieldNumber: 12,
     },
     stat: {
-      fieldNumber: 12,
+      fieldNumber: 13,
       type: 'object',
       required: ['minted', 'owner', 'redeemed', 'floor', 'volume'],
       properties: {
@@ -114,7 +119,7 @@ export const collectionSchema: SchemaWithDefault = {
       },
     },
     minting: {
-      fieldNumber: 13,
+      fieldNumber: 14,
       type: 'object',
       required: ['total', 'available', 'expire', 'price'],
       properties: {
@@ -133,7 +138,7 @@ export const collectionSchema: SchemaWithDefault = {
           },
         },
         expire: {
-          dataType: 'uint32',
+          dataType: 'sint32',
           fieldNumber: 3,
         },
         price: {
@@ -143,14 +148,14 @@ export const collectionSchema: SchemaWithDefault = {
       },
     },
     minted: {
-      fieldNumber: 14,
+      fieldNumber: 15,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
     social: {
-      fieldNumber: 15,
+      fieldNumber: 16,
       type: 'object',
       required: ['twitter'],
       properties: {
@@ -162,7 +167,7 @@ export const collectionSchema: SchemaWithDefault = {
     },
     promoted: {
       dataType: 'boolean',
-      fieldNumber: 16,
+      fieldNumber: 17,
     },
   },
 };

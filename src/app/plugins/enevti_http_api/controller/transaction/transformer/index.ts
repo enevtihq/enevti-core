@@ -30,21 +30,10 @@ function createOneKindNFT(
     ...payload,
     asset: {
       ...payload.asset,
-      time: {
-        date: payload.asset.time.date.toString(),
-        day: payload.asset.time.day.toString(),
-        month: payload.asset.time.month.toString(),
-        year: payload.asset.time.year.toString(),
-      },
-      from: {
-        hour: payload.asset.from.hour.toString(),
-        minute: payload.asset.from.minute.toString(),
-      },
       price: {
         amount: BigInt(payload.asset.price.amount),
         currency: payload.asset.price.currency,
       },
-      mintingExpire: payload.asset.mintingExpire.toString(),
     },
   };
 }

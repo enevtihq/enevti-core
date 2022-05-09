@@ -1,6 +1,8 @@
 import { SchemaWithDefault } from 'lisk-framework';
 import { contentSchema, nftContentSecureSchema } from './deps/content';
 import { priceSchema } from './deps/price';
+import { scheduleFromSchema } from './deps/schedule_from';
+import { scheduleTimeSchema } from './deps/schedule_time';
 
 export const allRedeemableNFTSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/allNft',
@@ -74,7 +76,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
       fieldNumber: 7,
     },
     networkIdentifier: {
-      dataType: 'string',
+      dataType: 'bytes',
       fieldNumber: 8,
     },
     like: {
@@ -120,11 +122,11 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           required: ['rank', 'percent'],
           properties: {
             rank: {
-              dataType: 'uint32',
+              dataType: 'sint32',
               fieldNumber: 1,
             },
             percent: {
-              dataType: 'uint32',
+              dataType: 'sint32',
               fieldNumber: 2,
             },
           },
@@ -158,7 +160,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           fieldNumber: 1,
           type: 'array',
           items: {
-            dataType: 'string',
+            dataType: 'bytes',
           },
         },
         upgradeMaterial: {
@@ -226,41 +228,11 @@ export const redeemableNFTSchema: SchemaWithDefault = {
             },
             time: {
               fieldNumber: 2,
-              type: 'object',
-              required: ['day', 'date', 'month', 'year'],
-              properties: {
-                day: {
-                  dataType: 'uint32',
-                  fieldNumber: 1,
-                },
-                date: {
-                  dataType: 'uint32',
-                  fieldNumber: 2,
-                },
-                month: {
-                  dataType: 'uint32',
-                  fieldNumber: 3,
-                },
-                year: {
-                  dataType: 'uint32',
-                  fieldNumber: 4,
-                },
-              },
+              ...scheduleTimeSchema,
             },
             from: {
               fieldNumber: 3,
-              type: 'object',
-              required: ['hour', 'minute'],
-              properties: {
-                hour: {
-                  dataType: 'uint32',
-                  fieldNumber: 1,
-                },
-                minute: {
-                  dataType: 'uint32',
-                  fieldNumber: 2,
-                },
-              },
+              ...scheduleFromSchema,
             },
             until: {
               dataType: 'uint32',

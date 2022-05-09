@@ -4,8 +4,8 @@ import { cryptography, StateStore } from 'lisk-sdk';
 export const getBlockTimestamp = (stateStore: StateStore): number =>
   stateStore.chain.lastBlockHeaders[0].timestamp * 1000;
 
-export const getNetworkIdentifier = (stateStore: StateStore): string =>
-  stateStore.chain.networkIdentifier.toString('hex');
+export const getNetworkIdentifier = (stateStore: StateStore): Buffer =>
+  stateStore.chain.networkIdentifier;
 
 export const generateID = (source: Buffer, nonce: bigint): Buffer => {
   const nonceBuffer = Buffer.alloc(8);

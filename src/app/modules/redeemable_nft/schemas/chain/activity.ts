@@ -29,7 +29,10 @@ export const activityNFTSchema: SchemaWithDefault = {
             dataType: 'bytes',
             fieldNumber: 4,
           },
-          value: priceSchema,
+          value: {
+            ...priceSchema,
+            fieldNumber: 5,
+          },
         },
       },
     },
@@ -46,7 +49,7 @@ export const activityCollectionSchema: SchemaWithDefault = {
       fieldNumber: 1,
       items: {
         type: 'object',
-        required: ['transaction', 'name', 'date', 'to', 'value', 'nft'],
+        required: ['transaction', 'name', 'date', 'to', 'value', 'nfts'],
         properties: {
           transaction: {
             dataType: 'bytes',
@@ -68,9 +71,12 @@ export const activityCollectionSchema: SchemaWithDefault = {
             ...priceSchema,
             fieldNumber: 5,
           },
-          nft: {
-            dataType: 'bytes',
+          nfts: {
+            type: 'array',
             fieldNumber: 6,
+            items: {
+              dataType: 'bytes',
+            },
           },
         },
       },
