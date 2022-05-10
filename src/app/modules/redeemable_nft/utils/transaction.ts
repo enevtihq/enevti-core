@@ -1,4 +1,4 @@
-import { cryptography, StateStore } from 'lisk-sdk';
+import { cryptography, StateStore, Transaction } from 'lisk-sdk';
 
 /* get block timestamp in miliseconds (chain timestamp are in seconds) */
 export const getBlockTimestamp = (stateStore: StateStore): number =>
@@ -7,10 +7,21 @@ export const getBlockTimestamp = (stateStore: StateStore): number =>
 export const getNetworkIdentifier = (stateStore: StateStore): Buffer =>
   stateStore.chain.networkIdentifier;
 
-export const generateID = (source: Buffer, nonce: bigint): Buffer => {
+export const generateID = (
+  transaction: Transaction,
+  stateStore: StateStore,
+  index: bigint,
+): Buffer => {
   const nonceBuffer = Buffer.alloc(8);
-  nonceBuffer.writeBigInt64LE(nonce);
-  const seed = Buffer.concat([source, nonceBuffer]);
+  nonceBuffer.writeBigInt64LE(transaction.nonce);
+  const indexBuffer = Buffer.alloc(8);
+  indexBuffer.writeBigInt64LE(index);
+  const seed = Buffer.concat([
+    stateStore.chain.networkIdentifier,
+    transaction.senderAddress,
+    nonceBuffer,
+    indexBuffer,
+  ]);
   return cryptography.hash(seed);
 };
 

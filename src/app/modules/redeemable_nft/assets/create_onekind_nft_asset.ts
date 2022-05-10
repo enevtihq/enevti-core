@@ -124,8 +124,10 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       );
     }
 
+    let idCounter = 0;
+
     const collection: CollectionAsset = {
-      id: generateID(senderAddress, transaction.nonce),
+      id: generateID(transaction, stateStore, BigInt(idCounter)),
       collectionType: NFTTYPE.ONEKIND,
       mintingType: asset.mintingType,
       cover: {
@@ -172,11 +174,13 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       promoted: false,
     };
 
+    idCounter += 1;
+
     const nftsInThisCollection: NFTAsset[] = [];
     const nftsIdInThisCollection: NFTIdAsset[] = [];
     for (let i = 0; i < asset.quantity; i += 1) {
       const nft: NFTAsset = {
-        id: generateID(senderAddress, transaction.nonce + BigInt(i + 1)),
+        id: generateID(transaction, stateStore, BigInt(idCounter)),
         collectionId: collection.id,
         symbol: asset.symbol,
         serial: i.toString(),
@@ -252,6 +256,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           staker: asset.royalty.staker,
         },
       };
+      idCounter += 1;
       nftsInThisCollection.unshift(nft);
       nftsIdInThisCollection.unshift(nft.id);
       allNFT.items.unshift(nft.id);
@@ -259,7 +264,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
 
     await setAllNFT(stateStore, allNFT);
     await asyncForEach<NFTAsset>(nftsInThisCollection, async item => {
-      await setNFTById(stateStore, item.id.toString('hex'), item); // TODO: problem here
+      await setNFTById(stateStore, item.id.toString('hex'), item);
     });
 
     collection.minting.total = nftsIdInThisCollection;
@@ -268,7 +273,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     allCollection.items.unshift(collection.id);
     await setAllCollection(stateStore, allCollection);
 
-    await setCollectionById(stateStore, collection.id.toString('hex'), collection); // TODO: problem here
+    await setCollectionById(stateStore, collection.id.toString('hex'), collection);
     await setRegisteredName(stateStore, collection.name, collection.id.toString('hex'));
     await setRegisteredSymbol(stateStore, collection.symbol, collection.id.toString('hex'));
     await asyncForEach(nftsInThisCollection, async item => {

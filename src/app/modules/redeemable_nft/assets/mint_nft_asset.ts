@@ -53,7 +53,7 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     const creatorAccount = await stateStore.account.get<RedeemableNFTAccountProps>(creatorAddress);
     const timestamp = getBlockTimestamp(stateStore);
-    const rng = seedrandom(transaction.nonce.toString());
+    const rng = seedrandom(stateStore.chain.lastBlockHeaders[0].id.toString('hex'));
 
     if (collection.minting.expire !== -1) {
       if (timestamp > collection.minting.expire) {
