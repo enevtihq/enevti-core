@@ -3,7 +3,7 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefaul
 import * as http from 'http';
 import * as express from 'express';
 import { Server } from 'socket.io';
-import { createEnevtiSocket } from './controller';
+import { createEnevtiSocket, registerAccountSocket } from './controller';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -57,6 +57,7 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
     this._server = http.createServer(this._app);
     this._io = new Server(this._server);
 
+    registerAccountSocket(this._io);
     createEnevtiSocket(this._channel, this._io);
 
     this._server.listen(8082);

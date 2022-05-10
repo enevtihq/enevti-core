@@ -17,6 +17,7 @@ import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
 import getStakePoolByUsername from './stake/getStakePoolByUsername';
 import getFeeds from './feeds/getFeeds';
+import getAvailableFeeds from './feeds/getAvailableFeeds';
 import isNameExists from './registrar/isNameExists';
 import isSymbolExists from './registrar/isSymbolExists';
 import isSerialExists from './registrar/isSerialExists';
@@ -45,6 +46,7 @@ export default {
   getStakePoolByAddress,
   getStakePoolByUsername,
   getFeeds,
+  getAvailableFeeds,
   isNameExists,
   isSymbolExists,
   isSerialExists,

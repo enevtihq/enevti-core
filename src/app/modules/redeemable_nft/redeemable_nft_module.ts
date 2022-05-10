@@ -3,16 +3,19 @@
 import {
   AfterBlockApplyContext,
   AfterGenesisBlockApplyContext,
+  apiClient,
   BaseModule,
   BeforeBlockApplyContext,
   TransactionApplyContext,
+  Transaction,
+  cryptography,
 } from 'lisk-sdk';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
-import { accessAllCollection, accessCollectionById } from './utils/collection';
+import { accessAllCollection, accessCollectionById, isMintingAvailable } from './utils/collection';
 import {
   accessAllNFTTemplate,
   accessAllNFTTemplateGenesis,
@@ -69,6 +72,28 @@ export class RedeemableNftModule extends BaseModule {
           },
         ),
       );
+    },
+    getAvailableCollection: async (
+      params,
+    ): Promise<{ offset: number; data: CollectionAsset[] }> => {
+      const { offset, limit } = params as { limit?: number; offset?: number };
+      const collections = await accessAllCollection(this._dataAccess, offset);
+      const availableCollection: CollectionAsset[] = [];
+      let index = 0;
+      for (const item of collections.items) {
+        index += 1;
+        const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
+        if (collection) {
+          const lastBlockHeaders = await this._dataAccess.getLastBlockHeader();
+          if (isMintingAvailable(collection, lastBlockHeaders.timestamp)) {
+            availableCollection.unshift(collection);
+            if (availableCollection.length === limit) {
+              break;
+            }
+          }
+        }
+      }
+      return { offset: index, data: availableCollection };
     },
     getCollection: async (params): Promise<CollectionAsset | undefined> => {
       const { id } = params as Record<string, string>;
@@ -172,16 +197,21 @@ export class RedeemableNftModule extends BaseModule {
     new MintNftAsset(),
     new DeliverSecretAsset(),
   ];
-  public events = [
-    // Example below
-    // 'redeemableNft:newBlock',
-  ];
+  public events = ['newCollection', 'newCollectionByAddress'];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
+  public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);
   // }
+
+  public async getClient() {
+    if (!this._client) {
+      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
+    }
+    return this._client;
+  }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -191,9 +221,19 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    // Get any data from stateStore using block info, below is an example getting a generator
-    // const generatorAddress = getAddressFromPublicKey(_input.block.header.generatorPublicKey);
-    // const generator = await _input.stateStore.account.get<TokenAccount>(generatorAddress);
+    const client = await this.getClient();
+    const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
+      payload: Transaction[];
+    };
+    for (const payload of prevBlock.payload) {
+      const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
+      if (payload.moduleID === 1000 && payload.assetID === 0) {
+        this._channel.publish('redeemableNft:newCollection');
+        this._channel.publish('redeemableNft:newCollectionByAddress', {
+          address: prevBlockSenderAddress.toString('hex'),
+        });
+      }
+    }
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {

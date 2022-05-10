@@ -54,7 +54,6 @@ export const accessCollectionById = async (
   if (!collectionBuffer) {
     return undefined;
   }
-  // TODO: problem here:
   return codec.decode<CollectionAsset>(collectionSchema, collectionBuffer);
 };
 
@@ -79,3 +78,8 @@ export const setCollectionById = async (
     codec.encode(collectionSchema, collection),
   );
 };
+
+export const isMintingAvailable = (collection: CollectionAsset, now: number) =>
+  (collection.minting.expire === -1 && collection.minting.available.length > 0) ||
+  collection.minting.expire > now ||
+  collection.minting.available.length > 0;
