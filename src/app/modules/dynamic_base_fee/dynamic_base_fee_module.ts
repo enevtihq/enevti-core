@@ -72,21 +72,23 @@ export class DynamicBaseFeeModule extends BaseModule {
 
     // revert lisk token module (because minFeePerByte is 0, we only need to calculate totalBaseFee)
     const givenFeeLisk = totalFee - totalBaseFee;
-    const feeBurntLisk = givenFeeLisk > 0 ? totalBaseFee : BigInt(0);
-    await _input.reducerHandler.invoke('token:debit', {
-      address: generatorAddress,
-      amount: givenFeeLisk,
-    });
-    totalFeeBurnt -= feeBurntLisk;
+    if (givenFeeLisk > 0) {
+      await _input.reducerHandler.invoke('token:debit', {
+        address: generatorAddress,
+        amount: givenFeeLisk,
+      });
+      totalFeeBurnt -= totalBaseFee;
+    }
 
     // credit based on dynamicBaseFee
     const givenFee = totalFee - totalDynamicBaseFee;
-    const feeBurnt = givenFee > 0 ? totalDynamicBaseFee : BigInt(0);
-    await _input.reducerHandler.invoke('token:credit', {
-      address: generatorAddress,
-      amount: givenFee,
-    });
-    totalFeeBurnt += feeBurnt;
+    if (givenFee > 0) {
+      await _input.reducerHandler.invoke('token:credit', {
+        address: generatorAddress,
+        amount: givenFee,
+      });
+      totalFeeBurnt += totalDynamicBaseFee;
+    }
 
     // apply on-chain change
     const updatedTotalBurntBuffer = Buffer.alloc(8);

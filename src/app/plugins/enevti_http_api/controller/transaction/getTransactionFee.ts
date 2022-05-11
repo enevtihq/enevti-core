@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { cryptography, transactions } from 'lisk-sdk';
 import { invokeGetNodeIndo } from '../../utils/hook/app';
+import { invokeGetBaseFee } from '../../utils/hook/dynamic_base_fee_module';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
 import transformAsset from './transformer';
@@ -47,8 +48,19 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       passphrase,
     );
 
-    const minFee =
-      BigInt(minFeePerByte as number) * BigInt(transactions.getBytes(schema, tx).length);
+    const baseFee = await invokeGetBaseFee(channel, tx as { moduleID: number; assetID: number });
+
+    let minFee = BigInt(0);
+    let trx = tx;
+    let keepLooping = true;
+
+    while (keepLooping) {
+      const byte = transactions.getBytes(schema, trx);
+      minFee = BigInt(minFeePerByte as number) * BigInt(byte.length);
+      trx = { ...trx, fee: minFee + BigInt(baseFee) };
+      const newByte = transactions.getBytes(schema, trx);
+      if (byte.length === newByte.length) keepLooping = false;
+    }
 
     res
       .status(200)

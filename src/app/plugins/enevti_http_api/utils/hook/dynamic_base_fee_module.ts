@@ -8,4 +8,4 @@ export const invokeGetDynamicBaseFeePerByte = async (
 export const invokeGetBaseFee = async (
   channel: BaseChannel,
   transaction: { moduleID: number; assetID: number },
-): Promise<BigInt> => channel.invoke('dynamicBaseFee:getBaseFee', { transaction });
+): Promise<bigint> => channel.invoke('dynamicBaseFee:getBaseFee', { transaction });
