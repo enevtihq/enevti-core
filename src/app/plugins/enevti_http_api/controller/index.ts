@@ -24,6 +24,7 @@ import isSerialExists from './registrar/isSerialExists';
 import isUsernameExists from './registrar/isUsernameExists';
 import getTransactionFee from './transaction/getTransactionFee';
 import getTransactionBaseFee from './transaction/getTransactionBaseFee';
+import getTransactionDynamicBaseFee from './transaction/getTransactionDynamicBaseFee';
 import postTransaction from './transaction/postTransaction';
 
 export default {
@@ -53,5 +54,6 @@ export default {
   isUsernameExists,
   getTransactionFee,
   getTransactionBaseFee,
+  getTransactionDynamicBaseFee,
   postTransaction,
 };

@@ -83,6 +83,10 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/registrar/serial/:serial', controller.isSerialExists(this._channel));
     this._app.get('/registrar/username/:username', controller.isUsernameExists(this._channel));
     this._app.post('/transaction/fee', controller.getTransactionFee(this._channel));
+    this._app.post(
+      '/transaction/dynamicBaseFee',
+      controller.getTransactionDynamicBaseFee(this._channel),
+    );
     this._app.get(
       '/transaction/basefee/:moduleID/:assetID',
       controller.getTransactionBaseFee(this._channel),

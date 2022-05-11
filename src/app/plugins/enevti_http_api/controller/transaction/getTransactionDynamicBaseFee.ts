@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { cryptography, transactions } from 'lisk-sdk';
 import { invokeGetNodeIndo } from '../../utils/hook/app';
+import { invokeGetDynamicBaseFeePerByte } from '../../utils/hook/dynamic_base_fee_module';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
 import transformAsset from './transformer';
@@ -26,9 +27,6 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const address = cryptography.getAddressFromPassphrase(passphrase);
     const account = await invokeGetAccount(channel, address.toString('hex'));
     const nodeInfo = await invokeGetNodeIndo(channel);
-    const {
-      genesisConfig: { minFeePerByte },
-    } = nodeInfo as { genesisConfig: Record<string, unknown> };
     const schema = await getAssetSchema(
       channel,
       payload.moduleID as number,
@@ -46,9 +44,12 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       Buffer.from(nodeInfo.networkIdentifier as string, 'hex'),
       passphrase,
     );
+    const minFeePerByte = await invokeGetDynamicBaseFeePerByte(
+      channel,
+      tx as { moduleID: number; assetID: number },
+    );
 
-    const minFee =
-      BigInt(minFeePerByte as number) * BigInt(transactions.getBytes(schema, tx).length);
+    const minFee = BigInt(minFeePerByte) * BigInt(transactions.getBytes(schema, tx).length);
 
     res
       .status(200)
