@@ -22,7 +22,7 @@ export const activityNFTSchema: SchemaWithDefault = {
             fieldNumber: 2,
           },
           date: {
-            dataType: 'uint32',
+            dataType: 'uint64',
             fieldNumber: 3,
           },
           to: {
@@ -60,7 +60,7 @@ export const activityCollectionSchema: SchemaWithDefault = {
             fieldNumber: 2,
           },
           date: {
-            dataType: 'uint32',
+            dataType: 'uint64',
             fieldNumber: 3,
           },
           to: {

@@ -13,7 +13,6 @@ import {
   codec,
   apiClient,
   Transaction,
-  cryptography,
   StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
@@ -79,13 +78,10 @@ export class CreatorFinanceModule extends BaseModule {
     for (const payload of prevBlock.payload) {
       if (payload.moduleID === 5 && payload.assetID === 1) {
         const voteAsset = (payload.asset as unknown) as Record<string, unknown>;
-        const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(
-          payload.senderPublicKey,
-        );
-        this._channel.publish('creatorFinance:stakerUpdates', {
-          address: prevBlockSenderAddress.toString('hex'),
-        });
         (voteAsset.votes as Record<string, unknown>[]).forEach(item => {
+          this._channel.publish('creatorFinance:stakerUpdates', {
+            address: (item.delegateAddress as Buffer).toString('hex'),
+          });
           this._channel.publish('creatorFinance:totalStakeChanged', {
             address: (item.delegateAddress as Buffer).toString('hex'),
           });
@@ -110,11 +106,13 @@ export class CreatorFinanceModule extends BaseModule {
       for (const vote of voteAsset.votes) {
         if (vote.amount >= BigInt(0)) {
           await addStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
+            id: _input.transaction.id,
             persona: _input.transaction.senderAddress,
             stake: vote.amount,
           });
         } else {
           await subtractStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
+            id: _input.transaction.id,
             persona: _input.transaction.senderAddress,
             stake: vote.amount,
           });

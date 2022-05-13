@@ -4,6 +4,7 @@ import { NFT } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
 import { invokeGetActivityCollection } from '../hook/redeemable_nft_module';
 import idBufferToNFT from './idBufferToNFT';
+import chainDateToUI from './chainDateToUI';
 
 export default async function idBufferToActivityCollection(channel: BaseChannel, id: Buffer) {
   const activityChain = await invokeGetActivityCollection(channel, id.toString('hex'));
@@ -24,7 +25,7 @@ export default async function idBufferToActivityCollection(channel: BaseChannel,
         amount: act.value.amount.toString(),
         currency: act.value.currency,
       };
-      return { ...act, transaction, to, value, nfts };
+      return { ...act, date: chainDateToUI(act.date), transaction, to, value, nfts };
     }),
   );
   return activity;

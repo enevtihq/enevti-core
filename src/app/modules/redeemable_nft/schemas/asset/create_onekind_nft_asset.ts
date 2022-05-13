@@ -182,7 +182,7 @@ export const createOnekindNftAssetSchema = {
       fieldNumber: 34,
     },
     mintingExpire: {
-      dataType: 'sint32',
+      dataType: 'uint32',
       fieldNumber: 35,
     },
   },

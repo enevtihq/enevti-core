@@ -72,7 +72,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
       fieldNumber: 6,
     },
     createdOn: {
-      dataType: 'uint32',
+      dataType: 'uint64',
       fieldNumber: 7,
     },
     networkIdentifier: {
@@ -187,7 +187,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           fieldNumber: 3,
         },
         touched: {
-          dataType: 'uint32',
+          dataType: 'uint64',
           fieldNumber: 4,
         },
         secret: {

@@ -86,7 +86,7 @@ export class RedeemableNftModule extends BaseModule {
         if (collection) {
           const lastBlockHeaders = await this._dataAccess.getLastBlockHeader();
           if (isMintingAvailable(collection, lastBlockHeaders.timestamp)) {
-            availableCollection.unshift(collection);
+            availableCollection.push(collection);
             if (availableCollection.length === limit) {
               break;
             }

@@ -1,8 +1,8 @@
 import { cryptography, StateStore, Transaction } from 'lisk-sdk';
 
-/* get block timestamp in miliseconds (chain timestamp are in seconds) */
+/* get block timestamp in second */
 export const getBlockTimestamp = (stateStore: StateStore): number =>
-  stateStore.chain.lastBlockHeaders[0].timestamp * 1000;
+  stateStore.chain.lastBlockHeaders[0].timestamp;
 
 export const getNetworkIdentifier = (stateStore: StateStore): Buffer =>
   stateStore.chain.networkIdentifier;

@@ -141,7 +141,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       description: asset.description,
       symbol: asset.symbol,
       creator: senderAddress,
-      createdOn: timestamp,
+      createdOn: BigInt(timestamp),
       like: 0,
       comment: 0,
       packSize: 1,
@@ -186,7 +186,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         serial: i.toString(),
         name: asset.name,
         description: asset.description,
-        createdOn: timestamp,
+        createdOn: BigInt(timestamp),
         networkIdentifier,
         like: 0,
         comment: 0,
@@ -214,7 +214,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           status: redeemStatus,
           count: 0,
           limit: asset.redeemLimit,
-          touched: timestamp,
+          touched: BigInt(timestamp),
           secret: {
             cipher: asset.cipher,
             signature: asset.signature,
@@ -287,7 +287,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     const activity: CollectionActivityChainItems = {
       transaction: transaction.id,
       name: ACTIVITY.COLLECTION.CREATED,
-      date: timestamp,
+      date: BigInt(timestamp),
       nfts: [],
       to: senderAddress,
       value: {

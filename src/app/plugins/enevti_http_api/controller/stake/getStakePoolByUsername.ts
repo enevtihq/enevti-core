@@ -27,6 +27,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
           const persona = await addressBufferToPersona(channel, item.persona);
           return {
             ...item,
+            id: item.id.toString('hex'),
             persona,
             stake: item.stake.toString(),
           };

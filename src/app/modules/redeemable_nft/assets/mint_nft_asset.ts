@@ -98,7 +98,7 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
 
       const activity: NFTActivityChainItems = {
         transaction: transaction.id,
-        date: timestamp,
+        date: BigInt(timestamp),
         name: ACTIVITY.NFT.MINT,
         to: senderAddress,
         value: {
@@ -127,7 +127,7 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
 
     const collectionActivity: CollectionActivityChainItems = {
       transaction: transaction.id,
-      date: timestamp,
+      date: BigInt(timestamp),
       name: ACTIVITY.COLLECTION.MINTED,
       to: senderAddress,
       value: {

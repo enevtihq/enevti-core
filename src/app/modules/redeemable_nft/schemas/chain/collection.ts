@@ -73,7 +73,7 @@ export const collectionSchema: SchemaWithDefault = {
       fieldNumber: 8,
     },
     createdOn: {
-      dataType: 'uint32',
+      dataType: 'uint64',
       fieldNumber: 9,
     },
     like: {
@@ -138,7 +138,7 @@ export const collectionSchema: SchemaWithDefault = {
           },
         },
         expire: {
-          dataType: 'sint32',
+          dataType: 'uint32',
           fieldNumber: 3,
         },
         price: {

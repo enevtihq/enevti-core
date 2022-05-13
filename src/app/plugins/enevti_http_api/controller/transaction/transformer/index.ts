@@ -1,14 +1,32 @@
 import {
+  AddStakeProps,
+  AddStakeUI,
+} from '../../../../../../types/core/asset/chain/add_stake_asset';
+import {
+  RegisterUsernameProps,
+  RegisterUsernameUI,
+} from '../../../../../../types/core/asset/chain/register_username';
+import {
   CreateOneKindNFTProps,
   CreateOneKindNFTUI,
 } from '../../../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
+import {
+  DeliverSecretProps,
+  DeliverSecretUI,
+} from '../../../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+import {
+  MintNFTProps,
+  MintNFTUI,
+} from '../../../../../../types/core/asset/redeemable_nft/mint_nft_asset';
 import { AppTransaction } from '../../../../../../types/core/service/transaction';
 
-function registerDelegate(payload: Record<string, unknown>) {
+function registerDelegate(
+  payload: AppTransaction<RegisterUsernameUI>,
+): AppTransaction<RegisterUsernameProps> {
   return payload;
 }
 
-function voteDelegate(payload: Record<string, unknown>) {
+function voteDelegate(payload: AppTransaction<AddStakeUI>): AppTransaction<AddStakeProps> {
   return {
     ...payload,
     asset: {
@@ -38,14 +56,24 @@ function createOneKindNFT(
   };
 }
 
+function mintNFT(payload: AppTransaction<MintNFTUI>): AppTransaction<MintNFTProps> {
+  return payload;
+}
+
+function deliverSecret(
+  payload: AppTransaction<DeliverSecretUI>,
+): AppTransaction<DeliverSecretProps> {
+  return payload;
+}
+
 export default function transformAsset(payload: Record<string, unknown>) {
   switch (payload.moduleID) {
     case 5:
       switch (payload.assetID) {
         case 0:
-          return registerDelegate(payload);
+          return registerDelegate((payload as unknown) as AppTransaction<RegisterUsernameUI>);
         case 1:
-          return voteDelegate(payload);
+          return voteDelegate((payload as unknown) as AppTransaction<AddStakeUI>);
         default:
           return payload;
       }
@@ -53,6 +81,10 @@ export default function transformAsset(payload: Record<string, unknown>) {
       switch (payload.assetID) {
         case 0:
           return createOneKindNFT((payload as unknown) as AppTransaction<CreateOneKindNFTUI>);
+        case 1:
+          return mintNFT((payload as unknown) as AppTransaction<MintNFTUI>);
+        case 2:
+          return deliverSecret((payload as unknown) as AppTransaction<DeliverSecretUI>);
         default:
           return payload;
       }

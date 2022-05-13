@@ -1,20 +1,21 @@
 import { BaseChannel } from 'lisk-framework';
-import { CollectionAsset } from '../../../../../types/core/chain/collection';
+import { Collection, CollectionAsset } from '../../../../../types/core/chain/collection';
 import { NFT } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
+import chainDateToUI from './chainDateToUI';
 import idBufferToNFT from './idBufferToNFT';
 
 export default async function collectionChainToUI(
   channel: BaseChannel,
   collection: CollectionAsset,
 ) {
-  const social = {
+  const social: Collection['social'] = {
     twitter: {
       link: collection.social.twitter,
       stat: 0,
     },
   };
-  const minted = await Promise.all(
+  const minted: Collection['minted'] = await Promise.all(
     collection.minted.map(
       async (item): Promise<NFT> => {
         const nft = await idBufferToNFT(channel, item);
@@ -23,8 +24,8 @@ export default async function collectionChainToUI(
       },
     ),
   );
-  const creator = await addressBufferToPersona(channel, collection.creator);
-  const stat = {
+  const creator: Collection['creator'] = await addressBufferToPersona(channel, collection.creator);
+  const stat: Collection['stat'] = {
     ...collection.stat,
     owner: collection.stat.owner.length,
     floor: {
@@ -36,8 +37,9 @@ export default async function collectionChainToUI(
       currency: collection.stat.volume.currency,
     },
   };
-  const minting = {
+  const minting: Collection['minting'] = {
     ...collection.minting,
+    expire: chainDateToUI(collection.minting.expire),
     total: collection.minting.total.length,
     available: collection.minting.available.length,
     price: {
@@ -47,6 +49,7 @@ export default async function collectionChainToUI(
   };
   return {
     id: collection.id.toString('hex'),
+    createdOn: chainDateToUI(collection.createdOn),
     social,
     minted,
     creator,

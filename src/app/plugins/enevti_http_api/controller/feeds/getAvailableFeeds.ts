@@ -24,15 +24,24 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
             const owner = await addressBufferToPersona(channel, item.creator);
             const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
             const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
-            const nft = await Promise.all(
-              item.minting.total.map(
-                async (nftid): Promise<NFT> => {
-                  const nftItem = await idBufferToNFT(channel, nftid);
-                  if (!nftItem) throw new Error('NFT not found while iterating collection.minting');
-                  return nftItem;
-                },
-              ),
-            );
+            let nft: NFT[] = [];
+            if (item.collectionType === 'packed') {
+              nft = await Promise.all(
+                item.minting.total.map(
+                  async (nftid): Promise<NFT> => {
+                    const nftItem = await idBufferToNFT(channel, nftid);
+                    if (!nftItem)
+                      throw new Error('NFT not found while iterating collection.minting');
+                    return nftItem;
+                  },
+                ),
+              );
+            } else {
+              const index = Math.floor(item.minting.total.length * Math.random());
+              const nftItem = await idBufferToNFT(channel, item.minting.total[index]);
+              if (!nftItem) throw new Error('NFT not found while iterating collection.minting');
+              nft = [nftItem];
+            }
             return {
               type: item.collectionType,
               id: item.id.toString('hex'),
