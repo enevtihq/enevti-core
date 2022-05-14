@@ -36,6 +36,13 @@ export const redeemableNftAccountSchema: AccountSchema = {
         dataType: 'bytes',
       },
     },
+    pending: {
+      fieldNumber: 7,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
   },
   default: {
     nftSold: 0,
@@ -44,5 +51,6 @@ export const redeemableNftAccountSchema: AccountSchema = {
     owned: [],
     onSale: [],
     collection: [],
+    pending: [],
   },
 };

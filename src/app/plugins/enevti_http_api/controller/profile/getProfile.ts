@@ -58,6 +58,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       owned: ownedAsset,
       onSale: onSaleAsset,
       collection: collectionAsset,
+      pending: account.redeemableNft.pending.length,
     };
 
     res.status(200).json({ data: profile, meta: req.params });

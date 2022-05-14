@@ -14,23 +14,27 @@ export const stakerSchema: SchemaWithDefault = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['persona', 'stake', 'rank', 'portion'],
+        required: ['id', 'persona', 'stake', 'rank', 'portion'],
         properties: {
-          persona: {
+          id: {
             dataType: 'bytes',
             fieldNumber: 1,
           },
+          persona: {
+            dataType: 'bytes',
+            fieldNumber: 2,
+          },
           stake: {
             dataType: 'uint64',
-            fieldNumber: 2,
+            fieldNumber: 3,
           },
           rank: {
             dataType: 'uint32',
-            fieldNumber: 3,
+            fieldNumber: 4,
           },
           portion: {
             dataType: 'uint32',
-            fieldNumber: 4,
+            fieldNumber: 5,
           },
         },
       },

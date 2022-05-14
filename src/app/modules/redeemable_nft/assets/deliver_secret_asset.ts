@@ -19,14 +19,15 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     asset,
     transaction,
     stateStore,
+    reducerHandler,
   }: ApplyAssetContext<DeliverSecretProps>): Promise<void> {
-    const { senderPublicKey } = transaction;
+    const { senderPublicKey, senderAddress } = transaction;
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error("NFT doesn't exist");
     }
 
-    if (nft.redeem.secret.sender !== senderPublicKey) {
+    if (Buffer.compare(nft.redeem.secret.sender, senderPublicKey) !== 0) {
       throw new Error('Sender not authorized to deliver secret');
     }
 
@@ -36,6 +37,12 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
 
     nft.redeem.secret.cipher = asset.cipher;
     nft.redeem.secret.signature = asset.signature;
+    nft.redeem.status = 'ready';
+
+    await reducerHandler.invoke('token:credit', {
+      address: senderAddress,
+      amount: nft.price.amount,
+    });
 
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
   }

@@ -4,6 +4,7 @@ import { onNewFeedItem } from './feeds';
 import {
   onBalanceChanged,
   onNewCollectionByAddress,
+  onPendingUtilityDelivery,
   onTotalStakeChanged,
   onUsernameUpdated,
 } from './profile';
@@ -16,6 +17,7 @@ export function createEnevtiSocket(channel: BaseChannel, io: Server) {
   onStakerUpdates(channel, io);
   onNewCollectionByAddress(channel, io);
   onNewFeedItem(channel, io);
+  onPendingUtilityDelivery(channel, io);
 }
 
 export function registerAccountSocket(io: Server) {

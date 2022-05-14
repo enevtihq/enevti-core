@@ -15,7 +15,12 @@ import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
-import { accessAllCollection, accessCollectionById, isMintingAvailable } from './utils/collection';
+import {
+  accessAllCollection,
+  accessCollectionById,
+  getCollectionById,
+  isMintingAvailable,
+} from './utils/collection';
 import {
   accessAllNFTTemplate,
   accessAllNFTTemplateGenesis,
@@ -37,6 +42,9 @@ import { collectionSchema } from './schemas/chain/collection';
 import { accessActivityCollection, accessActivityNFT } from './utils/activity';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
 import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
+import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
+import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
@@ -197,7 +205,12 @@ export class RedeemableNftModule extends BaseModule {
     new MintNftAsset(),
     new DeliverSecretAsset(),
   ];
-  public events = ['newCollection', 'newCollectionByAddress'];
+  public events = [
+    'newCollection',
+    'newCollectionByAddress',
+    'pendingUtilityDelivery',
+    'secretDelivered',
+  ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
   public _client: apiClient.APIClient | undefined = undefined;
@@ -225,6 +238,9 @@ export class RedeemableNftModule extends BaseModule {
     const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
       payload: Transaction[];
     };
+
+    const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
+
     for (const payload of prevBlock.payload) {
       const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
       if (payload.moduleID === 1000 && payload.assetID === 0) {
@@ -233,6 +249,29 @@ export class RedeemableNftModule extends BaseModule {
           address: prevBlockSenderAddress.toString('hex'),
         });
       }
+      if (payload.moduleID === 1000 && payload.assetID === 1) {
+        const mintNFTAsset = (payload.asset as unknown) as MintNFTProps;
+        const collection = await getCollectionById(_input.stateStore, mintNFTAsset.id);
+        if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
+        const creatorAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
+          collection.creator,
+        );
+        creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
+      }
+      if (payload.moduleID === 1000 && payload.assetID === 2) {
+        const deliverSecretAsset = (payload.asset as unknown) as DeliverSecretProps;
+        this._channel.publish('redeemableNft:secretDelivered', {
+          nft: deliverSecretAsset.id,
+        });
+      }
+    }
+
+    if (pendingNFTBuffer.size > 0) {
+      pendingNFTBuffer.forEach(nft =>
+        this._channel.publish('redeemableNft:pendingUtilityDelivery', {
+          nft: nft.toString('hex'),
+        }),
+      );
     }
   }
 

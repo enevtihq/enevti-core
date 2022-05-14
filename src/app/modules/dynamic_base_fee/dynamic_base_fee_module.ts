@@ -7,7 +7,6 @@ import {
   TransactionApplyContext,
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
-  GenesisConfig,
   cryptography,
 } from 'lisk-sdk';
 import { getBaseFee, getDynamicBaseFee, getDynamicBaseFeePerByte, getTotalFees } from './utils/fee';
@@ -47,11 +46,9 @@ export class DynamicBaseFeeModule extends BaseModule {
   ];
   public id = 1003;
 
-  public constructor(genesisConfig: GenesisConfig) {
-    super(genesisConfig);
-    if (genesisConfig.minFeePerByte !== 0)
-      throw new Error('genesisConfig.minFeePerByte must be 0 to use dynamicBaseFee module');
-  }
+  // public constructor(genesisConfig: GenesisConfig) {
+  //     super(genesisConfig);
+  // }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -109,8 +106,9 @@ export class DynamicBaseFeeModule extends BaseModule {
     // const sender = await _input.stateStore.account.getOrDefault<TokenAccount>(_input.transaction.senderAddress);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async afterGenesisBlockApply(_input: AfterGenesisBlockApplyContext) {
-    // Get any data from genesis block, for example get all genesis accounts
-    // const genesisAccounts = genesisBlock.header.asset.accounts;
+    if (this.config.minFeePerByte !== 0)
+      throw new Error('config.minFeePerByte must be 0 to use dynamicBaseFee module');
   }
 }

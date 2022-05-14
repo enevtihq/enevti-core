@@ -39,6 +39,7 @@ export function getDefaultAccount(
       owned: [],
       onSale: [],
       collection: [],
+      pending: [],
     },
     persona: {
       photo: '',

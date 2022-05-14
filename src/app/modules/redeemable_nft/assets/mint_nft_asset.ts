@@ -109,6 +109,9 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
       await addActivityNFT(stateStore, nft.id.toString('hex'), activity);
 
       senderAccount.redeemableNft.owned.push(nft.id);
+      if (nft.redeem.status === 'pending-secret') {
+        creatorAccount.redeemableNft.pending.push(nft.id);
+      }
 
       await reducerHandler.invoke('token:debit', {
         address: senderAddress,
@@ -122,7 +125,7 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
         });
       }
     });
-
+    collection.stat.minted += boughtItem.length;
     creatorAccount.redeemableNft.nftSold += boughtItem.length;
 
     const collectionActivity: CollectionActivityChainItems = {
