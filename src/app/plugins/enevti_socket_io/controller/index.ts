@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { onNewActivityCollection, onNewActivityNFT } from './activity';
 import { onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
@@ -15,7 +15,7 @@ import {
 } from './profile';
 import { onStakerUpdates } from './stake';
 
-export function createEnevtiSocket(channel: BaseChannel, io: Server) {
+export function createEnevtiSocket(channel: BaseChannel, io: Server | Socket) {
   // Profile Socket
   onUsernameUpdated(channel, io);
   onBalanceChanged(channel, io);

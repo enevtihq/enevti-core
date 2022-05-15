@@ -260,7 +260,11 @@ export class RedeemableNftModule extends BaseModule {
       header: BlockHeader;
       payload: Transaction[];
     };
-    const timestampBlock = (await client.block.get(prevBlock.header.previousBlockID)) as {
+    const timestampBlock = (await client.block.get(
+      prevBlock.header.previousBlockID.length > 0
+        ? prevBlock.header.previousBlockID
+        : _input.block.header.previousBlockID,
+    )) as {
       header: BlockHeader;
       payload: Transaction[];
     };

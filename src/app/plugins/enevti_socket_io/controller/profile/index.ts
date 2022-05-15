@@ -1,12 +1,12 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 import idBufferToCollection from '../../../enevti_http_api/utils/transformer/idBufferToCollection';
 
-export function onUsernameUpdated(channel: BaseChannel, io: Server) {
+export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
     if (data) {
       const payload = data as { address: string };
@@ -16,7 +16,7 @@ export function onUsernameUpdated(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onBalanceChanged(channel: BaseChannel, io: Server) {
+export function onBalanceChanged(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:balanceChanged', async data => {
     if (data) {
       const payload = data as { address: string };
@@ -26,7 +26,7 @@ export function onBalanceChanged(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onTotalStakeChanged(channel: BaseChannel, io: Server) {
+export function onTotalStakeChanged(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('creatorFinance:totalStakeChanged', async data => {
     if (data) {
       const payload = data as { address: string };
@@ -39,7 +39,7 @@ export function onTotalStakeChanged(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onNewCollectionByAddress(channel: BaseChannel, io: Server) {
+export function onNewCollectionByAddress(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newCollectionByAddress', async data => {
     if (data) {
       const payload = data as { address: string };
@@ -59,7 +59,7 @@ export function onNewCollectionByAddress(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onPendingUtilityDelivery(channel: BaseChannel, io: Server) {
+export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:pendingUtilityDelivery', async data => {
     if (data) {
       const payload = data as { nft: string };
@@ -81,7 +81,7 @@ export function onPendingUtilityDelivery(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onSecretDelivered(channel: BaseChannel, io: Server) {
+export function onSecretDelivered(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:secretDelivered', async data => {
     if (data) {
       const payload = data as { nft: string };
@@ -101,7 +101,7 @@ export function onSecretDelivered(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onTotalNFTSoldChanged(channel: BaseChannel, io: Server) {
+export function onTotalNFTSoldChanged(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:totalNFTSoldChanged', async data => {
     if (data) {
       const payload = data as { address: string };
@@ -111,7 +111,7 @@ export function onTotalNFTSoldChanged(channel: BaseChannel, io: Server) {
   });
 }
 
-export function onNewPendingByAddress(channel: BaseChannel, io: Server) {
+export function onNewPendingByAddress(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newPendingByAddress', async data => {
     if (data) {
       const payload = data as { address: string };

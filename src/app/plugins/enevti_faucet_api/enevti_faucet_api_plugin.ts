@@ -98,8 +98,8 @@ export class EnevtiFaucetApiPlugin extends BasePlugin {
             Buffer.from(this._passphrase, 'hex').toString(),
           );
 
-          this._nonce += 1;
           await this._client.transaction.send(transaction);
+          this._nonce += 1;
           res.status(200).json({ data: 'success', meta: req.body as Record<string, string> });
         } catch (err: unknown) {
           res

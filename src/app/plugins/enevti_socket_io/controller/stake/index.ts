@@ -1,7 +1,7 @@
 import { BaseChannel } from 'lisk-framework';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
-export function onStakerUpdates(channel: BaseChannel, io: Server) {
+export function onStakerUpdates(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('creatorFinance:stakerUpdates', data => {
     if (data) {
       const payload = data as { address: string };

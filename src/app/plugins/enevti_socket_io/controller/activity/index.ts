@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import {
   invokeGetActivityCollection,
   invokeGetActivityNFT,
@@ -7,7 +7,7 @@ import {
   invokeGetNFT,
 } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 
-export function onNewActivityCollection(channel: BaseChannel, io: Server) {
+export function onNewActivityCollection(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newActivityCollection', async data => {
     if (data) {
       const payload = data as { collection: string; timestamp: number };
@@ -21,7 +21,8 @@ export function onNewActivityCollection(channel: BaseChannel, io: Server) {
     }
   });
 }
-export function onNewActivityNFT(channel: BaseChannel, io: Server) {
+
+export function onNewActivityNFT(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newActivityNFT', async data => {
     if (data) {
       const payload = data as { nft: string; timestamp: number };

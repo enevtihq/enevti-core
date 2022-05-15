@@ -1,10 +1,10 @@
 import { BaseChannel } from 'lisk-framework';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetCollection } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../../enevti_http_api/utils/transformer/idBufferToNFT';
 
-export function onNewNFTMinted(channel: BaseChannel, io: Server) {
+export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTMinted', async data => {
     if (data) {
       const payload = data as { collection: string; quantity: number };
