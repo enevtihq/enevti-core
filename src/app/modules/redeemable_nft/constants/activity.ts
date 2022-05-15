@@ -8,9 +8,11 @@ export const ACTIVITY: {
   NFT: {
     MINT: 'mint',
     REDEEM: 'redeem',
+    SECRETDELIVERED: 'secretDelivered',
   },
   COLLECTION: {
     CREATED: 'created',
     MINTED: 'minted',
+    SECRETDELIVERED: 'secretDelivered',
   },
 };

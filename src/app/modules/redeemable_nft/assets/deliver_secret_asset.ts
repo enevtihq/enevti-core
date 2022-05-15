@@ -1,7 +1,13 @@
-import { BaseAsset, ApplyAssetContext } from 'lisk-sdk';
+import { BaseAsset, ApplyAssetContext, cryptography } from 'lisk-sdk';
 import { deliverSecretAssetSchema } from '../schemas/asset/deliver_secret_asset';
 import { DeliverSecretProps } from '../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
+import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { getBlockTimestamp } from '../utils/transaction';
+import { ACTIVITY } from '../constants/activity';
+import { COIN_NAME } from '../constants/chain';
+import { addActivityCollection, addActivityNFT } from '../utils/activity';
+import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 
 export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   public name = 'deliverSecret';
@@ -22,6 +28,8 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     reducerHandler,
   }: ApplyAssetContext<DeliverSecretProps>): Promise<void> {
     const { senderPublicKey, senderAddress } = transaction;
+    const timestamp = getBlockTimestamp(stateStore);
+
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error("NFT doesn't exist");
@@ -45,5 +53,30 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     });
 
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
+
+    const nftActivity: NFTActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.NFT.SECRETDELIVERED,
+      to: cryptography.getAddressFromPublicKey(nft.redeem.secret.recipient),
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+    };
+    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
+
+    const collectionActivity: CollectionActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.COLLECTION.SECRETDELIVERED,
+      to: cryptography.getAddressFromPublicKey(nft.redeem.secret.recipient),
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+      nfts: [nft.id],
+    };
+    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
   }
 }

@@ -10,6 +10,7 @@ import {
   Transaction,
   cryptography,
 } from 'lisk-sdk';
+import { BlockHeader } from '@liskhq/lisk-chain';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
@@ -27,7 +28,7 @@ import {
   accessNFTTemplateById,
   addNFTTemplateGenesis,
 } from './utils/nft_template';
-import { accessAllNFT, accessNFTById } from './utils/redeemable_nft';
+import { accessAllNFT, accessNFTById, getNFTById } from './utils/redeemable_nft';
 import {
   accessRegisteredName,
   accessRegisteredSerial,
@@ -225,6 +226,11 @@ export class RedeemableNftModule extends BaseModule {
     'newCollectionByAddress',
     'pendingUtilityDelivery',
     'secretDelivered',
+    'totalNFTSoldChanged',
+    'newPendingByAddress',
+    'newNFTMinted',
+    'newActivityCollection',
+    'newActivityNFT',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
@@ -251,34 +257,90 @@ export class RedeemableNftModule extends BaseModule {
   public async afterBlockApply(_input: AfterBlockApplyContext) {
     const client = await this.getClient();
     const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
+      header: BlockHeader;
+      payload: Transaction[];
+    };
+    const timestampBlock = (await client.block.get(prevBlock.header.previousBlockID)) as {
+      header: BlockHeader;
       payload: Transaction[];
     };
 
     const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
+    const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
+    const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
 
     for (const payload of prevBlock.payload) {
       const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
+      const senderAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
+        prevBlockSenderAddress,
+      );
+
       if (payload.moduleID === 1000 && payload.assetID === 0) {
         this._channel.publish('redeemableNft:newCollection');
         this._channel.publish('redeemableNft:newCollectionByAddress', {
           address: prevBlockSenderAddress.toString('hex'),
         });
+        collectionWithNewActivity.add(senderAccount.redeemableNft.collection[0]);
       }
+
       if (payload.moduleID === 1000 && payload.assetID === 1) {
         const mintNFTAsset = (payload.asset as unknown) as MintNFTProps;
         const collection = await getCollectionById(_input.stateStore, mintNFTAsset.id);
         if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
+
+        collectionWithNewActivity.add(collection.id);
+        collection.minted
+          .slice(0, mintNFTAsset.quantity)
+          .forEach(nft => nftWithNewActivity.add(nft));
+
+        this._channel.publish('redeemableNft:newNFTMinted', {
+          collection: collection.id.toString('hex'),
+          quantity: mintNFTAsset.quantity,
+        });
+
+        this._channel.publish('redeemableNft:totalNFTSoldChanged', {
+          address: collection.creator.toString('hex'),
+        });
+
         const creatorAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
           collection.creator,
         );
-        creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
+        if (creatorAccount.redeemableNft.pending.length > 0) {
+          creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
+          this._channel.publish('redeemableNft:newPendingByAddress', {
+            address: collection.creator.toString('hex'),
+          });
+        }
       }
+
       if (payload.moduleID === 1000 && payload.assetID === 2) {
         const deliverSecretAsset = (payload.asset as unknown) as DeliverSecretProps;
+        const nft = await getNFTById(_input.stateStore, deliverSecretAsset.id);
+        if (!nft) throw new Error('nft id not found in afterBlockApply hook');
+        collectionWithNewActivity.add(nft.collectionId);
+        nftWithNewActivity.add(nft.id);
         this._channel.publish('redeemableNft:secretDelivered', {
           nft: deliverSecretAsset.id,
         });
       }
+    }
+
+    if (collectionWithNewActivity.size > 0) {
+      collectionWithNewActivity.forEach(collection =>
+        this._channel.publish('redeemableNft:newActivityCollection', {
+          collection: collection.toString('hex'),
+          timestamp: timestampBlock.header.timestamp,
+        }),
+      );
+    }
+
+    if (nftWithNewActivity.size > 0) {
+      nftWithNewActivity.forEach(nft =>
+        this._channel.publish('redeemableNft:newActivityNFT', {
+          nft: nft.toString('hex'),
+          timestamp: timestampBlock.header.timestamp,
+        }),
+      );
     }
 
     if (pendingNFTBuffer.size > 0) {

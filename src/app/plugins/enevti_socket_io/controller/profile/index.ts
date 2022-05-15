@@ -93,6 +93,30 @@ export function onSecretDelivered(channel: BaseChannel, io: Server) {
         secret,
         content,
       });
+      io.to(nft.id.toString('hex')).emit(`secretDelivered`, {
+        id: nft.id.toString('hex'),
+        secret,
+      });
+    }
+  });
+}
+
+export function onTotalNFTSoldChanged(channel: BaseChannel, io: Server) {
+  channel.subscribe('redeemableNft:totalNFTSoldChanged', async data => {
+    if (data) {
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
+      io.to(payload.address).emit(`totalNFTSoldChanged`, account.redeemableNft.nftSold);
+    }
+  });
+}
+
+export function onNewPendingByAddress(channel: BaseChannel, io: Server) {
+  channel.subscribe('redeemableNft:newPendingByAddress', async data => {
+    if (data) {
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
+      io.to(payload.address).emit(`newPending`, account.redeemableNft.pending.length);
     }
   });
 }
