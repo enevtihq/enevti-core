@@ -7,15 +7,16 @@ import idBufferToActivityCollection from '../../utils/transformer/idBufferToActi
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const { offset, limit } = req.query as Record<string, string>;
+    const { offset, limit, version } = req.query as Record<string, string>;
     const collections = await invokeGetAllCollection(
       channel,
-      parseInt(offset, 10),
-      parseInt(limit, 10),
+      offset ? parseInt(offset, 10) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
+      version ? parseInt(version, 10) : undefined,
     );
 
     const response: Collection[] = await Promise.all(
-      collections.map(
+      collections.data.map(
         async (item): Promise<Collection> => {
           const activity = await idBufferToActivityCollection(channel, item.id);
           const restCollection = await collectionChainToUI(channel, item);

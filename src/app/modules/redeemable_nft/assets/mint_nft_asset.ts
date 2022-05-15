@@ -3,7 +3,7 @@ import * as seedrandom from 'seedrandom';
 import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { MintNFTProps } from '../../../../types/core/asset/redeemable_nft/mint_nft_asset';
-import { getCollectionById, setCollectionById } from '../utils/collection';
+import { getCollectionById, isMintingAvailable, setCollectionById } from '../utils/collection';
 import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
 import { NFTTYPE } from '../constants/nft_type';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
@@ -20,7 +20,7 @@ function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, bough
   const item = collection.minting.available[index];
   boughtItem.unshift(item);
   collection.minting.available.splice(index, 1);
-  collection.minted.push(item);
+  collection.minted.unshift(item);
 }
 
 export class MintNftAsset extends BaseAsset<MintNFTProps> {
@@ -55,10 +55,8 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
     const timestamp = getBlockTimestamp(stateStore);
     const rng = seedrandom(stateStore.chain.lastBlockHeaders[0].id.toString('hex'));
 
-    if (collection.minting.expire !== -1) {
-      if (timestamp > collection.minting.expire) {
-        throw new Error('minting expired');
-      }
+    if (!isMintingAvailable(collection, timestamp)) {
+      throw new Error('minting expired');
     }
 
     if (collection.minting.available.length < asset.quantity * collection.packSize) {
@@ -108,9 +106,9 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
       };
       await addActivityNFT(stateStore, nft.id.toString('hex'), activity);
 
-      senderAccount.redeemableNft.owned.push(nft.id);
+      senderAccount.redeemableNft.owned.unshift(nft.id);
       if (nft.redeem.status === 'pending-secret') {
-        creatorAccount.redeemableNft.pending.push(nft.id);
+        creatorAccount.redeemableNft.pending.unshift(nft.id);
       }
 
       await reducerHandler.invoke('token:debit', {

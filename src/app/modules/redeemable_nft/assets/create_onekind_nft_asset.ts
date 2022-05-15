@@ -80,8 +80,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.recurring !== RECURRING.ANYTIME && asset.until <= 0) {
       throw new Error(`asset.until must be greater than 0`);
     }
-    if (asset.mintingExpire < -1 || asset.mintingExpire === 0) {
-      throw new Error(`asset.mintingExpire can only be -1, or greater than 0`);
+    if (asset.mintingExpire < 0) {
+      throw new Error(`asset.mintingExpire can't be negative`);
     }
     if (asset.royalty.creator < 0) {
       throw new Error(`asset.royalty.origin can't be negative`);

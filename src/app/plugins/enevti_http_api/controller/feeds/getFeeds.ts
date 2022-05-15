@@ -9,15 +9,16 @@ import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const { offset, limit } = req.query as Record<string, string>;
+    const { offset, limit, version } = req.query as Record<string, string>;
     const collections = await invokeGetAllCollection(
       channel,
-      parseInt(offset, 10),
-      parseInt(limit, 10),
+      offset ? parseInt(offset, 10) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
+      version ? parseInt(version, 10) : undefined,
     );
 
     const feeds: Feeds = await Promise.all(
-      collections.map(
+      collections.data.map(
         async (item): Promise<FeedItem> => {
           const owner = await addressBufferToPersona(channel, item.creator);
           const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));

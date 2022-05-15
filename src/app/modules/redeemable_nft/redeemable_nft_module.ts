@@ -67,28 +67,43 @@ export class RedeemableNftModule extends BaseModule {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
-      return (await accessAllCollection(this._dataAccess, o, l)).items;
+      return (await accessAllCollection(this._dataAccess, o, l)).allCollection.items;
     },
-    getAllCollection: async (params): Promise<CollectionAsset[]> => {
-      const { offset, limit } = params as { limit?: number; offset?: number };
-      const collections = await accessAllCollection(this._dataAccess, offset, limit);
-      return Promise.all(
-        collections.items.map(
+    getAllCollection: async (
+      params,
+    ): Promise<{ offset: number; version: number; data: CollectionAsset[] }> => {
+      const { offset, limit, version } = params as {
+        limit?: number;
+        offset?: number;
+        version?: number;
+      };
+      const collections = await accessAllCollection(this._dataAccess, offset, limit, version);
+      const data = await Promise.all(
+        collections.allCollection.items.map(
           async (item): Promise<CollectionAsset> => {
             const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
             return collection ?? ((collectionSchema.default as unknown) as CollectionAsset);
           },
         ),
       );
+      return {
+        offset: Number(offset ?? 0) + Number(limit ?? 0),
+        version: collections.version,
+        data,
+      };
     },
     getAvailableCollection: async (
       params,
-    ): Promise<{ offset: number; data: CollectionAsset[] }> => {
-      const { offset, limit } = params as { limit?: number; offset?: number };
-      const collections = await accessAllCollection(this._dataAccess, offset);
+    ): Promise<{ offset: number; version: number; data: CollectionAsset[] }> => {
+      const { offset, limit, version } = params as {
+        limit?: number;
+        offset?: number;
+        version?: number;
+      };
+      const collections = await accessAllCollection(this._dataAccess, offset, undefined, version);
       const availableCollection: CollectionAsset[] = [];
       let index = 0;
-      for (const item of collections.items) {
+      for (const item of collections.allCollection.items) {
         index += 1;
         const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
         if (collection) {
@@ -101,7 +116,7 @@ export class RedeemableNftModule extends BaseModule {
           }
         }
       }
-      return { offset: index, data: availableCollection };
+      return { offset: index, version: availableCollection.length, data: availableCollection };
     },
     getCollection: async (params): Promise<CollectionAsset | undefined> => {
       const { id } = params as Record<string, string>;

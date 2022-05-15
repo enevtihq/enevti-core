@@ -7,24 +7,31 @@ export const accessAllCollection = async (
   dataAccess: BaseModuleDataAccess,
   offset = 0,
   limit?: number,
-): Promise<AllCollection> => {
+  version?: number,
+): Promise<{ allCollection: AllCollection; version: number }> => {
   const collectionBuffer = await dataAccess.getChainState(CHAIN_STATE_ALL_COLLECTION);
   if (!collectionBuffer) {
     return {
-      items: [],
+      allCollection: {
+        items: [],
+      },
+      version: 0,
     };
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
+  const v = version ?? allCollection.items.length;
+  const o = offset + (allCollection.items.length - v);
   const l = limit ?? allCollection.items.length - offset;
-  allCollection.items.slice(offset, l);
-  return allCollection;
+  allCollection.items.slice(o, l);
+  return { allCollection, version: v };
 };
 
 export const getAllCollection = async (
   stateStore: StateStore,
   offset = 0,
   limit?: number,
+  version?: number,
 ): Promise<AllCollection> => {
   const collectionBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_COLLECTION);
   if (!collectionBuffer) {
@@ -34,8 +41,10 @@ export const getAllCollection = async (
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
+  const v = version ?? allCollection.items.length;
+  const o = offset + (allCollection.items.length - v);
   const l = limit ?? allCollection.items.length - offset;
-  allCollection.items.slice(offset, l);
+  allCollection.items.slice(o, l);
   return allCollection;
 };
 
@@ -80,6 +89,6 @@ export const setCollectionById = async (
 };
 
 export const isMintingAvailable = (collection: CollectionAsset, now: number) =>
-  (collection.minting.expire === -1 && collection.minting.available.length > 0) ||
+  (collection.minting.expire === 0 && collection.minting.available.length > 0) ||
   collection.minting.expire > now ||
   collection.minting.available.length > 0;

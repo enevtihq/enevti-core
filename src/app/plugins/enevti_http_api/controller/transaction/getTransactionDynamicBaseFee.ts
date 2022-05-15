@@ -6,7 +6,6 @@ import {
   invokeGetBaseFee,
   invokeGetDynamicBaseFeePerByte,
 } from '../../utils/hook/dynamic_base_fee_module';
-import { invokeGetAccount } from '../../utils/hook/persona_module';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
 import transformAsset from './transformer';
 
@@ -27,8 +26,6 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const passphrase = Buffer.from(auth.split(' ')[1], 'base64').toString().split(':')[1];
 
     const { publicKey } = cryptography.getPrivateAndPublicKeyFromPassphrase(passphrase);
-    const address = cryptography.getAddressFromPassphrase(passphrase);
-    const account = await invokeGetAccount(channel, address.toString('hex'));
     const nodeInfo = await invokeGetNodeIndo(channel);
     const schema = await getAssetSchema(
       channel,
@@ -41,7 +38,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       {
         ...transformAsset(payload),
         fee: BigInt(payload.fee as string),
-        nonce: BigInt(account.sequence.nonce),
+        nonce: BigInt(payload.nonce as string),
         senderPublicKey: publicKey,
       },
       Buffer.from(nodeInfo.networkIdentifier as string, 'hex'),
