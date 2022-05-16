@@ -200,8 +200,19 @@ export const redeemableNFTSchema: SchemaWithDefault = {
               fieldNumber: 1,
             },
             signature: {
-              dataType: 'string',
               fieldNumber: 2,
+              type: 'object',
+              required: ['cipher', 'plain'],
+              properties: {
+                cipher: {
+                  dataType: 'string',
+                  fieldNumber: 1,
+                },
+                plain: {
+                  dataType: 'string',
+                  fieldNumber: 2,
+                },
+              },
             },
             sender: {
               dataType: 'bytes',

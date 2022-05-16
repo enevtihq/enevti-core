@@ -1,4 +1,10 @@
-import { BaseAsset, ApplyAssetContext, ValidateAssetContext, transactions } from 'lisk-sdk';
+import {
+  BaseAsset,
+  ApplyAssetContext,
+  ValidateAssetContext,
+  transactions,
+  cryptography,
+} from 'lisk-sdk';
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
 import { RECURRING } from '../constants/recurring';
@@ -104,6 +110,17 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     const allNFT = await getAllNFT(stateStore);
     const networkIdentifier = getNetworkIdentifier(stateStore);
     const redeemStatus = UTILITY_WITH_SECRET.includes(asset.utility) ? 'pending-secret' : 'ready';
+
+    if (
+      asset.utility === 'content' &&
+      !cryptography.verifyData(
+        cryptography.stringToBuffer(asset.cipher),
+        Buffer.from(asset.signature.cipher, 'hex'),
+        transaction.senderPublicKey,
+      )
+    ) {
+      throw new Error('secret cipher not verified!');
+    }
 
     const allNFTTemplate = await getAllNFTTemplate(stateStore);
     if (allNFTTemplate.items.includes(asset.template))
@@ -217,7 +234,10 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           touched: BigInt(timestamp),
           secret: {
             cipher: asset.cipher,
-            signature: asset.signature,
+            signature: {
+              cipher: asset.signature.cipher,
+              plain: asset.signature.plain,
+            },
             sender: transaction.senderPublicKey,
             recipient: transaction.senderPublicKey,
           },

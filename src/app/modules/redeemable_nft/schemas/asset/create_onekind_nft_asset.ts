@@ -114,8 +114,19 @@ export const createOnekindNftAssetSchema = {
       fieldNumber: 17,
     },
     signature: {
-      dataType: 'string',
       fieldNumber: 18,
+      type: 'object',
+      required: ['cipher', 'plain'],
+      properties: {
+        cipher: {
+          dataType: 'string',
+          fieldNumber: 1,
+        },
+        plain: {
+          dataType: 'string',
+          fieldNumber: 2,
+        },
+      },
     },
     content: {
       dataType: 'string',

@@ -13,8 +13,19 @@ export const deliverSecretAssetSchema = {
       fieldNumber: 2,
     },
     signature: {
-      dataType: 'string',
       fieldNumber: 3,
+      type: 'object',
+      required: ['cipher', 'plain'],
+      properties: {
+        cipher: {
+          dataType: 'string',
+          fieldNumber: 1,
+        },
+        plain: {
+          dataType: 'string',
+          fieldNumber: 2,
+        },
+      },
     },
   },
 };

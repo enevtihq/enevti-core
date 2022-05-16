@@ -30,6 +30,16 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     const { senderPublicKey, senderAddress } = transaction;
     const timestamp = getBlockTimestamp(stateStore);
 
+    if (
+      !cryptography.verifyData(
+        cryptography.stringToBuffer(asset.cipher),
+        Buffer.from(asset.signature.cipher, 'hex'),
+        transaction.senderPublicKey,
+      )
+    ) {
+      throw new Error('secret cipher not verified!');
+    }
+
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error("NFT doesn't exist");
@@ -44,7 +54,9 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     }
 
     nft.redeem.secret.cipher = asset.cipher;
-    nft.redeem.secret.signature = asset.signature;
+    nft.redeem.secret.signature.cipher = asset.signature.cipher;
+    nft.redeem.secret.signature.plain = asset.signature.plain;
+    nft.redeem.secret.sender = transaction.senderPublicKey;
     nft.redeem.status = 'ready';
 
     await reducerHandler.invoke('token:credit', {
