@@ -33,3 +33,9 @@ export async function asyncForEach<T>(
     await callback(array[index], index, array);
   }
 }
+
+export function addInObject(object: Record<string, number>, key: string | Buffer, add: number) {
+  const id = Buffer.isBuffer(key) ? key.toString('hex') : key;
+  // eslint-disable-next-line no-param-reassign
+  object[id] = add + (Object.keys(object).includes(id) ? object[id] : 0);
+}

@@ -8,6 +8,7 @@ import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
 import { addActivityCollection, addActivityNFT } from '../utils/activity';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
+import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 
 export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   public name = 'deliverSecret';
@@ -28,6 +29,7 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     reducerHandler,
   }: ApplyAssetContext<DeliverSecretProps>): Promise<void> {
     const { senderPublicKey, senderAddress } = transaction;
+    const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     const timestamp = getBlockTimestamp(stateStore);
 
     if (
@@ -65,6 +67,13 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     });
 
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
+
+    const index = senderAccount.redeemableNft.pending.findIndex(
+      t => t.toString('hex') === asset.id,
+    );
+    if (index === -1) throw new Error('NFT id not found in account pending list');
+    senderAccount.redeemableNft.pending.splice(index, 1);
+    await stateStore.account.set(senderAddress, senderAccount);
 
     const nftActivity: NFTActivityChainItems = {
       transaction: transaction.id,

@@ -46,6 +46,7 @@ import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
 import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
 import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+import { addInObject, asyncForEach } from './utils/transaction';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
@@ -269,22 +270,20 @@ export class RedeemableNftModule extends BaseModule {
       payload: Transaction[];
     };
 
+    const accountWithNewCollection: Set<Buffer> = new Set<Buffer>();
+    const accountWithNewPending: Set<Buffer> = new Set<Buffer>();
     const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
     const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
     const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
+    const totalNftMintedInCollection: { [collection: string]: number } = {};
+    const totalCollectionCreatedByAddress: { [address: string]: number } = {};
 
     for (const payload of prevBlock.payload) {
-      const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
-      const senderAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
-        prevBlockSenderAddress,
-      );
+      const senderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
 
       if (payload.moduleID === 1000 && payload.assetID === 0) {
-        this._channel.publish('redeemableNft:newCollection');
-        this._channel.publish('redeemableNft:newCollectionByAddress', {
-          address: prevBlockSenderAddress.toString('hex'),
-        });
-        collectionWithNewActivity.add(senderAccount.redeemableNft.collection[0]);
+        accountWithNewCollection.add(senderAddress);
+        addInObject(totalCollectionCreatedByAddress, senderAddress, 1);
       }
 
       if (payload.moduleID === 1000 && payload.assetID === 1) {
@@ -293,40 +292,75 @@ export class RedeemableNftModule extends BaseModule {
         if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
         collectionWithNewActivity.add(collection.id);
-        collection.minted
-          .slice(0, mintNFTAsset.quantity)
-          .forEach(nft => nftWithNewActivity.add(nft));
-
-        this._channel.publish('redeemableNft:newNFTMinted', {
-          collection: collection.id.toString('hex'),
-          quantity: mintNFTAsset.quantity,
-        });
-
-        this._channel.publish('redeemableNft:totalNFTSoldChanged', {
-          address: collection.creator.toString('hex'),
-        });
-
-        const creatorAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
-          collection.creator,
-        );
-        if (creatorAccount.redeemableNft.pending.length > 0) {
-          creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
-          this._channel.publish('redeemableNft:newPendingByAddress', {
-            address: collection.creator.toString('hex'),
-          });
-        }
+        addInObject(totalNftMintedInCollection, collection.id, mintNFTAsset.quantity);
       }
 
       if (payload.moduleID === 1000 && payload.assetID === 2) {
         const deliverSecretAsset = (payload.asset as unknown) as DeliverSecretProps;
         const nft = await getNFTById(_input.stateStore, deliverSecretAsset.id);
         if (!nft) throw new Error('nft id not found in afterBlockApply hook');
+
         collectionWithNewActivity.add(nft.collectionId);
         nftWithNewActivity.add(nft.id);
+        accountWithNewPending.add(nft.creator);
+
         this._channel.publish('redeemableNft:secretDelivered', {
           nft: deliverSecretAsset.id,
         });
       }
+    }
+
+    await asyncForEach(Object.keys(totalCollectionCreatedByAddress), async address => {
+      const account = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
+        Buffer.from(address, 'hex'),
+      );
+      account.redeemableNft.collection
+        .slice(0, totalCollectionCreatedByAddress[address])
+        .forEach(collection => collectionWithNewActivity.add(collection));
+    });
+
+    await asyncForEach(Object.keys(totalNftMintedInCollection), async collectionId => {
+      const collection = await getCollectionById(_input.stateStore, collectionId);
+      if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
+
+      collection.minted
+        .slice(0, totalNftMintedInCollection[collectionId])
+        .forEach(nft => nftWithNewActivity.add(nft));
+
+      this._channel.publish('redeemableNft:newNFTMinted', {
+        collection: collection.id.toString('hex'),
+        quantity: totalNftMintedInCollection[collectionId],
+      });
+
+      this._channel.publish('redeemableNft:totalNFTSoldChanged', {
+        address: collection.creator.toString('hex'),
+      });
+
+      const creatorAccount = await _input.stateStore.account.get<RedeemableNFTAccountProps>(
+        collection.creator,
+      );
+      if (creatorAccount.redeemableNft.pending.length > 0) {
+        creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
+        accountWithNewPending.add(collection.creator);
+      }
+    });
+
+    if (accountWithNewPending.size > 0) {
+      accountWithNewPending.forEach(address =>
+        this._channel.publish('redeemableNft:newPendingByAddress', {
+          address: address.toString('hex'),
+        }),
+      );
+    }
+
+    if (accountWithNewCollection.size > 0) {
+      this._channel.publish('redeemableNft:newCollection');
+      accountWithNewCollection.forEach(address =>
+        this._channel.publish('redeemableNft:newCollectionByAddress', {
+          address: address.toString('hex'),
+          count: totalCollectionCreatedByAddress[address.toString('hex')],
+        }),
+      );
     }
 
     if (collectionWithNewActivity.size > 0) {
@@ -348,11 +382,9 @@ export class RedeemableNftModule extends BaseModule {
     }
 
     if (pendingNFTBuffer.size > 0) {
-      pendingNFTBuffer.forEach(nft =>
-        this._channel.publish('redeemableNft:pendingUtilityDelivery', {
-          nft: nft.toString('hex'),
-        }),
-      );
+      this._channel.publish('redeemableNft:pendingUtilityDelivery', {
+        nfts: [...pendingNFTBuffer],
+      });
     }
   }
 
