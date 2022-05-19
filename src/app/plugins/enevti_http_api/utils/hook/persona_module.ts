@@ -7,7 +7,6 @@ import {
   CreaFiAccountProps,
   RedeemableNFTAccountProps,
 } from '../../../../../types/core/account/profile';
-import { RegisteredUsernameAsset } from '../../../../../types/core/chain/registrar';
 
 export const invokeGetAccount = async (
   channel: BaseChannel,
@@ -24,8 +23,7 @@ export const invokeGetAccount = async (
 export const invokeGetAddressByUsername = async (
   channel: BaseChannel,
   username: string,
-): Promise<RegisteredUsernameAsset | undefined> =>
-  channel.invoke('persona:getAddressByUsername', { username });
+): Promise<Buffer | undefined> => channel.invoke('persona:getAddressByUsername', { username });
 
 export const invokeIsUsernameExists = async (
   channel: BaseChannel,

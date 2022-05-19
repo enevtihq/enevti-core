@@ -13,10 +13,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;
     }
-    const stakerChain = await invokeGetStakerByAddress(
-      channel,
-      usernameRegistrar.address.toString('hex'),
-    );
+    const stakerChain = await invokeGetStakerByAddress(channel, usernameRegistrar.toString('hex'));
     if (!stakerChain) {
       res.status(404).json('Staker data not found');
       return;
@@ -36,7 +33,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     );
 
     const stake: StakePoolData = {
-      owner: await addressBufferToPersona(channel, usernameRegistrar.address),
+      owner: await addressBufferToPersona(channel, usernameRegistrar),
       staker,
     };
 

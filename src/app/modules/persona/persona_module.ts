@@ -35,7 +35,7 @@ export class PersonaModule extends BaseModule {
     },
     getAddressByUsername: async params => {
       const { username } = params as Record<string, string>;
-      return accessRegisteredUsername(this._dataAccess, username);
+      return (await accessRegisteredUsername(this._dataAccess, username))?.address;
     },
     isUsernameExists: async params => {
       const { username } = params as Record<string, string>;

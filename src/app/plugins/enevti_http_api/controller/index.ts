@@ -23,6 +23,10 @@ import isNameExists from './registrar/isNameExists';
 import isSymbolExists from './registrar/isSymbolExists';
 import isSerialExists from './registrar/isSerialExists';
 import isUsernameExists from './registrar/isUsernameExists';
+import nameToCollection from './registrar/nameToCollection';
+import symbolToCollection from './registrar/symbolToCollection';
+import serialToNFT from './registrar/serialToNFT';
+import usernameToAddress from './registrar/usernameToAddress';
 import getTransactionFee from './transaction/getTransactionFee';
 import getTransactionBaseFee from './transaction/getTransactionBaseFee';
 import getTransactionDynamicBaseFee from './transaction/getTransactionDynamicBaseFee';
@@ -54,6 +58,10 @@ export default {
   isSymbolExists,
   isSerialExists,
   isUsernameExists,
+  nameToCollection,
+  symbolToCollection,
+  serialToNFT,
+  usernameToAddress,
   getTransactionFee,
   getTransactionBaseFee,
   getTransactionDynamicBaseFee,

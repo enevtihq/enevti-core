@@ -13,14 +13,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;
     }
-    const account = await invokeGetAccount(channel, usernameRegistrar.address.toString('hex'));
+    const account = await invokeGetAccount(channel, usernameRegistrar.toString('hex'));
 
     const persona: Persona = {
-      address: usernameRegistrar.address.toString('hex'),
-      base32: Lisk.cryptography.getBase32AddressFromAddress(
-        usernameRegistrar.address,
-        BASE32_PREFIX,
-      ),
+      address: usernameRegistrar.toString('hex'),
+      base32: Lisk.cryptography.getBase32AddressFromAddress(usernameRegistrar, BASE32_PREFIX),
       photo: account.persona.photo,
       username: account.persona.username,
     };

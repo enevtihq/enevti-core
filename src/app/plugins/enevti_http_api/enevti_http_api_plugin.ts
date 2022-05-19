@@ -80,9 +80,13 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/feeds', controller.getFeeds(this._channel));
     this._app.get('/feeds/available', controller.getAvailableFeeds(this._channel));
     this._app.get('/registrar/name/:name', controller.isNameExists(this._channel));
+    this._app.get('/registrar/name/:name/id', controller.nameToCollection(this._channel));
     this._app.get('/registrar/symbol/:symbol', controller.isSymbolExists(this._channel));
+    this._app.get('/registrar/symbol/:symbol/id', controller.symbolToCollection(this._channel));
     this._app.get('/registrar/serial/:serial', controller.isSerialExists(this._channel));
+    this._app.get('/registrar/serial/:serial/id', controller.serialToNFT(this._channel));
     this._app.get('/registrar/username/:username', controller.isUsernameExists(this._channel));
+    this._app.get('/registrar/username/:username/id', controller.usernameToAddress(this._channel));
     this._app.post('/transaction/fee', controller.getTransactionFee(this._channel));
     this._app.post(
       '/transaction/dynamicBaseFee',
