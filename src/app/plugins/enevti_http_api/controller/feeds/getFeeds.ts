@@ -6,6 +6,7 @@ import addressBufferToPersona from '../../utils/transformer/addressBufferToPerso
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import { invokeGetAllCollection } from '../../utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
+import chainDateToUI from '../../utils/transformer/chainDateToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -47,6 +48,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
             owner,
             stake,
             delegate: !!ownerAccount.dpos.delegate.username,
+            minted: item.stat.minted,
+            total: item.minting.total.length,
+            expire: chainDateToUI(item.minting.expire),
             nft,
           };
         },

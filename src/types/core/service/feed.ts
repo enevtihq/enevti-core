@@ -14,6 +14,9 @@ export interface FeedItem {
   owner: Persona;
   stake: string;
   delegate: boolean;
+  total: number;
+  minted: number;
+  expire: number;
   nft: NFTBase[];
 }
 
