@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { NFT, NFTBase } from '../../../../../types/core/chain/nft';
 import { invokeGetCollection } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../../enevti_http_api/utils/transformer/idBufferToNFT';
+import { minimizeNFT } from '../../../enevti_http_api/utils/transformer/minimizeToBase';
 
 export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTMinted', async data => {
@@ -15,19 +16,7 @@ export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
           async (item): Promise<NFTBase & { owner: NFT['owner'] }> => {
             const nft = await idBufferToNFT(channel, item);
             if (!nft) throw new Error('undefined nft while iterating collection.minted');
-            const {
-              collectionId,
-              redeem,
-              comment,
-              description,
-              createdOn,
-              creator,
-              networkIdentifier,
-              royalty,
-              activity,
-              ...nftBase
-            } = nft;
-            return nftBase;
+            return { ...minimizeNFT(nft), owner: nft.owner };
           },
         ),
       );

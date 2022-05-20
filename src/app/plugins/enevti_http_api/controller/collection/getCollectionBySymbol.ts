@@ -6,7 +6,6 @@ import {
   invokeGetCollection,
   invokeGetCollectionIdFromSymbol,
 } from '../../utils/hook/redeemable_nft_module';
-import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -22,12 +21,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       return;
     }
 
-    const activity = await idBufferToActivityCollection(channel, collection.id);
-    const restCollection = await collectionChainToUI(channel, collection);
+    const restCollection = await collectionChainToUI(channel, collection, false);
     const response: Collection = {
       ...collection,
       ...restCollection,
-      activity,
+      activity: [],
     };
 
     res.status(200).json({ data: response, meta: req.params });

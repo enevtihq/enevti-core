@@ -14,7 +14,7 @@ export const accessAllNFT = async (
   }
   const allNFT = codec.decode<AllNFT>(allRedeemableNFTSchema, allNFTBuffer);
   const l = limit ?? allNFT.items.length - offset;
-  allNFT.items.slice(offset, l);
+  allNFT.items.slice(offset, offset + l);
   return allNFT;
 };
 
@@ -29,7 +29,7 @@ export const getAllNFT = async (
   }
   const allNFT = codec.decode<AllNFT>(allRedeemableNFTSchema, allNFTBuffer);
   const l = limit ?? allNFT.items.length - offset;
-  allNFT.items.slice(offset, l);
+  allNFT.items.slice(offset, offset + l);
   return allNFT;
 };
 

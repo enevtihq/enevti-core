@@ -62,23 +62,35 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/activity/nft/:id', controller.getActivityNFT(this._channel));
     this._app.get('/collection', controller.getAllCollection(this._channel));
     this._app.get('/collection/id/:id', controller.getCollectionById(this._channel));
+    this._app.get('/collection/id/:id/minted', controller.getCollectionMintedById(this._channel));
+    this._app.get(
+      '/collection/id/:id/activity',
+      controller.getCollectionActivityById(this._channel),
+    );
     this._app.get('/collection/n/:name', controller.getCollectionByName(this._channel));
     this._app.get('/collection/s/:symbol', controller.getCollectionBySymbol(this._channel));
     this._app.get('/nft', controller.getAllNFT(this._channel));
     this._app.get('/nft/id/:id', controller.getNFTById(this._channel));
+    this._app.get('/nft/id/:id/activity', controller.getNFTActivityById(this._channel));
     this._app.get('/nft/s/:serial', controller.getNFTBySerial(this._channel));
     this._app.get('/nft/template', controller.getAllNFTTemplate(this._channel));
     this._app.get('/nft/template/genesis', controller.getAllNFTTemplateGenesis(this._channel));
     this._app.get('/nft/template/:id', controller.getNFTTemplateById(this._channel));
     this._app.get('/profile/:address', controller.getProfile(this._channel));
+    this._app.get('/profile/:address/owned', controller.getProfileOwned(this._channel));
+    this._app.get('/profile/:address/collection', controller.getProfileCollection(this._channel));
     this._app.get('/profile/:address/nonce', controller.getProfileNonce(this._channel));
     this._app.get('/profile/:address/pending', controller.getProfilePendingDelivery(this._channel));
     this._app.get('/persona/a/:address', controller.getPersonaByAddress(this._channel));
     this._app.get('/persona/u/:username', controller.getPersonaByUsername(this._channel));
     this._app.get('/stake/a/:address', controller.getStakePoolByAddress(this._channel));
+    this._app.get(
+      '/stake/a/:address/staker',
+      controller.getStakePoolStakerByAddress(this._channel),
+    );
     this._app.get('/stake/u/:username', controller.getStakePoolByUsername(this._channel));
-    this._app.get('/feeds', controller.getFeeds(this._channel));
-    this._app.get('/feeds/available', controller.getAvailableFeeds(this._channel));
+    this._app.get('/feeds/unavailable', controller.getUnavailableFeeds(this._channel));
+    this._app.get('/feeds/available', controller.getFeeds(this._channel));
     this._app.get('/registrar/name/:name', controller.isNameExists(this._channel));
     this._app.get('/registrar/name/:name/id', controller.nameToCollection(this._channel));
     this._app.get('/registrar/symbol/:symbol', controller.isSymbolExists(this._channel));

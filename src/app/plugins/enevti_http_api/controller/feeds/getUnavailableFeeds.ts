@@ -4,24 +4,25 @@ import { NFT } from '../../../../../types/core/chain/nft';
 import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
-import { invokeGetAvailableCollection } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetUnavailableCollection } from '../../utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { offset, limit, version } = req.query as Record<string, string>;
-    const availableCollections = await invokeGetAvailableCollection(
+    const unavailableCollections = await invokeGetUnavailableCollection(
       channel,
       offset ? parseInt(offset, 10) : undefined,
       limit ? parseInt(limit, 10) : undefined,
       version ? parseInt(version, 10) : undefined,
     );
 
-    const availableFeeds: { offset: number; data: Feeds } = {
-      offset: availableCollections.offset,
+    const unavailableFeeds: { checkpoint: number; data: Feeds; version: number } = {
+      checkpoint: unavailableCollections.checkpoint,
+      version: unavailableCollections.version,
       data: await Promise.all(
-        availableCollections.data.map(
+        unavailableCollections.data.map(
           async (item): Promise<FeedItem> => {
             const owner = await addressBufferToPersona(channel, item.creator);
             const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
@@ -69,7 +70,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     };
 
-    res.status(200).json({ data: availableFeeds, meta: req.query });
+    res.status(200).json({ data: unavailableFeeds, meta: req.query });
   } catch (err: unknown) {
     res.status(409).json({ data: (err as string).toString(), meta: req.query });
   }

@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAllNFT } from '../../utils/hook/redeemable_nft_module';
-import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
@@ -13,12 +12,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const response: NFT[] = await Promise.all(
       nfts.map(
         async (item): Promise<NFT> => {
-          const activity = await idBufferToActivityNFT(channel, item.id);
           const restNFT = await nftChainToUI(channel, item);
           return {
             ...item,
             ...restNFT,
-            activity,
+            activity: [],
           };
         },
       ),

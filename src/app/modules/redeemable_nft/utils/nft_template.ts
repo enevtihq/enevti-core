@@ -21,7 +21,7 @@ export const accessAllNFTTemplateGenesis = async (
     registeredTemplateBuffer,
   );
   const l = limit ?? allNftTemplate.items.length - offset;
-  allNftTemplate.items.slice(offset, l);
+  allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
 
@@ -39,7 +39,7 @@ export const getAllNFTTemplateGenesis = async (
     registeredTemplateBuffer,
   );
   const l = limit ?? allNftTemplate.items.length - offset;
-  allNftTemplate.items.slice(offset, l);
+  allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
 
@@ -67,7 +67,7 @@ export const accessAllNFTTemplate = async (
     registeredTemplateBuffer,
   );
   const l = limit ?? allNftTemplate.items.length - offset;
-  allNftTemplate.items.slice(offset, l);
+  allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
 
@@ -85,7 +85,7 @@ export const getAllNFTTemplate = async (
     registeredTemplateBuffer,
   );
   const l = limit ?? allNftTemplate.items.length - offset;
-  allNftTemplate.items.slice(offset, l);
+  allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
 

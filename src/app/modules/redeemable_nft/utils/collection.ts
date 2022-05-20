@@ -1,6 +1,14 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { allCollectionSchema, collectionSchema } from '../schemas/chain/collection';
-import { CHAIN_STATE_ALL_COLLECTION, CHAIN_STATE_COLLECTION } from '../constants/codec';
+import {
+  allCollectionSchema,
+  allUnavailableCollectionSchema,
+  collectionSchema,
+} from '../schemas/chain/collection';
+import {
+  CHAIN_STATE_ALL_COLLECTION,
+  CHAIN_STATE_ALL_UNAVAILABLE_COLLECTION,
+  CHAIN_STATE_COLLECTION,
+} from '../constants/codec';
 import { AllCollection, CollectionAsset } from '../../../../types/core/chain/collection';
 
 export const accessAllCollection = async (
@@ -20,10 +28,10 @@ export const accessAllCollection = async (
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
-  const v = version ?? allCollection.items.length;
+  const v = version === undefined || version === 0 ? allCollection.items.length : version;
   const o = offset + (allCollection.items.length - v);
-  const l = limit ?? allCollection.items.length - offset;
-  allCollection.items.slice(o, l);
+  const l = limit ?? allCollection.items.length - o;
+  allCollection.items.slice(o, o + l);
   return { allCollection, version: v };
 };
 
@@ -41,10 +49,10 @@ export const getAllCollection = async (
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
-  const v = version ?? allCollection.items.length;
+  const v = version === undefined || version === 0 ? allCollection.items.length : version;
   const o = offset + (allCollection.items.length - v);
-  const l = limit ?? allCollection.items.length - offset;
-  allCollection.items.slice(o, l);
+  const l = limit ?? allCollection.items.length - o;
+  allCollection.items.slice(o, o + l);
   return allCollection;
 };
 
@@ -52,6 +60,68 @@ export const setAllCollection = async (stateStore: StateStore, allCollection: Al
   await stateStore.chain.set(
     CHAIN_STATE_ALL_COLLECTION,
     codec.encode(allCollectionSchema, allCollection),
+  );
+};
+
+export const accessAllUnavailableCollection = async (
+  dataAccess: BaseModuleDataAccess,
+  offset = 0,
+  limit?: number,
+  version?: number,
+): Promise<{ allUnavailableCollection: AllCollection; version: number }> => {
+  const collectionBuffer = await dataAccess.getChainState(CHAIN_STATE_ALL_UNAVAILABLE_COLLECTION);
+  if (!collectionBuffer) {
+    return {
+      allUnavailableCollection: {
+        items: [],
+      },
+      version: 0,
+    };
+  }
+
+  const allUnavailableCollection = codec.decode<AllCollection>(
+    allUnavailableCollectionSchema,
+    collectionBuffer,
+  );
+  const v =
+    version === undefined || version === 0 ? allUnavailableCollection.items.length : version;
+  const o = offset + (allUnavailableCollection.items.length - v);
+  const l = limit ?? allUnavailableCollection.items.length - o;
+  allUnavailableCollection.items.slice(o, o + l);
+  return { allUnavailableCollection, version: v };
+};
+
+export const getAllUnavailableCollection = async (
+  stateStore: StateStore,
+  offset = 0,
+  limit?: number,
+  version?: number,
+): Promise<AllCollection> => {
+  const collectionBuffer = await stateStore.chain.get(CHAIN_STATE_ALL_UNAVAILABLE_COLLECTION);
+  if (!collectionBuffer) {
+    return {
+      items: [],
+    };
+  }
+
+  const allCollection = codec.decode<AllCollection>(
+    allUnavailableCollectionSchema,
+    collectionBuffer,
+  );
+  const v = version === undefined || version === 0 ? allCollection.items.length : version;
+  const o = offset + (allCollection.items.length - v);
+  const l = limit ?? allCollection.items.length - o;
+  allCollection.items.slice(o, o + l);
+  return allCollection;
+};
+
+export const setAllUnavailableCollection = async (
+  stateStore: StateStore,
+  allCollection: AllCollection,
+) => {
+  await stateStore.chain.set(
+    CHAIN_STATE_ALL_UNAVAILABLE_COLLECTION,
+    codec.encode(allUnavailableCollectionSchema, allCollection),
   );
 };
 

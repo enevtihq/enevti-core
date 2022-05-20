@@ -8,6 +8,7 @@ import idBufferToNFT from './idBufferToNFT';
 export default async function collectionChainToUI(
   channel: BaseChannel,
   collection: CollectionAsset,
+  withMinted = true,
 ) {
   const social: Collection['social'] = {
     twitter: {
@@ -15,15 +16,17 @@ export default async function collectionChainToUI(
       stat: 0,
     },
   };
-  const minted: Collection['minted'] = await Promise.all(
-    collection.minted.map(
-      async (item): Promise<NFT> => {
-        const nft = await idBufferToNFT(channel, item);
-        if (!nft) throw new Error('NFT not found while processing minted');
-        return nft;
-      },
-    ),
-  );
+  const minted: Collection['minted'] = withMinted
+    ? await Promise.all(
+        collection.minted.map(
+          async (item): Promise<NFT> => {
+            const nft = await idBufferToNFT(channel, item);
+            if (!nft) throw new Error('NFT not found while processing minted');
+            return nft;
+          },
+        ),
+      )
+    : [];
   const creator: Collection['creator'] = await addressBufferToPersona(channel, collection.creator);
   const stat: Collection['stat'] = {
     ...collection.stat,

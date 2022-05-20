@@ -4,21 +4,27 @@ import getAllCollection from './collection/getAllCollection';
 import getCollectionById from './collection/getCollectionById';
 import getCollectionByName from './collection/getCollectionByName';
 import getCollectionBySymbol from './collection/getCollectionBySymbol';
+import getCollectionActivityById from './collection/getCollectionActivityById';
+import getCollectionMintedById from './collection/getCollectionMintedById';
 import getAllNFT from './nft/getAllNFT';
 import getNFTById from './nft/getNFTById';
 import getNFTBySerial from './nft/getNFTBySerial';
+import getNFTActivityById from './nft/getNFTActivityById';
 import getNFTTemplateById from './nft/getNFTTemplateById';
 import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './nft/getAllNFTTemplate';
 import getProfile from './profile/getProfile';
 import getProfileNonce from './profile/getProfileNonce';
 import getProfilePendingDelivery from './profile/getProfilePendingDelivery';
+import getProfileCollection from './profile/getProfileCollection';
+import getProfileOwned from './profile/getProfileOwned';
 import getPersonaByAddress from './persona/getPersonaByAddress';
 import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
 import getStakePoolByUsername from './stake/getStakePoolByUsername';
+import getStakePoolStakerByAddress from './stake/getStakePoolStakerByAddress';
 import getFeeds from './feeds/getFeeds';
-import getAvailableFeeds from './feeds/getAvailableFeeds';
+import getUnavailableFeeds from './feeds/getUnavailableFeeds';
 import isNameExists from './registrar/isNameExists';
 import isSymbolExists from './registrar/isSymbolExists';
 import isSerialExists from './registrar/isSerialExists';
@@ -39,21 +45,27 @@ export default {
   getCollectionById,
   getCollectionByName,
   getCollectionBySymbol,
+  getCollectionActivityById,
+  getCollectionMintedById,
   getAllNFT,
   getNFTById,
   getNFTBySerial,
+  getNFTActivityById,
   getNFTTemplateById,
   getAllNFTTemplateGenesis,
   getAllNFTTemplate,
   getProfile,
   getProfileNonce,
   getProfilePendingDelivery,
+  getProfileCollection,
+  getProfileOwned,
   getPersonaByAddress,
   getPersonaByUsername,
   getStakePoolByAddress,
   getStakePoolByUsername,
+  getStakePoolStakerByAddress,
   getFeeds,
-  getAvailableFeeds,
+  getUnavailableFeeds,
   isNameExists,
   isSymbolExists,
   isSerialExists,

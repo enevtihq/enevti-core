@@ -18,9 +18,14 @@ import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
 import {
   accessAllCollection,
+  accessAllUnavailableCollection,
   accessCollectionById,
+  getAllCollection,
+  getAllUnavailableCollection,
   getCollectionById,
   isMintingAvailable,
+  setAllCollection,
+  setAllUnavailableCollection,
 } from './utils/collection';
 import {
   accessAllNFTTemplate,
@@ -73,7 +78,7 @@ export class RedeemableNftModule extends BaseModule {
     },
     getAllCollection: async (
       params,
-    ): Promise<{ offset: number; version: number; data: CollectionAsset[] }> => {
+    ): Promise<{ checkpoint: number; version: number; data: CollectionAsset[] }> => {
       const { offset, limit, version } = params as {
         limit?: number;
         offset?: number;
@@ -89,36 +94,38 @@ export class RedeemableNftModule extends BaseModule {
         ),
       );
       return {
-        offset: Number(offset ?? 0) + Number(limit ?? 0),
+        checkpoint: Number(offset ?? 0) + Number(limit ?? 0),
         version: collections.version,
         data,
       };
     },
-    getAvailableCollection: async (
+    getAllUnavailableCollection: async (
       params,
-    ): Promise<{ offset: number; version: number; data: CollectionAsset[] }> => {
+    ): Promise<{ checkpoint: number; version: number; data: CollectionAsset[] }> => {
       const { offset, limit, version } = params as {
         limit?: number;
         offset?: number;
         version?: number;
       };
-      const collections = await accessAllCollection(this._dataAccess, offset, undefined, version);
-      const availableCollection: CollectionAsset[] = [];
-      let index = 0;
-      for (const item of collections.allCollection.items) {
-        index += 1;
-        const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
-        if (collection) {
-          const lastBlockHeaders = await this._dataAccess.getLastBlockHeader();
-          if (isMintingAvailable(collection, lastBlockHeaders.timestamp)) {
-            availableCollection.push(collection);
-            if (availableCollection.length === limit) {
-              break;
-            }
-          }
-        }
-      }
-      return { offset: index, version: availableCollection.length, data: availableCollection };
+      const collections = await accessAllUnavailableCollection(
+        this._dataAccess,
+        offset,
+        limit,
+        version,
+      );
+      const data = await Promise.all(
+        collections.allUnavailableCollection.items.map(
+          async (item): Promise<CollectionAsset> => {
+            const collection = await accessCollectionById(this._dataAccess, item.toString('hex'));
+            return collection ?? ((collectionSchema.default as unknown) as CollectionAsset);
+          },
+        ),
+      );
+      return {
+        checkpoint: Number(offset ?? 0) + Number(limit ?? 0),
+        version: collections.version,
+        data,
+      };
     },
     getCollection: async (params): Promise<CollectionAsset | undefined> => {
       const { id } = params as Record<string, string>;
@@ -256,6 +263,26 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
+    const allCollection = await getAllCollection(_input.stateStore);
+    const allCollectionAsset: CollectionAsset[] = await Promise.all(
+      allCollection.items.map(async id => {
+        const collection = await getCollectionById(_input.stateStore, id.toString('hex'));
+        if (!collection) throw new Error('undefined collection while iterating allCollection');
+        return collection;
+      }),
+    );
+    const allUnavailableCollection = await getAllUnavailableCollection(_input.stateStore);
+    allCollectionAsset.forEach(collection => {
+      if (!isMintingAvailable(collection, _input.block.header.timestamp)) {
+        const index = allCollection.items.findIndex(t => Buffer.compare(t, collection.id) === 0);
+        if (index === -1) throw new Error('findindex failed in afterblock apply');
+        allCollection.items.splice(index, 1);
+        allUnavailableCollection.items.unshift(collection.id);
+      }
+    });
+    await setAllCollection(_input.stateStore, allCollection);
+    await setAllUnavailableCollection(_input.stateStore, allUnavailableCollection);
+
     const client = await this.getClient();
     const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
       header: BlockHeader;

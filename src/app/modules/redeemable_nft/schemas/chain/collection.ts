@@ -17,6 +17,21 @@ export const allCollectionSchema: SchemaWithDefault = {
   },
 };
 
+export const allUnavailableCollectionSchema: SchemaWithDefault = {
+  $id: 'enevti/redeemableNft/allUnavailableCollection',
+  type: 'object',
+  required: ['items'],
+  properties: {
+    items: {
+      type: 'array',
+      fieldNumber: 1,
+      items: {
+        dataType: 'bytes',
+      },
+    },
+  },
+};
+
 export const collectionSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/collection',
   type: 'object',
