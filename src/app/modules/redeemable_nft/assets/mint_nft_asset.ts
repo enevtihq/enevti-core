@@ -49,9 +49,12 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
       throw new Error("NFT Collection doesn't exist");
     }
 
-    const creatorAddress = collection.creator;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
-    const creatorAccount = await stateStore.account.get<RedeemableNFTAccountProps>(creatorAddress);
+    const creatorAddress = collection.creator;
+    const creatorAccount =
+      creatorAddress.compare(senderAddress) === 0
+        ? senderAccount
+        : await stateStore.account.get<RedeemableNFTAccountProps>(creatorAddress);
     const timestamp = getBlockTimestamp(stateStore);
     const rng = seedrandom(stateStore.chain.lastBlockHeaders[0].id.toString('hex'));
 

@@ -13,7 +13,7 @@
     "mode": "ipc"
   },
   "genesisConfig": {
-    "blockTime": 10,
+    "blockTime": 5,
     "communityIdentifier": "sdk",
     "maxPayloadLength": 15360,
     "bftThreshold": 68,
@@ -11493,8 +11493,8 @@
     "port": 5000
   },
   "transactionPool": {
-    "maxTransactions": 4096,
-    "maxTransactionsPerAccount": 64,
+    "maxTransactions": 2048,
+    "maxTransactionsPerAccount": 32,
     "transactionExpiryTime": 10800000,
     "minEntranceFeePriority": "0",
     "minReplacementFeeDifference": "10"
