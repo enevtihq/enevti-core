@@ -1,21 +1,34 @@
 /* eslint-disable class-methods-use-this */
 
+import { BlockHeader } from '@liskhq/lisk-chain';
 import {
   AfterBlockApplyContext,
   AfterGenesisBlockApplyContext,
   apiClient,
   BaseModule,
   BeforeBlockApplyContext,
-  TransactionApplyContext,
-  Transaction,
   cryptography,
+  Transaction,
+  TransactionApplyContext,
 } from 'lisk-sdk';
-import { BlockHeader } from '@liskhq/lisk-chain';
+import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
+import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
+import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
+import { NFTAsset } from '../../../types/core/chain/nft';
+import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
+import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
+import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
 import { redeemableNftAccountSchema } from './schemas/account';
+import { collectionSchema } from './schemas/chain/collection';
+import { nftTemplateSchema } from './schemas/chain/nft_template';
+import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
+import { accessActivityCollection, accessActivityNFT } from './utils/activity';
 import {
   accessAllCollection,
   accessAllUnavailableCollection,
@@ -39,18 +52,6 @@ import {
   accessRegisteredSerial,
   accessRegisteredSymbol,
 } from './utils/registrar';
-import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
-import { nftTemplateSchema } from './schemas/chain/nft_template';
-import { NFTAsset } from '../../../types/core/chain/nft';
-import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
-import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
-import { collectionSchema } from './schemas/chain/collection';
-import { accessActivityCollection, accessActivityNFT } from './utils/activity';
-import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
-import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
-import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
-import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
-import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { addInObject, asyncForEach } from './utils/transaction';
 
 export class RedeemableNftModule extends BaseModule {
@@ -228,6 +229,7 @@ export class RedeemableNftModule extends BaseModule {
     new CreateOnekindNftAsset(),
     new MintNftAsset(),
     new DeliverSecretAsset(),
+    new MintNftTypeQrAsset(),
   ];
   public events = [
     'newCollection',

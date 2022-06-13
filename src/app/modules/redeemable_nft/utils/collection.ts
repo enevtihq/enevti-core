@@ -158,7 +158,9 @@ export const setCollectionById = async (
   );
 };
 
-export const isMintingAvailable = (collection: CollectionAsset, now: number) =>
-  (collection.minting.expire === 0 && collection.minting.available.length > 0) ||
-  collection.minting.expire > now ||
-  collection.minting.available.length > 0;
+export function isMintingAvailable(collection: CollectionAsset, now: number) {
+  return (
+    (collection.minting.expire === 0 && collection.minting.available.length > 0) ||
+    (collection.minting.expire > now && collection.minting.available.length > 0)
+  );
+}

@@ -1,19 +1,22 @@
-import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
 import * as seedrandom from 'seedrandom';
-import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { MintNFTProps } from '../../../../types/core/asset/redeemable_nft/mint_nft_asset';
-import { getCollectionById, isMintingAvailable, setCollectionById } from '../utils/collection';
-import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
-import { NFTTYPE } from '../constants/nft_type';
-import { getNFTById, setNFTById } from '../utils/redeemable_nft';
+import {
+  MintNFTByQR,
+  MintNFTByQRProps,
+} from '../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
 import {
   CollectionActivityChainItems,
   CollectionAsset,
 } from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
+import { NFTTYPE } from '../constants/nft_type';
+import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asset';
 import { addActivityCollection, addActivityNFT } from '../utils/activity';
+import { getCollectionById, isMintingAvailable, setCollectionById } from '../utils/collection';
+import { getNFTById, setNFTById } from '../utils/redeemable_nft';
+import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);
@@ -23,16 +26,19 @@ function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, bough
   collection.minted.unshift(item);
 }
 
-export class MintNftAsset extends BaseAsset<MintNFTProps> {
-  public name = 'mintNft';
-  public id = 1;
+export class MintNftTypeQrAsset extends BaseAsset {
+  public name = 'mintNftTypeQr';
+  public id = 3;
 
   // Define schema for asset
-  public schema = mintNftAssetSchema;
+  public schema = mintNftTypeQrAssetSchema;
 
-  public validate({ asset }: ValidateAssetContext<MintNFTProps>): void {
-    if (asset.quantity <= 0) {
-      throw new Error(`asset.quantity must be greater than 0`);
+  public validate({ asset }: ValidateAssetContext<MintNFTByQRProps>): void {
+    if (asset.payload.length === 0) {
+      throw new Error(`asset.payload cannot be empty`);
+    }
+    if (asset.signature.length === 0) {
+      throw new Error(`asset.signature cannot be empty`);
     }
   }
 
@@ -42,15 +48,31 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
     transaction,
     stateStore,
     reducerHandler,
-  }: ApplyAssetContext<MintNFTProps>): Promise<void> {
+  }: ApplyAssetContext<MintNFTByQRProps>): Promise<void> {
     const { senderAddress } = transaction;
-    const collection = await getCollectionById(stateStore, asset.id);
+    const { id, quantity, nonce, publicKey } = JSON.parse(asset.payload) as MintNFTByQR;
+
+    const collection = await getCollectionById(stateStore, id);
     if (!collection) {
       throw new Error("NFT Collection doesn't exist");
     }
 
-    if (!['', 'normal'].includes(collection.mintingType)) {
+    if (!['qr'].includes(collection.mintingType)) {
       throw new Error(`invalid mintingType on specified collection`);
+    }
+
+    if (collection.minted.length !== nonce) {
+      throw new Error(`invalid nonce on asset payload`);
+    }
+
+    if (
+      !cryptography.verifyData(
+        cryptography.stringToBuffer(asset.payload),
+        Buffer.from(asset.signature, 'hex'),
+        Buffer.from(publicKey, 'hex'),
+      )
+    ) {
+      throw new Error(`invalid signature, make sure you get valid signature from creator`);
     }
 
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
@@ -66,12 +88,12 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
       throw new Error('minting unavailable');
     }
 
-    if (collection.minting.available.length < asset.quantity * collection.packSize) {
+    if (collection.minting.available.length < quantity * collection.packSize) {
       throw new Error('quantity unavailable');
     }
 
     const boughtItem: Buffer[] = [];
-    for (let i = 0; i < asset.quantity; i += 1) {
+    for (let i = 0; i < quantity; i += 1) {
       switch (collection.collectionType) {
         case NFTTYPE.ONEKIND:
         case NFTTYPE.UPGRADABLE:
