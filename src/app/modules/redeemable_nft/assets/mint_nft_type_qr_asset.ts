@@ -1,22 +1,22 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
 import * as seedrandom from 'seedrandom';
+import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asset';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import {
   MintNFTByQR,
   MintNFTByQRProps,
 } from '../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
+import { getCollectionById, isMintingAvailable, setCollectionById } from '../utils/collection';
+import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
+import { NFTTYPE } from '../constants/nft_type';
+import { getNFTById, setNFTById } from '../utils/redeemable_nft';
 import {
   CollectionActivityChainItems,
   CollectionAsset,
 } from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
-import { NFTTYPE } from '../constants/nft_type';
-import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asset';
 import { addActivityCollection, addActivityNFT } from '../utils/activity';
-import { getCollectionById, isMintingAvailable, setCollectionById } from '../utils/collection';
-import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { asyncForEach, getBlockTimestamp } from '../utils/transaction';
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);
@@ -50,7 +50,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
     reducerHandler,
   }: ApplyAssetContext<MintNFTByQRProps>): Promise<void> {
     const { senderAddress } = transaction;
-    const { id, quantity, nonce, publicKey } = JSON.parse(asset.payload) as MintNFTByQR;
+    const payloadHex = Buffer.from(asset.payload, 'hex').toString();
+    const { id, quantity, nonce, publicKey } = JSON.parse(payloadHex) as MintNFTByQR;
 
     const collection = await getCollectionById(stateStore, id);
     if (!collection) {
@@ -61,7 +62,7 @@ export class MintNftTypeQrAsset extends BaseAsset {
       throw new Error(`invalid mintingType on specified collection`);
     }
 
-    if (collection.minted.length !== nonce) {
+    if (collection.stat.minted !== nonce) {
       throw new Error(`invalid nonce on asset payload`);
     }
 
