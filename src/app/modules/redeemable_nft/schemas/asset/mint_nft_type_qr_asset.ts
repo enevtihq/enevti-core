@@ -2,9 +2,9 @@ export const mintNftTypeQrAssetSchema = {
   $id: 'enevti/redeemableNft/mintNftTypeQrAsset',
   title: 'MintNftTypeQrAsset transaction asset for redeemableNft module',
   type: 'object',
-  required: ['payload', 'signature'],
+  required: ['body', 'signature'],
   properties: {
-    payload: {
+    body: {
       dataType: 'string',
       fieldNumber: 1,
     },

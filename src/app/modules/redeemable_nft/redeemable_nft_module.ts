@@ -344,8 +344,8 @@ export class RedeemableNftModule extends BaseModule {
 
       if (payload.moduleID === 1000 && payload.assetID === 3) {
         const mintNFTAsset = (payload.asset as unknown) as MintNFTByQRProps;
-        const payloadHex = Buffer.from(mintNFTAsset.payload, 'hex').toString();
-        const { id, quantity } = JSON.parse(payloadHex) as MintNFTByQR;
+        const plainPayload = Buffer.from(mintNFTAsset.body, 'base64').toString();
+        const { id, quantity } = JSON.parse(plainPayload) as MintNFTByQR;
 
         const collection = await getCollectionById(_input.stateStore, id);
         if (!collection) throw new Error('Collection not found in AfterBlockApply hook');

@@ -34,8 +34,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
   public schema = mintNftTypeQrAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<MintNFTByQRProps>): void {
-    if (asset.payload.length === 0) {
-      throw new Error(`asset.payload cannot be empty`);
+    if (asset.body.length === 0) {
+      throw new Error(`asset.body cannot be empty`);
     }
     if (asset.signature.length === 0) {
       throw new Error(`asset.signature cannot be empty`);
@@ -50,7 +50,7 @@ export class MintNftTypeQrAsset extends BaseAsset {
     reducerHandler,
   }: ApplyAssetContext<MintNFTByQRProps>): Promise<void> {
     const { senderAddress } = transaction;
-    const plainPayload = Buffer.from(asset.payload, 'base64').toString();
+    const plainPayload = Buffer.from(asset.body, 'base64').toString();
     const { id, quantity, nonce, publicKey } = JSON.parse(plainPayload) as MintNFTByQR;
 
     const collection = await getCollectionById(stateStore, id);
@@ -68,7 +68,7 @@ export class MintNftTypeQrAsset extends BaseAsset {
 
     if (
       !cryptography.verifyData(
-        cryptography.stringToBuffer(asset.payload),
+        cryptography.stringToBuffer(asset.body),
         Buffer.from(asset.signature, 'hex'),
         Buffer.from(publicKey, 'hex'),
       )
