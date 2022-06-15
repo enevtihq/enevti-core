@@ -50,8 +50,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
     reducerHandler,
   }: ApplyAssetContext<MintNFTByQRProps>): Promise<void> {
     const { senderAddress } = transaction;
-    const payloadHex = Buffer.from(asset.payload, 'hex').toString();
-    const { id, quantity, nonce, publicKey } = JSON.parse(payloadHex) as MintNFTByQR;
+    const plainPayload = Buffer.from(asset.payload, 'base64').toString();
+    const { id, quantity, nonce, publicKey } = JSON.parse(plainPayload) as MintNFTByQR;
 
     const collection = await getCollectionById(stateStore, id);
     if (!collection) {

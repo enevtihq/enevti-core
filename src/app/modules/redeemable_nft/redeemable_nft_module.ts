@@ -14,6 +14,10 @@ import {
 import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import {
+  MintNFTByQR,
+  MintNFTByQRProps,
+} from '../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
 import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
 import { NFTAsset } from '../../../types/core/chain/nft';
@@ -336,6 +340,18 @@ export class RedeemableNftModule extends BaseModule {
         this._channel.publish('redeemableNft:secretDelivered', {
           nft: deliverSecretAsset.id,
         });
+      }
+
+      if (payload.moduleID === 1000 && payload.assetID === 3) {
+        const mintNFTAsset = (payload.asset as unknown) as MintNFTByQRProps;
+        const payloadHex = Buffer.from(mintNFTAsset.payload, 'hex').toString();
+        const { id, quantity } = JSON.parse(payloadHex) as MintNFTByQR;
+
+        const collection = await getCollectionById(_input.stateStore, id);
+        if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
+
+        collectionWithNewActivity.add(collection.id);
+        addInObject(totalNftMintedInCollection, collection.id, quantity);
       }
     }
 
