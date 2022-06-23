@@ -15,6 +15,7 @@ import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './nft/getAllNFTTemplate';
 import getProfile from './profile/getProfile';
 import getProfileNonce from './profile/getProfileNonce';
+import getProfileBalance from './profile/getProfileBalance';
 import getProfilePendingDelivery from './profile/getProfilePendingDelivery';
 import getProfileCollection from './profile/getProfileCollection';
 import getProfileOwned from './profile/getProfileOwned';
@@ -56,6 +57,7 @@ export default {
   getAllNFTTemplate,
   getProfile,
   getProfileNonce,
+  getProfileBalance,
   getProfilePendingDelivery,
   getProfileCollection,
   getProfileOwned,
