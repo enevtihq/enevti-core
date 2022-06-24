@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { WalletView } from '../../../../../types/core/service/wallet';
+import { WalletStaked } from '../../../../../types/core/service/wallet';
 
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
@@ -12,7 +12,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
-    const staked: WalletView['staked'] = await Promise.all(
+    const staked: WalletStaked[] = await Promise.all(
       account.dpos.sentVotes.map(async item => ({
         persona: await addressBufferToPersona(channel, item.delegateAddress),
         amount: item.amount.toString(),
