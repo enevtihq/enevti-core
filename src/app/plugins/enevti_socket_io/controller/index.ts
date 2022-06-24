@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
-import { onNewActivityCollection, onNewActivityNFT } from './activity';
+import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
 import { onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
 import {
@@ -38,6 +38,7 @@ export function createEnevtiSocket(channel: BaseChannel, io: Server | Socket) {
   // Activity Socket
   onNewActivityCollection(channel, io);
   onNewActivityNFT(channel, io);
+  onNewActivityProfile(channel, io);
 }
 
 export function registerAccountSocket(io: Server) {

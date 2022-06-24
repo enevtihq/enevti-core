@@ -8,6 +8,7 @@ import {
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
   cryptography,
+  StateStore,
 } from 'lisk-sdk';
 import { getBaseFee, getDynamicBaseFee, getDynamicBaseFeePerByte, getTotalFees } from './utils/fee';
 
@@ -25,18 +26,14 @@ export class DynamicBaseFeeModule extends BaseModule {
     },
   };
   public reducers = {
-    // Example below
-    // getBalance: async (
-    // 	params: Record<string, unknown>,
-    // 	stateStore: StateStore,
-    // ): Promise<bigint> => {
-    // 	const { address } = params;
-    // 	if (!Buffer.isBuffer(address)) {
-    // 		throw new Error('Address must be a buffer');
-    // 	}
-    // 	const account = await stateStore.account.getOrDefault<TokenAccount>(address);
-    // 	return account.token.balance;
-    // },
+    getBaseFee: async (
+      params: Record<string, unknown>,
+      _stateStore: StateStore,
+      // eslint-disable-next-line @typescript-eslint/require-await
+    ): Promise<bigint> => {
+      const { transaction } = params as Record<string, { moduleID: number; assetID: number }>;
+      return getBaseFee(this.config, transaction);
+    },
   };
   public name = 'dynamicBaseFee';
   public transactionAssets = [];

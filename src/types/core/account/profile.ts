@@ -1,8 +1,9 @@
-import { NFTBase } from '../chain/nft';
-import { CollectionBase } from '../chain/collection';
+import { NFT, NFTBase } from '../chain/nft';
+import { Collection, CollectionBase } from '../chain/collection';
 import { SocialProfile } from './social';
 import { CollectionIdAsset, NFTIdAsset } from '../chain/id';
-import { Persona } from './persona';
+import { Persona, PersonaAsset } from './persona';
+import { ActivityBase, ActivityChainBase } from '../chain/activity';
 
 export type ProfileView = Profile & { persona: Persona };
 
@@ -35,4 +36,33 @@ export type CreaFiAccountProps = {
   creatorFinance: {
     totalStake: bigint;
   };
+};
+
+export type ProfileActivityName =
+  | 'tokenSent'
+  | 'tokenReceived'
+  | 'registerUsername'
+  | 'addStake'
+  | 'selfStake'
+  | 'createNFT'
+  | 'mintNFT'
+  | 'NFTSale'
+  | 'deliverSecret';
+
+export type ProfileActivity = Omit<ActivityBase, 'name'> & {
+  name: ProfileActivityName;
+  from: Persona;
+  payload?: NFT | Collection | Record<string, unknown>;
+};
+
+export type ProfileActivityAsset = Buffer;
+
+export type ProfileActivityChainItems = Omit<ActivityChainBase, 'name'> & {
+  name: ProfileActivityName;
+  from: PersonaAsset;
+  payload: Buffer;
+};
+
+export type ProfileActivityChain = {
+  items: ProfileActivityChainItems[];
 };

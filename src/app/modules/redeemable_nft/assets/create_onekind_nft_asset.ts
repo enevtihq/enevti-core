@@ -19,7 +19,7 @@ import {
 } from '../../../../types/core/chain/collection';
 import { NFTIdAsset } from '../../../../types/core/chain/id';
 import { NFTAsset } from '../../../../types/core/chain/nft';
-import { addActivityCollection } from '../utils/activity';
+import { addActivityCollection, addActivityProfile } from '../utils/activity';
 import { getAllCollection, setAllCollection, setCollectionById } from '../utils/collection';
 import { getAllNFTTemplate } from '../utils/nft_template';
 import { getAllNFT, setAllNFT, setNFTById } from '../utils/redeemable_nft';
@@ -316,6 +316,19 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       },
     };
     await addActivityCollection(stateStore, collection.id.toString('hex'), activity);
+
+    await addActivityProfile(stateStore, senderAddress.toString('hex'), {
+      transaction: transaction.id,
+      name: ACTIVITY.PROFILE.CREATENFT,
+      date: BigInt(timestamp),
+      from: senderAddress,
+      to: Buffer.alloc(0),
+      payload: collection.id,
+      value: {
+        amount: BigInt(0),
+        currency: asset.price.currency,
+      },
+    });
 
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     senderAccount.redeemableNft.collection.unshift(collection.id);

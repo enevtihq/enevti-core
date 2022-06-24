@@ -11,7 +11,10 @@ import {
   Transaction,
   TransactionApplyContext,
 } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
+import {
+  ProfileActivityChain,
+  RedeemableNFTAccountProps,
+} from '../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
 import {
@@ -28,11 +31,18 @@ import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
+import { ACTIVITY } from './constants/activity';
+import { COIN_NAME } from './constants/chain';
 import { redeemableNftAccountSchema } from './schemas/account';
 import { collectionSchema } from './schemas/chain/collection';
 import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
-import { accessActivityCollection, accessActivityNFT } from './utils/activity';
+import {
+  accessActivityCollection,
+  accessActivityNFT,
+  accessActivityProfile,
+  addActivityProfile,
+} from './utils/activity';
 import {
   accessAllCollection,
   accessAllUnavailableCollection,
@@ -211,6 +221,11 @@ export class RedeemableNftModule extends BaseModule {
       const activity = await accessActivityCollection(this._dataAccess, id);
       return activity;
     },
+    getActivityProfile: async (params): Promise<ProfileActivityChain> => {
+      const { address } = params as Record<string, string>;
+      const activity = await accessActivityProfile(this._dataAccess, address);
+      return activity;
+    },
     isNameExists: async (params): Promise<boolean> => {
       const { name } = params as Record<string, string>;
       const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
@@ -245,6 +260,7 @@ export class RedeemableNftModule extends BaseModule {
     'newNFTMinted',
     'newActivityCollection',
     'newActivityNFT',
+    'newActivityProfile',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
@@ -305,6 +321,7 @@ export class RedeemableNftModule extends BaseModule {
 
     const accountWithNewCollection: Set<Buffer> = new Set<Buffer>();
     const accountWithNewPending: Set<Buffer> = new Set<Buffer>();
+    const accountWithNewActivity: Set<Buffer> = new Set<Buffer>();
     const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
     const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
     const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
@@ -314,20 +331,110 @@ export class RedeemableNftModule extends BaseModule {
     for (const payload of prevBlock.payload) {
       const senderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
 
+      // transferAsset
+      if (payload.moduleID === 2 && payload.assetID === 0) {
+        const transferAsset = (payload.asset as unknown) as {
+          amount: bigint;
+          recipientAddress: Buffer;
+        };
+
+        await addActivityProfile(_input.stateStore, senderAddress.toString('hex'), {
+          transaction: payload.id,
+          name: ACTIVITY.PROFILE.TOKENSENT,
+          date: BigInt(timestampBlock.header.timestamp),
+          from: senderAddress,
+          to: transferAsset.recipientAddress,
+          payload: Buffer.alloc(0),
+          value: {
+            amount: transferAsset.amount,
+            currency: COIN_NAME,
+          },
+        });
+        accountWithNewActivity.add(senderAddress);
+
+        await addActivityProfile(
+          _input.stateStore,
+          transferAsset.recipientAddress.toString('hex'),
+          {
+            transaction: payload.id,
+            name: ACTIVITY.PROFILE.TOKENRECEIVED,
+            date: BigInt(timestampBlock.header.timestamp),
+            from: senderAddress,
+            to: transferAsset.recipientAddress,
+            payload: Buffer.alloc(0),
+            value: {
+              amount: transferAsset.amount,
+              currency: COIN_NAME,
+            },
+          },
+        );
+        accountWithNewActivity.add(transferAsset.recipientAddress);
+      }
+
+      // registerTransactionAsset
+      if (payload.moduleID === 5 && payload.assetID === 0) {
+        const registerBaseFee = await _input.reducerHandler.invoke('dynamicBaseFee:getBaseFee', {
+          transaction: payload,
+        });
+        await addActivityProfile(_input.stateStore, senderAddress.toString('hex'), {
+          transaction: payload.id,
+          name: ACTIVITY.PROFILE.REGISTERUSERNAME,
+          date: BigInt(timestampBlock.header.timestamp),
+          from: senderAddress,
+          to: Buffer.alloc(0),
+          payload: Buffer.alloc(0),
+          value: {
+            amount: registerBaseFee as bigint,
+            currency: COIN_NAME,
+          },
+        });
+        accountWithNewActivity.add(senderAddress);
+      }
+
+      // voteTransactionAsset
+      if (payload.moduleID === 5 && payload.assetID === 1) {
+        const voteAsset = (payload.asset as unknown) as {
+          votes: { delegateAddress: Buffer; amount: bigint }[];
+        };
+        await asyncForEach(voteAsset.votes, async item => {
+          await addActivityProfile(_input.stateStore, senderAddress.toString('hex'), {
+            transaction: payload.id,
+            name:
+              Buffer.compare(senderAddress, item.delegateAddress) === 0
+                ? ACTIVITY.PROFILE.SELFSTAKE
+                : ACTIVITY.PROFILE.ADDSTAKE,
+            date: BigInt(timestampBlock.header.timestamp),
+            from: senderAddress,
+            to: item.delegateAddress,
+            payload: Buffer.alloc(0),
+            value: {
+              amount: item.amount,
+              currency: COIN_NAME,
+            },
+          });
+        });
+        accountWithNewActivity.add(senderAddress);
+      }
+
+      // createNftAsset
       if (payload.moduleID === 1000 && payload.assetID === 0) {
         accountWithNewCollection.add(senderAddress);
+        accountWithNewActivity.add(senderAddress);
         addInObject(totalCollectionCreatedByAddress, senderAddress, 1);
       }
 
+      // mintNftAsset
       if (payload.moduleID === 1000 && payload.assetID === 1) {
         const mintNFTAsset = (payload.asset as unknown) as MintNFTProps;
         const collection = await getCollectionById(_input.stateStore, mintNFTAsset.id);
         if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
         collectionWithNewActivity.add(collection.id);
+        accountWithNewActivity.add(senderAddress);
         addInObject(totalNftMintedInCollection, collection.id, mintNFTAsset.quantity);
       }
 
+      // deliverSecretAsset
       if (payload.moduleID === 1000 && payload.assetID === 2) {
         const deliverSecretAsset = (payload.asset as unknown) as DeliverSecretProps;
         const nft = await getNFTById(_input.stateStore, deliverSecretAsset.id);
@@ -336,12 +443,14 @@ export class RedeemableNftModule extends BaseModule {
         collectionWithNewActivity.add(nft.collectionId);
         nftWithNewActivity.add(nft.id);
         accountWithNewPending.add(nft.creator);
+        accountWithNewActivity.add(nft.creator);
 
         this._channel.publish('redeemableNft:secretDelivered', {
           nft: deliverSecretAsset.id,
         });
       }
 
+      // mintNftTypeQrAsset
       if (payload.moduleID === 1000 && payload.assetID === 3) {
         const mintNFTAsset = (payload.asset as unknown) as MintNFTByQRProps;
         const plainPayload = Buffer.from(mintNFTAsset.body, 'base64').toString();
@@ -351,6 +460,7 @@ export class RedeemableNftModule extends BaseModule {
         if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
         collectionWithNewActivity.add(collection.id);
+        accountWithNewActivity.add(senderAddress);
         addInObject(totalNftMintedInCollection, collection.id, quantity);
       }
     }
@@ -421,6 +531,15 @@ export class RedeemableNftModule extends BaseModule {
       nftWithNewActivity.forEach(nft =>
         this._channel.publish('redeemableNft:newActivityNFT', {
           nft: nft.toString('hex'),
+          timestamp: timestampBlock.header.timestamp,
+        }),
+      );
+    }
+
+    if (accountWithNewActivity.size > 0) {
+      accountWithNewActivity.forEach(address =>
+        this._channel.publish('redeemableNft:newActivityProfile', {
+          address: address.toString('hex'),
           timestamp: timestampBlock.header.timestamp,
         }),
       );

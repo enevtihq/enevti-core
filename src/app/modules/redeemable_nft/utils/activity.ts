@@ -1,6 +1,14 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { CHAIN_STATE_ACTIVITY_COLLECTION, CHAIN_STATE_ACTIVITY_NFT } from '../constants/codec';
-import { activityCollectionSchema, activityNFTSchema } from '../schemas/chain/activity';
+import {
+  CHAIN_STATE_ACTIVITY_COLLECTION,
+  CHAIN_STATE_ACTIVITY_NFT,
+  CHAIN_STATE_ACTIVITY_PROFILE,
+} from '../constants/codec';
+import {
+  activityCollectionSchema,
+  activityNFTSchema,
+  activityProfileSchema,
+} from '../schemas/chain/activity';
 import {
   CollectionActivityChain,
   CollectionActivityChainItems,
@@ -9,6 +17,10 @@ import {
   NFTActivityChain,
   NFTActivityChainItems,
 } from '../../../../types/core/chain/nft/NFTActivity';
+import {
+  ProfileActivityChain,
+  ProfileActivityChainItems,
+} from '../../../../types/core/account/profile';
 
 export const accessActivityNFT = async (
   dataAccess: BaseModuleDataAccess,
@@ -94,4 +106,49 @@ export const addActivityCollection = async (
   const activityChain = await getActivityCollection(stateStore, id);
   activityChain.items.unshift(activityItem);
   await setActivityCollection(stateStore, id, activityChain);
+};
+
+export const accessActivityProfile = async (
+  dataAccess: BaseModuleDataAccess,
+  address: string,
+): Promise<ProfileActivityChain> => {
+  const activityBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_ACTIVITY_PROFILE}:${address}`,
+  );
+  if (!activityBuffer) {
+    return { items: [] };
+  }
+  return codec.decode<ProfileActivityChain>(activityProfileSchema, activityBuffer);
+};
+
+export const getActivityProfile = async (
+  stateStore: StateStore,
+  address: string,
+): Promise<ProfileActivityChain> => {
+  const activityBuffer = await stateStore.chain.get(`${CHAIN_STATE_ACTIVITY_PROFILE}:${address}`);
+  if (!activityBuffer) {
+    return { items: [] };
+  }
+  return codec.decode<ProfileActivityChain>(activityProfileSchema, activityBuffer);
+};
+
+export const setActivityProfile = async (
+  stateStore: StateStore,
+  address: string,
+  activity: ProfileActivityChain,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_ACTIVITY_PROFILE}:${address}`,
+    codec.encode(activityProfileSchema, activity),
+  );
+};
+
+export const addActivityProfile = async (
+  stateStore: StateStore,
+  address: string,
+  activity: ProfileActivityChainItems,
+) => {
+  const activityChain = await getActivityProfile(stateStore, address);
+  activityChain.items.unshift(activity);
+  await setActivityProfile(stateStore, address, activityChain);
 };

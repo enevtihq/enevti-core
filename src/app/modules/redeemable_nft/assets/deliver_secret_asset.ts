@@ -6,7 +6,7 @@ import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActiv
 import { getBlockTimestamp } from '../utils/transaction';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
-import { addActivityCollection, addActivityNFT } from '../utils/activity';
+import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 
@@ -64,6 +64,19 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     await reducerHandler.invoke('token:credit', {
       address: senderAddress,
       amount: nft.price.amount,
+    });
+
+    await addActivityProfile(stateStore, senderAddress.toString('hex'), {
+      transaction: transaction.id,
+      name: ACTIVITY.PROFILE.DELIVERSECRET,
+      date: BigInt(timestamp),
+      from: senderAddress,
+      to: nft.owner,
+      payload: nft.id,
+      value: {
+        amount: nft.price.amount,
+        currency: nft.price.currency,
+      },
     });
 
     await setNFTById(stateStore, nft.id.toString('hex'), nft);

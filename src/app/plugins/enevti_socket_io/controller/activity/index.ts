@@ -18,3 +18,12 @@ export function onNewActivityNFT(channel: BaseChannel, io: Server | Socket) {
     }
   });
 }
+
+export function onNewActivityProfile(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:newActivityProfile', data => {
+    if (data) {
+      const payload = data as { address: string; timestamp: number };
+      io.to(payload.address).emit(`newProfileActivityUpdates`, Date.now());
+    }
+  });
+}

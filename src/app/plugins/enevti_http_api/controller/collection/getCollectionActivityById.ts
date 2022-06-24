@@ -3,7 +3,11 @@ import { BaseChannel } from 'lisk-framework';
 import { Collection, CollectionActivity } from '../../../../../types/core/chain/collection';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 
-type ProfileOwnedResponse = { checkpoint: number; version: number; data: Collection['activity'] };
+type CollectionActivityResponse = {
+  checkpoint: number;
+  version: number;
+  data: Collection['activity'];
+};
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -19,7 +23,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const ret: CollectionActivity[] = collectionActivity.slice(o, o + l);
 
-    const response: ProfileOwnedResponse = {
+    const response: CollectionActivityResponse = {
       data: ret,
       checkpoint: o + l,
       version: v,

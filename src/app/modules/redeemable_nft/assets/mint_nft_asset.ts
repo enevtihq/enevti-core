@@ -13,7 +13,7 @@ import {
 } from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
-import { addActivityCollection, addActivityNFT } from '../utils/activity';
+import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);
@@ -123,10 +123,35 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
         amount: collection.minting.price.amount,
       });
 
+      await addActivityProfile(stateStore, senderAddress.toString('hex'), {
+        transaction: transaction.id,
+        name: ACTIVITY.PROFILE.MINTNFT,
+        date: BigInt(timestamp),
+        from: senderAddress,
+        to: creatorAddress,
+        payload: nft.id,
+        value: {
+          amount: collection.minting.price.amount,
+          currency: collection.minting.price.currency,
+        },
+      });
+
       if (nft.redeem.status !== 'pending-secret') {
         await reducerHandler.invoke('token:credit', {
           address: creatorAddress,
           amount: collection.minting.price.amount,
+        });
+        await addActivityProfile(stateStore, creatorAddress.toString('hex'), {
+          transaction: transaction.id,
+          name: ACTIVITY.PROFILE.NFTSALE,
+          date: BigInt(timestamp),
+          from: senderAddress,
+          to: creatorAddress,
+          payload: nft.id,
+          value: {
+            amount: collection.minting.price.amount,
+            currency: collection.minting.price.currency,
+          },
         });
       }
     });
