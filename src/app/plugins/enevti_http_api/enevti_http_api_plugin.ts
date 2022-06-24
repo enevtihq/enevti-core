@@ -78,6 +78,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/nft/template/genesis', controller.getAllNFTTemplateGenesis(this._channel));
     this._app.get('/nft/template/:id', controller.getNFTTemplateById(this._channel));
     this._app.get('/profile/:address', controller.getProfile(this._channel));
+    this._app.get('/profile/:address/staked', controller.getProfileStaked(this._channel));
     this._app.get('/profile/:address/owned', controller.getProfileOwned(this._channel));
     this._app.get('/profile/:address/collection', controller.getProfileCollection(this._channel));
     this._app.get('/profile/:address/pending', controller.getProfilePendingDelivery(this._channel));
@@ -111,6 +112,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
       controller.getTransactionBaseFee(this._channel),
     );
     this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
+    this._app.get('/wallet/:address', controller.getWallet(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }

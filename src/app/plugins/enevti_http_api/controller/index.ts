@@ -15,6 +15,7 @@ import getNFTTemplateById from './nft/getNFTTemplateById';
 import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './nft/getAllNFTTemplate';
 import getProfile from './profile/getProfile';
+import getProfileStaked from './profile/getProfileStaked';
 import getProfileNonce from './profile/getProfileNonce';
 import getProfileBalance from './profile/getProfileBalance';
 import getProfilePendingDelivery from './profile/getProfilePendingDelivery';
@@ -39,6 +40,7 @@ import getTransactionFee from './transaction/getTransactionFee';
 import getTransactionBaseFee from './transaction/getTransactionBaseFee';
 import getTransactionDynamicBaseFee from './transaction/getTransactionDynamicBaseFee';
 import postTransaction from './transaction/postTransaction';
+import getWallet from './wallet/getWallet';
 
 export default {
   getActivityCollection,
@@ -58,6 +60,7 @@ export default {
   getAllNFTTemplateGenesis,
   getAllNFTTemplate,
   getProfile,
+  getProfileStaked,
   getProfileNonce,
   getProfileBalance,
   getProfilePendingDelivery,
@@ -82,4 +85,5 @@ export default {
   getTransactionBaseFee,
   getTransactionDynamicBaseFee,
   postTransaction,
+  getWallet,
 };

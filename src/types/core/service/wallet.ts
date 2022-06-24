@@ -1,10 +1,8 @@
-import { PersonaService } from '../account/persona';
+import { Persona, PersonaService } from '../account/persona';
 
 export type WalletView = {
   balance: string;
-  staked: (PersonaService & {
-    amount: string;
-  })[];
+  staked: { persona: Persona; amount: string }[];
   history: TransactionServiceItem[];
 };
 
