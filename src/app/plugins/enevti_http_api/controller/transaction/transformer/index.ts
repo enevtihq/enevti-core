@@ -18,6 +18,10 @@ import {
   MintNFTProps,
   MintNFTUI,
 } from '../../../../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import {
+  TransferTokenProps,
+  TransferTokenUI,
+} from '../../../../../../types/core/asset/token/transfer_asset';
 import { AppTransaction } from '../../../../../../types/core/service/transaction';
 
 function registerDelegate(
@@ -66,8 +70,28 @@ function deliverSecret(
   return payload;
 }
 
+function transferToken(
+  payload: AppTransaction<TransferTokenUI>,
+): AppTransaction<TransferTokenProps> {
+  return {
+    ...payload,
+    asset: {
+      ...payload.asset,
+      amount: BigInt(payload.asset.amount),
+      recipientAddress: Buffer.from(payload.asset.recipientAddress, 'hex'),
+    },
+  };
+}
+
 export default function transformAsset(payload: Record<string, unknown>) {
   switch (payload.moduleID) {
+    case 2:
+      switch (payload.assetID) {
+        case 0:
+          return transferToken((payload as unknown) as AppTransaction<TransferTokenUI>);
+        default:
+          return payload;
+      }
     case 5:
       switch (payload.assetID) {
         case 0:
