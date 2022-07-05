@@ -1,5 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
+import * as admin from 'firebase-admin';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
 import { onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
@@ -15,14 +16,18 @@ import {
 } from './profile';
 import { onStakerUpdates } from './stake';
 
-export function createEnevtiSocket(channel: BaseChannel, io: Server | Socket) {
+export function createEnevtiSocket(
+  channel: BaseChannel,
+  io: Server | Socket,
+  firebaseAdmin: typeof admin | undefined,
+) {
   // Profile Socket
   onUsernameUpdated(channel, io);
   onBalanceChanged(channel, io);
   onTotalStakeChanged(channel, io);
   onNewCollectionByAddress(channel, io);
   onNewPendingByAddress(channel, io);
-  onPendingUtilityDelivery(channel, io);
+  onPendingUtilityDelivery(channel, io, firebaseAdmin);
   onTotalNFTSoldChanged(channel, io);
   onSecretDelivered(channel, io);
 

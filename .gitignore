@@ -46,3 +46,6 @@ dist
 
 # Lisk Secret Config
 config/*/accounts.json
+
+# Firebase Admin Key for HTTP API
+**/firebase.json

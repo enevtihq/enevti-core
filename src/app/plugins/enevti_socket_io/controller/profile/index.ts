@@ -1,9 +1,11 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
+import * as admin from 'firebase-admin';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
+import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
@@ -47,7 +49,11 @@ export function onNewCollectionByAddress(channel: BaseChannel, io: Server | Sock
   });
 }
 
-export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Socket) {
+export function onPendingUtilityDelivery(
+  channel: BaseChannel,
+  io: Server | Socket,
+  firebaseAdmin: typeof admin | undefined,
+) {
   channel.subscribe('redeemableNft:pendingUtilityDelivery', async data => {
     if (data) {
       const payload = data as { nfts: Buffer[] };
@@ -78,8 +84,31 @@ export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Sock
         }
       });
 
-      Object.keys(accountMap).forEach(address => {
-        io.to(address).emit('deliverSecretNotif', accountMap[address]);
+      await asyncForEach(Object.keys(accountMap), async address => {
+        if (firebaseAdmin) {
+          await admin.messaging().send({
+            topic: address,
+            data: {
+              type: 'deliverSecretNotif',
+              payload: JSON.stringify(accountMap[address]),
+            },
+            android: { priority: 'high' },
+            apns: {
+              payload: {
+                aps: {
+                  contentAvailable: true,
+                },
+              },
+              headers: {
+                'apns-push-type': 'background',
+                'apns-priority': '5',
+                'apns-topic': 'com.enevti.app',
+              },
+            },
+          });
+        } else {
+          io.to(address).emit('deliverSecretNotif', accountMap[address]);
+        }
       });
     }
   });
