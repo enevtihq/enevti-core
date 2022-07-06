@@ -86,28 +86,32 @@ export function onPendingUtilityDelivery(
 
       await asyncForEach(Object.keys(accountMap), async address => {
         if (firebaseAdmin) {
-          await admin.messaging().send({
-            topic: address,
-            data: {
-              type: 'deliverSecretNotif',
-              payload: JSON.stringify(accountMap[address]),
-            },
-            android: { priority: 'high' },
-            apns: {
-              payload: {
-                aps: {
-                  contentAvailable: true,
+          try {
+            await admin.messaging().send({
+              topic: address,
+              data: {
+                type: 'deliverSecretNotif',
+                payload: address,
+              },
+              android: { priority: 'high' },
+              apns: {
+                payload: {
+                  aps: {
+                    contentAvailable: true,
+                  },
+                },
+                headers: {
+                  'apns-push-type': 'background',
+                  'apns-priority': '5',
+                  'apns-topic': 'com.enevti.app',
                 },
               },
-              headers: {
-                'apns-push-type': 'background',
-                'apns-priority': '5',
-                'apns-topic': 'com.enevti.app',
-              },
-            },
-          });
+            });
+          } catch (err) {
+            io.to(address).emit('deliverSecretNotif', address);
+          }
         } else {
-          io.to(address).emit('deliverSecretNotif', accountMap[address]);
+          io.to(address).emit('deliverSecretNotif', address);
         }
       });
     }
