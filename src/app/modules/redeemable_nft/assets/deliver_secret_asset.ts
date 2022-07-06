@@ -44,7 +44,7 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
 
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
-      throw new Error("NFT doesn't exist");
+      throw new Error('NFT doesnt exist');
     }
 
     if (Buffer.compare(nft.redeem.secret.sender, senderPublicKey) !== 0) {
@@ -52,7 +52,7 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     }
 
     if (nft.redeem.status !== 'pending-secret') {
-      throw new Error('NFT status is not "pending-secret"');
+      throw new Error('NFT status is not pending-secret');
     }
 
     nft.redeem.secret.cipher = asset.cipher;

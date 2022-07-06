@@ -46,7 +46,7 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
     const { senderAddress } = transaction;
     const collection = await getCollectionById(stateStore, asset.id);
     if (!collection) {
-      throw new Error("NFT Collection doesn't exist");
+      throw new Error('NFT Collection doesnt exist');
     }
 
     if (!['', 'normal'].includes(collection.mintingType)) {

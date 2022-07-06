@@ -55,7 +55,7 @@ export class MintNftTypeQrAsset extends BaseAsset {
 
     const collection = await getCollectionById(stateStore, id);
     if (!collection) {
-      throw new Error("NFT Collection doesn't exist");
+      throw new Error('NFT Collection doesnt exist');
     }
 
     if (!['qr'].includes(collection.mintingType)) {
