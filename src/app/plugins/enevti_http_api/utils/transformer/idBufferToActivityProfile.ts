@@ -5,8 +5,6 @@ import chainDateToUI from './chainDateToUI';
 import { ProfileActivity } from '../../../../../types/core/account/profile';
 import idBufferToNFT from './idBufferToNFT';
 import idBufferToCollection from './idBufferToCollection';
-import { NFT } from '../../../../../types/core/chain/nft';
-import { Collection } from '../../../../../types/core/chain/collection';
 
 export default async function idBufferToActivityProfile(channel: BaseChannel, address: Buffer) {
   const activityChain = await invokeGetActivityProfile(channel, address.toString('hex'));
@@ -20,15 +18,21 @@ export default async function idBufferToActivityProfile(channel: BaseChannel, ad
         currency: act.value.currency,
       };
 
-      let payload: NFT | Collection | Record<string, unknown> | undefined = {};
+      let payload: Record<string, unknown> = {};
       switch (act.name) {
         case 'mintNFT':
         case 'deliverSecret':
         case 'NFTSale':
-          payload = await idBufferToNFT(channel, act.payload);
+          payload = ((await idBufferToNFT(channel, act.payload)) as unknown) as Record<
+            string,
+            unknown
+          >;
           break;
         case 'createNFT':
-          payload = await idBufferToCollection(channel, act.payload);
+          payload = ((await idBufferToCollection(channel, act.payload)) as unknown) as Record<
+            string,
+            unknown
+          >;
           break;
         default:
           break;

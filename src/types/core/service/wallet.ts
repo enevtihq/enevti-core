@@ -1,11 +1,12 @@
 import { Persona, PersonaService } from '../account/persona';
+import { ProfileActivity } from '../account/profile';
 
 export type WalletStaked = { persona: Persona; amount: string };
 
 export type WalletView = {
   balance: string;
   staked: string;
-  history: TransactionServiceItem[];
+  history: ProfileActivity[];
 };
 
 export type StakeSentService = {

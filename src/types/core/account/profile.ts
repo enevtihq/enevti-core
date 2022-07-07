@@ -1,5 +1,5 @@
-import { NFT, NFTBase } from '../chain/nft';
-import { Collection, CollectionBase } from '../chain/collection';
+import { NFTBase } from '../chain/nft';
+import { CollectionBase } from '../chain/collection';
 import { SocialProfile } from './social';
 import { CollectionIdAsset, NFTIdAsset } from '../chain/id';
 import { Persona, PersonaAsset } from './persona';
@@ -52,7 +52,7 @@ export type ProfileActivityName =
 export type ProfileActivity = Omit<ActivityBase, 'name'> & {
   name: ProfileActivityName;
   from: Persona;
-  payload?: NFT | Collection | Record<string, unknown>;
+  payload: Record<string, unknown>;
 };
 
 export type ProfileActivityAsset = Buffer;
