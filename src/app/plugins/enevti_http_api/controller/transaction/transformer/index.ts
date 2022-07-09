@@ -7,6 +7,14 @@ import {
   RegisterUsernameUI,
 } from '../../../../../../types/core/asset/chain/register_username';
 import {
+  CommentCollectionProps,
+  CommentCollectionUI,
+} from '../../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
+import {
+  CommentNFTProps,
+  CommentNFTUI,
+} from '../../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
+import {
   CreateOneKindNFTProps,
   CreateOneKindNFTUI,
 } from '../../../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
@@ -15,9 +23,21 @@ import {
   DeliverSecretUI,
 } from '../../../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import {
+  LikeCollectionProps,
+  LikeCollectionUI,
+} from '../../../../../../types/core/asset/redeemable_nft/like_collection_asset';
+import {
+  LikeNFTProps,
+  LikeNFTUI,
+} from '../../../../../../types/core/asset/redeemable_nft/like_nft_asset';
+import {
   MintNFTProps,
   MintNFTUI,
 } from '../../../../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import {
+  MintNFTByQRProps,
+  MintNFTByQRUI,
+} from '../../../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
 import {
   TransferTokenProps,
   TransferTokenUI,
@@ -64,9 +84,33 @@ function mintNFT(payload: AppTransaction<MintNFTUI>): AppTransaction<MintNFTProp
   return payload;
 }
 
+function mintNFTQR(payload: AppTransaction<MintNFTByQRUI>): AppTransaction<MintNFTByQRProps> {
+  return payload;
+}
+
 function deliverSecret(
   payload: AppTransaction<DeliverSecretUI>,
 ): AppTransaction<DeliverSecretProps> {
+  return payload;
+}
+
+function likeNFT(payload: AppTransaction<LikeNFTUI>): AppTransaction<LikeNFTProps> {
+  return payload;
+}
+
+function likeCollection(
+  payload: AppTransaction<LikeCollectionUI>,
+): AppTransaction<LikeCollectionProps> {
+  return payload;
+}
+
+function commentNFT(payload: AppTransaction<CommentNFTUI>): AppTransaction<CommentNFTProps> {
+  return payload;
+}
+
+function commentCollection(
+  payload: AppTransaction<CommentCollectionUI>,
+): AppTransaction<CommentCollectionProps> {
   return payload;
 }
 
@@ -109,6 +153,16 @@ export default function transformAsset(payload: Record<string, unknown>) {
           return mintNFT((payload as unknown) as AppTransaction<MintNFTUI>);
         case 2:
           return deliverSecret((payload as unknown) as AppTransaction<DeliverSecretUI>);
+        case 3:
+          return mintNFTQR((payload as unknown) as AppTransaction<MintNFTByQRUI>);
+        case 4:
+          return likeNFT((payload as unknown) as AppTransaction<LikeNFTUI>);
+        case 5:
+          return likeCollection((payload as unknown) as AppTransaction<LikeCollectionUI>);
+        case 6:
+          return commentNFT((payload as unknown) as AppTransaction<CommentNFTUI>);
+        case 7:
+          return commentCollection((payload as unknown) as AppTransaction<CommentCollectionUI>);
         default:
           return payload;
       }

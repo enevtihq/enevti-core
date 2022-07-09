@@ -22,12 +22,17 @@ import {
   MintNFTByQRProps,
 } from '../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
 import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
+import { AllCommentAsset, AllLikeAsset } from '../../../types/core/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/core/chain/id';
 import { NFTAsset } from '../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
+import { CommentCollectionAsset } from './assets/comment_collection_asset';
+import { CommentNftAsset } from './assets/comment_nft_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
+import { LikeCollectionAsset } from './assets/like_collection_asset';
+import { LikeNftAsset } from './assets/like_nft_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
 import { BlankNFTTemplate, EnevtiNFTTemplate } from './config/template';
@@ -55,6 +60,12 @@ import {
   setAllUnavailableCollection,
 } from './utils/collection';
 import {
+  accessCollectionCommentById,
+  accessCollectionLikeById,
+  accessNFTCommentById,
+  accessNFTLikeById,
+} from './utils/engagement';
+import {
   accessAllNFTTemplate,
   accessAllNFTTemplateGenesis,
   accessNFTTemplateById,
@@ -70,6 +81,26 @@ import { addInObject, asyncForEach } from './utils/transaction';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
+    getNFTLike: async (params): Promise<AllLikeAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const likeNft = await accessNFTLikeById(this._dataAccess, id);
+      return likeNft ?? undefined;
+    },
+    getCollectionLike: async (params): Promise<AllLikeAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const likeCollection = await accessCollectionLikeById(this._dataAccess, id);
+      return likeCollection ?? undefined;
+    },
+    getNFTComment: async (params): Promise<AllCommentAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentNft = await accessNFTCommentById(this._dataAccess, id);
+      return commentNft ?? undefined;
+    },
+    getCollectionComment: async (params): Promise<AllCommentAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentCollection = await accessCollectionCommentById(this._dataAccess, id);
+      return commentCollection ?? undefined;
+    },
     getCollectionIdFromName: async (params): Promise<CollectionIdAsset | undefined> => {
       const { name } = params as Record<string, string>;
       const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
@@ -249,6 +280,10 @@ export class RedeemableNftModule extends BaseModule {
     new MintNftAsset(),
     new DeliverSecretAsset(),
     new MintNftTypeQrAsset(),
+    new LikeNftAsset(),
+    new LikeCollectionAsset(),
+    new CommentNftAsset(),
+    new CommentCollectionAsset(),
   ];
   public events = [
     'newCollection',

@@ -4,13 +4,16 @@ import { NFT } from '../../../../../types/core/chain/nft';
 import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
-import { invokeGetAllCollection } from '../../utils/hook/redeemable_nft_module';
+import {
+  invokeGetAllCollection,
+  invokeGetCollectionLike,
+} from '../../utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
     const collections = await invokeGetAllCollection(
       channel,
       offset ? parseInt(offset, 10) : undefined,
@@ -24,6 +27,19 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       data: await Promise.all(
         collections.data.map(
           async (item): Promise<FeedItem> => {
+            let liked = false;
+            if (viewer) {
+              const likeCollectionAsset = await invokeGetCollectionLike(
+                channel,
+                item.id.toString('hex'),
+              );
+              if (likeCollectionAsset) {
+                liked =
+                  likeCollectionAsset.address.findIndex(
+                    t => Buffer.compare(Buffer.from(viewer, 'hex'), t) === 0,
+                  ) !== -1;
+              }
+            }
             const owner = await addressBufferToPersona(channel, item.creator);
             const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
             const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
@@ -49,6 +65,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
               type: item.collectionType,
               id: item.id.toString('hex'),
               like: item.like,
+              liked,
               comment: item.comment,
               price: {
                 amount: item.minting.price.amount.toString(),
