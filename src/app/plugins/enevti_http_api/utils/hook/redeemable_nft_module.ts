@@ -2,6 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import {
   EngagementActivityChain,
   ProfileActivityChain,
+  RedeemableNFTAccountStatsChain,
 } from '../../../../../types/core/account/profile';
 import {
   CollectionActivityChain,
@@ -152,6 +153,12 @@ export const invokeGetActivityEngagement = async (
   address: string,
 ): Promise<EngagementActivityChain> =>
   channel.invoke('redeemableNft:getActivityEngagement', { address });
+
+export const invokeGetAccountStats = async (
+  channel: BaseChannel,
+  address: string,
+): Promise<RedeemableNFTAccountStatsChain> =>
+  channel.invoke('redeemableNft:getAccountStats', { address });
 
 export const invokeIsNameExists = async (channel: BaseChannel, name: string): Promise<boolean> =>
   channel.invoke('redeemableNft:isNameExists', { name });

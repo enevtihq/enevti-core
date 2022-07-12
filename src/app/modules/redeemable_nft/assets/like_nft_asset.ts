@@ -2,6 +2,7 @@ import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { LikeNFTProps } from '../../../../types/core/asset/redeemable_nft/like_nft_asset';
 import { ACTIVITY } from '../constants/activity';
 import { likeNftAssetSchema } from '../schemas/asset/like_nft_asset';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
 import { addNFTLikeById } from '../utils/engagement';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
@@ -40,6 +41,15 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
       date: BigInt(timestamp),
       target: nft.id,
     });
+
+    const accountStats = await getAccountStats(
+      stateStore,
+      transaction.senderAddress.toString('hex'),
+    );
+    accountStats.likeSent.nft.unshift(nft.id);
+    accountStats.likeSent.total =
+      accountStats.likeSent.nft.length + accountStats.likeSent.collection.length;
+    await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
     // TODO: implement buyback logic
   }
 }

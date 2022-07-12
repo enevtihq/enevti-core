@@ -9,6 +9,7 @@ import { COIN_NAME } from '../constants/chain';
 import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 
 export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   public name = 'deliverSecret';
@@ -55,11 +56,34 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
       throw new Error('NFT status is not pending-secret');
     }
 
+    const accountStats = await getAccountStats(stateStore, senderAccount.address.toString('hex'));
+    const nftInServeRateIndex = accountStats.serveRate.items.findIndex(
+      t => Buffer.compare(t.id, nft.id) === 0 && t.nonce === nft.redeem.count && t.status === 0,
+    );
+
+    if (nftInServeRateIndex === -1) {
+      throw new Error('cannot find NFT in account stats serveRate items');
+    }
+
+    accountStats.serveRate.items[nftInServeRateIndex].status = 1;
+
+    const serveRate = Number(
+      (
+        (accountStats.serveRate.items.length * 10000) /
+        accountStats.serveRate.items.filter(t => t.status === 1).length
+      ).toFixed(0),
+    );
+
+    accountStats.serveRate.score = serveRate;
+    senderAccount.redeemableNft.serveRate = serveRate;
+    await setAccountStats(stateStore, senderAccount.address.toString('hex'), accountStats);
+
     nft.redeem.secret.cipher = asset.cipher;
     nft.redeem.secret.signature.cipher = asset.signature.cipher;
     nft.redeem.secret.signature.plain = asset.signature.plain;
     nft.redeem.secret.sender = transaction.senderPublicKey;
     nft.redeem.status = 'ready';
+    nft.redeem.count += 1;
 
     await reducerHandler.invoke('token:credit', {
       address: senderAddress,

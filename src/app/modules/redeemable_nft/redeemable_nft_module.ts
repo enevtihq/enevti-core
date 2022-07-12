@@ -15,6 +15,7 @@ import {
   EngagementActivityChain,
   ProfileActivityChain,
   RedeemableNFTAccountProps,
+  RedeemableNFTAccountStatsChain,
 } from '../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { LikeCollectionProps } from '../../../types/core/asset/redeemable_nft/like_collection_asset';
@@ -45,6 +46,7 @@ import { redeemableNftAccountSchema } from './schemas/account';
 import { collectionSchema } from './schemas/chain/collection';
 import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
+import { accessAccountStats } from './utils/account_stats';
 import {
   accessActivityCollection,
   accessActivityEngagement,
@@ -255,6 +257,11 @@ export class RedeemableNftModule extends BaseModule {
       const { id } = params as Record<string, string>;
       const activity = await accessActivityCollection(this._dataAccess, id);
       return activity;
+    },
+    getAccountStats: async (params): Promise<RedeemableNFTAccountStatsChain> => {
+      const { address } = params as Record<string, string>;
+      const accountStats = await accessAccountStats(this._dataAccess, address);
+      return accountStats;
     },
     getActivityProfile: async (params): Promise<ProfileActivityChain> => {
       const { address } = params as Record<string, string>;

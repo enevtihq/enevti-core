@@ -17,6 +17,7 @@ import {
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 
 function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
   const index = Math.floor(pnrg() * collection.minting.available.length);
@@ -114,6 +115,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
       }
     }
 
+    const accountStats = await getAccountStats(stateStore, creatorAccount.address.toString('hex'));
+
     await asyncForEach<Buffer>(boughtItem, async item => {
       const nft = await getNFTById(stateStore, item.toString('hex'));
       if (!nft) {
@@ -177,9 +180,24 @@ export class MintNftTypeQrAsset extends BaseAsset {
           },
         });
       }
+
+      accountStats.nftSold.unshift(nft.id);
+      accountStats.serveRate.items.unshift({ id: nft.id, nonce: nft.redeem.count, status: 0 });
     });
+
+    const serveRate = Number(
+      (
+        (accountStats.serveRate.items.length * 10000) /
+        accountStats.serveRate.items.filter(t => t.status === 1).length
+      ).toFixed(0),
+    );
+
     collection.stat.minted += boughtItem.length;
     creatorAccount.redeemableNft.nftSold += boughtItem.length;
+    creatorAccount.redeemableNft.serveRate = serveRate;
+
+    accountStats.serveRate.score = serveRate;
+    await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);
 
     const collectionActivity: CollectionActivityChainItems = {
       transaction: transaction.id,

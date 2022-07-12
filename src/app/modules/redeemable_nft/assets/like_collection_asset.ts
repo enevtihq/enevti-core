@@ -2,6 +2,7 @@ import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { LikeCollectionProps } from '../../../../types/core/asset/redeemable_nft/like_collection_asset';
 import { ACTIVITY } from '../constants/activity';
 import { likeCollectionAssetSchema } from '../schemas/asset/like_collection_asset';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
 import { getCollectionById, setCollectionById } from '../utils/collection';
 import { addCollectionLikeById } from '../utils/engagement';
@@ -40,6 +41,15 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
       date: BigInt(timestamp),
       target: collection.id,
     });
+
+    const accountStats = await getAccountStats(
+      stateStore,
+      transaction.senderAddress.toString('hex'),
+    );
+    accountStats.likeSent.collection.unshift(collection.id);
+    accountStats.likeSent.total =
+      accountStats.likeSent.nft.length + accountStats.likeSent.collection.length;
+    await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
     // TODO: implement buyback logic
   }
 }

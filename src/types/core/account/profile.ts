@@ -20,6 +20,24 @@ export type Profile = {
   pending: number;
 };
 
+export type RedeemableNFTAccountStatsChain = {
+  nftSold: Buffer[];
+  treasuryAct: Buffer[];
+  serveRate: {
+    score: number;
+    items: {
+      id: Buffer;
+      nonce: number;
+      status: 0 | 1;
+    }[];
+  };
+  likeSent: {
+    total: number;
+    nft: Buffer[];
+    collection: Buffer[];
+  };
+};
+
 export type RedeemableNFTAccountProps = {
   redeemableNft: {
     nftSold: number;
