@@ -2,7 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
 import * as admin from 'firebase-admin';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
-import { onNewNFTMinted } from './collection';
+import { onNewCollectionLike, onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
 import {
   onBalanceChanged,
@@ -15,6 +15,7 @@ import {
   onUsernameUpdated,
 } from './profile';
 import { onStakerUpdates } from './stake';
+import { onNewNFTLike } from './nft';
 
 export function createEnevtiSocket(
   channel: BaseChannel,
@@ -39,6 +40,10 @@ export function createEnevtiSocket(
 
   // Collection Socket
   onNewNFTMinted(channel, io);
+  onNewCollectionLike(channel, io);
+
+  // NFT Socket
+  onNewNFTLike(channel, io);
 
   // Activity Socket
   onNewActivityCollection(channel, io);

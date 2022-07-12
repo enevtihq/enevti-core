@@ -16,6 +16,8 @@ import {
   RedeemableNFTAccountProps,
 } from '../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+import { LikeCollectionProps } from '../../../types/core/asset/redeemable_nft/like_collection_asset';
+import { LikeNFTProps } from '../../../types/core/asset/redeemable_nft/like_nft_asset';
 import { MintNFTProps } from '../../../types/core/asset/redeemable_nft/mint_nft_asset';
 import {
   MintNFTByQR,
@@ -296,6 +298,8 @@ export class RedeemableNftModule extends BaseModule {
     'newActivityCollection',
     'newActivityNFT',
     'newActivityProfile',
+    'newNFTLike',
+    'newCollectionLike',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
@@ -359,7 +363,9 @@ export class RedeemableNftModule extends BaseModule {
     const accountWithNewActivity: Set<Buffer> = new Set<Buffer>();
     const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
     const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
+    const collectionWithNewLike: Set<Buffer> = new Set<Buffer>();
     const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
+    const nftWithNewLike: Set<Buffer> = new Set<Buffer>();
     const totalNftMintedInCollection: { [collection: string]: number } = {};
     const totalCollectionCreatedByAddress: { [address: string]: number } = {};
 
@@ -498,6 +504,18 @@ export class RedeemableNftModule extends BaseModule {
         accountWithNewActivity.add(senderAddress);
         addInObject(totalNftMintedInCollection, collection.id, quantity);
       }
+
+      // likeNFtAsset
+      if (payload.moduleID === 1000 && payload.assetID === 4) {
+        const likeNftAsset = (payload.asset as unknown) as LikeNFTProps;
+        nftWithNewLike.add(Buffer.from(likeNftAsset.id, 'hex'));
+      }
+
+      // likeCollectionAsset
+      if (payload.moduleID === 1000 && payload.assetID === 5) {
+        const likeCollectionAsset = (payload.asset as unknown) as LikeCollectionProps;
+        collectionWithNewLike.add(Buffer.from(likeCollectionAsset.id, 'hex'));
+      }
     }
 
     await asyncForEach(Object.keys(totalCollectionCreatedByAddress), async address => {
@@ -584,6 +602,18 @@ export class RedeemableNftModule extends BaseModule {
       this._channel.publish('redeemableNft:pendingUtilityDelivery', {
         nfts: [...pendingNFTBuffer],
       });
+    }
+
+    if (nftWithNewLike.size > 0) {
+      nftWithNewLike.forEach(nft =>
+        this._channel.publish('redeemableNft:newNFTLike', { id: nft.toString('hex') }),
+      );
+    }
+
+    if (collectionWithNewLike.size > 0) {
+      collectionWithNewLike.forEach(nft =>
+        this._channel.publish('redeemableNft:newCollectionLike', { id: nft.toString('hex') }),
+      );
     }
   }
 

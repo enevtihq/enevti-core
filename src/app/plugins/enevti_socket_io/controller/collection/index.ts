@@ -30,3 +30,16 @@ export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
     }
   });
 }
+
+export function onNewCollectionLike(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:newCollectionLike', async data => {
+    if (data) {
+      const payload = data as { id: string };
+      const collection = await invokeGetCollection(channel, payload.id);
+      if (!collection)
+        throw new Error('undefined Collection id while subscribing newCollectionLike');
+
+      io.to(collection.id.toString('hex')).emit(`newLike`, collection.like);
+    }
+  });
+}
