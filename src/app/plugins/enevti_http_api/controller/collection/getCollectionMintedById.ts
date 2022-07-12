@@ -5,7 +5,7 @@ import { invokeGetCollection } from '../../utils/hook/redeemable_nft_module';
 import { NFT } from '../../../../../types/core/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 
-type ProfileOwnedResponse = { checkpoint: number; version: number; data: Collection['minted'] };
+type CollectionMintedResponse = { checkpoint: number; version: number; data: Collection['minted'] };
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -32,7 +32,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     );
 
-    const response: ProfileOwnedResponse = {
+    const response: CollectionMintedResponse = {
       data: minted,
       checkpoint: o + l,
       version: v,
