@@ -1,8 +1,11 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { LikeNFTProps } from '../../../../types/core/asset/redeemable_nft/like_nft_asset';
+import { ACTIVITY } from '../constants/activity';
 import { likeNftAssetSchema } from '../schemas/asset/like_nft_asset';
+import { addActivityEngagement } from '../utils/activity';
 import { addNFTLikeById } from '../utils/engagement';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
+import { getBlockTimestamp } from '../utils/transaction';
 
 export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
   public name = 'likeNft';
@@ -21,6 +24,7 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
     transaction,
     stateStore,
   }: ApplyAssetContext<LikeNFTProps>): Promise<void> {
+    const timestamp = getBlockTimestamp(stateStore);
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error('NFT doesnt exists');
@@ -29,6 +33,13 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
     nft.like += 1;
     await addNFTLikeById(stateStore, asset.id, transaction.senderAddress);
     await setNFTById(stateStore, asset.id, nft);
+
+    await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
+      transaction: transaction.id,
+      name: ACTIVITY.ENGAGEMENT.LIKENFT,
+      date: BigInt(timestamp),
+      target: nft.id,
+    });
     // TODO: implement buyback logic
   }
 }

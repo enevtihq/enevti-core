@@ -1,6 +1,7 @@
 import getActivityCollection from './activity/getActivityCollection';
 import getActivityNFT from './activity/getActivityNFT';
 import getActivityProfile from './activity/getActivityProfile';
+import getActivityEngagement from './activity/getActivityEngagement';
 import getAllCollection from './collection/getAllCollection';
 import getCollectionById from './collection/getCollectionById';
 import getCollectionByName from './collection/getCollectionByName';
@@ -46,6 +47,7 @@ export default {
   getActivityCollection,
   getActivityNFT,
   getActivityProfile,
+  getActivityEngagement,
   getAllCollection,
   getCollectionById,
   getCollectionByName,

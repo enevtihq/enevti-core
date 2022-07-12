@@ -12,6 +12,7 @@ import {
   TransactionApplyContext,
 } from 'lisk-sdk';
 import {
+  EngagementActivityChain,
   ProfileActivityChain,
   RedeemableNFTAccountProps,
 } from '../../../types/core/account/profile';
@@ -46,6 +47,7 @@ import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
 import {
   accessActivityCollection,
+  accessActivityEngagement,
   accessActivityNFT,
   accessActivityProfile,
   addActivityProfile,
@@ -257,6 +259,11 @@ export class RedeemableNftModule extends BaseModule {
     getActivityProfile: async (params): Promise<ProfileActivityChain> => {
       const { address } = params as Record<string, string>;
       const activity = await accessActivityProfile(this._dataAccess, address);
+      return activity;
+    },
+    getActivityEngagement: async (params): Promise<EngagementActivityChain> => {
+      const { address } = params as Record<string, string>;
+      const activity = await accessActivityEngagement(this._dataAccess, address);
       return activity;
     },
     isNameExists: async (params): Promise<boolean> => {

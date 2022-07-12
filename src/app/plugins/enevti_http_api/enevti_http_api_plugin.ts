@@ -61,6 +61,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/activity/collection/:id', controller.getActivityCollection(this._channel));
     this._app.get('/activity/nft/:id', controller.getActivityNFT(this._channel));
     this._app.get('/activity/profile/:address', controller.getActivityProfile(this._channel));
+    this._app.get('/activity/engagement/:address', controller.getActivityEngagement(this._channel));
     this._app.get('/collection', controller.getAllCollection(this._channel));
     this._app.get('/collection/id/:id', controller.getCollectionById(this._channel));
     this._app.get('/collection/id/:id/minted', controller.getCollectionMintedById(this._channel));

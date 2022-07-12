@@ -129,3 +129,37 @@ export const activityProfileSchema: SchemaWithDefault = {
     },
   },
 };
+
+export const activityEngagementSchema: SchemaWithDefault = {
+  $id: 'enevti/redeemableNft/activityEngagement',
+  type: 'object',
+  required: ['items'],
+  properties: {
+    items: {
+      type: 'array',
+      fieldNumber: 1,
+      items: {
+        type: 'object',
+        required: ['transaction', 'name', 'date', 'target'],
+        properties: {
+          transaction: {
+            dataType: 'bytes',
+            fieldNumber: 1,
+          },
+          name: {
+            dataType: 'string',
+            fieldNumber: 2,
+          },
+          date: {
+            dataType: 'uint64',
+            fieldNumber: 3,
+          },
+          target: {
+            dataType: 'bytes',
+            fieldNumber: 4,
+          },
+        },
+      },
+    },
+  },
+};

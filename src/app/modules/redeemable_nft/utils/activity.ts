@@ -1,11 +1,13 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import {
   CHAIN_STATE_ACTIVITY_COLLECTION,
+  CHAIN_STATE_ACTIVITY_ENGAGEMENT,
   CHAIN_STATE_ACTIVITY_NFT,
   CHAIN_STATE_ACTIVITY_PROFILE,
 } from '../constants/codec';
 import {
   activityCollectionSchema,
+  activityEngagementSchema,
   activityNFTSchema,
   activityProfileSchema,
 } from '../schemas/chain/activity';
@@ -18,6 +20,8 @@ import {
   NFTActivityChainItems,
 } from '../../../../types/core/chain/nft/NFTActivity';
 import {
+  EngagementActivityChain,
+  EngagementActivityChainItems,
   ProfileActivityChain,
   ProfileActivityChainItems,
 } from '../../../../types/core/account/profile';
@@ -151,4 +155,51 @@ export const addActivityProfile = async (
   const activityChain = await getActivityProfile(stateStore, address);
   activityChain.items.unshift(activity);
   await setActivityProfile(stateStore, address, activityChain);
+};
+
+export const accessActivityEngagement = async (
+  dataAccess: BaseModuleDataAccess,
+  address: string,
+): Promise<EngagementActivityChain> => {
+  const activityBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_ACTIVITY_ENGAGEMENT}:${address}`,
+  );
+  if (!activityBuffer) {
+    return { items: [] };
+  }
+  return codec.decode<EngagementActivityChain>(activityEngagementSchema, activityBuffer);
+};
+
+export const getActivityEngagement = async (
+  stateStore: StateStore,
+  address: string,
+): Promise<EngagementActivityChain> => {
+  const activityBuffer = await stateStore.chain.get(
+    `${CHAIN_STATE_ACTIVITY_ENGAGEMENT}:${address}`,
+  );
+  if (!activityBuffer) {
+    return { items: [] };
+  }
+  return codec.decode<EngagementActivityChain>(activityEngagementSchema, activityBuffer);
+};
+
+export const setActivityEngagement = async (
+  stateStore: StateStore,
+  address: string,
+  activity: EngagementActivityChain,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_ACTIVITY_ENGAGEMENT}:${address}`,
+    codec.encode(activityEngagementSchema, activity),
+  );
+};
+
+export const addActivityEngagement = async (
+  stateStore: StateStore,
+  address: string,
+  activity: EngagementActivityChainItems,
+) => {
+  const activityChain = await getActivityEngagement(stateStore, address);
+  activityChain.items.unshift(activity);
+  await setActivityEngagement(stateStore, address, activityChain);
 };

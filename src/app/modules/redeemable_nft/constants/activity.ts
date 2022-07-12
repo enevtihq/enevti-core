@@ -1,4 +1,7 @@
-import { ProfileActivityName } from '../../../../types/core/account/profile';
+import {
+  EngagementActivityName,
+  ProfileActivityName,
+} from '../../../../types/core/account/profile';
 import { CollectionActivityName } from '../../../../types/core/chain/collection';
 import { NFTActivityName } from '../../../../types/core/chain/nft/NFTActivity';
 
@@ -6,6 +9,7 @@ export const ACTIVITY: {
   NFT: Record<Uppercase<NFTActivityName>, NFTActivityName>;
   COLLECTION: Record<Uppercase<CollectionActivityName>, CollectionActivityName>;
   PROFILE: Record<Uppercase<ProfileActivityName>, ProfileActivityName>;
+  ENGAGEMENT: Record<Uppercase<EngagementActivityName>, EngagementActivityName>;
 } = {
   NFT: {
     MINT: 'mint',
@@ -27,5 +31,12 @@ export const ACTIVITY: {
     MINTNFT: 'mintNFT',
     NFTSALE: 'NFTSale',
     DELIVERSECRET: 'deliverSecret',
+  },
+  ENGAGEMENT: {
+    LIKENFT: 'likeNft',
+    LIKECOLLECTION: 'likeCollection',
+    COMMENTNFT: 'commentNft',
+    COMMENTCOLLECTION: 'commentCollection',
+    REPLY: 'reply',
   },
 };

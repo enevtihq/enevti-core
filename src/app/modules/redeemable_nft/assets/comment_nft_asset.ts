@@ -1,7 +1,9 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { CommentNFTProps } from '../../../../types/core/asset/redeemable_nft/comment_nft_asset';
 import { CommentAsset } from '../../../../types/core/chain/engagement';
+import { ACTIVITY } from '../constants/activity';
 import { commentNftAssetSchema } from '../schemas/asset/comment_nft_asset';
+import { addActivityEngagement } from '../utils/activity';
 import { addNFTCommentById } from '../utils/engagement';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
 import { getBlockTimestamp } from '../utils/transaction';
@@ -23,6 +25,7 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
     transaction,
     stateStore,
   }: ApplyAssetContext<CommentNFTProps>): Promise<void> {
+    const timestamp = getBlockTimestamp(stateStore);
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error('NFT doesnt exists');
@@ -34,10 +37,17 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
       type: 'nft',
       owner: transaction.senderAddress,
       text: asset.text,
-      date: BigInt(getBlockTimestamp(stateStore)),
+      date: BigInt(timestamp),
       target: nft.id,
     };
     await addNFTCommentById(stateStore, asset.id, comment);
     await setNFTById(stateStore, asset.id, nft);
+
+    await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
+      transaction: transaction.id,
+      name: ACTIVITY.ENGAGEMENT.COMMENTNFT,
+      date: BigInt(timestamp),
+      target: nft.id,
+    });
   }
 }

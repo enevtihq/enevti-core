@@ -66,3 +66,26 @@ export type ProfileActivityChainItems = Omit<ActivityChainBase, 'name'> & {
 export type ProfileActivityChain = {
   items: ProfileActivityChainItems[];
 };
+
+export type EngagementActivityName =
+  | 'likeNft'
+  | 'likeCollection'
+  | 'commentNft'
+  | 'commentCollection'
+  | 'reply';
+
+export type EngagementActivity = Omit<ActivityBase, 'name' | 'to' | 'value'> & {
+  name: EngagementActivityName;
+  target: Record<string, unknown>;
+};
+
+export type EngagementActivityAsset = Buffer;
+
+export type EngagementActivityChainItems = Omit<ActivityChainBase, 'name' | 'to' | 'value'> & {
+  name: EngagementActivityName;
+  target: Buffer;
+};
+
+export type EngagementActivityChain = {
+  items: EngagementActivityChainItems[];
+};

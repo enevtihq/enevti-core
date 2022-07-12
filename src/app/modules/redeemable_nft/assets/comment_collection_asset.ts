@@ -1,7 +1,9 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { CommentCollectionProps } from '../../../../types/core/asset/redeemable_nft/comment_collection_asset';
 import { CommentAsset } from '../../../../types/core/chain/engagement';
+import { ACTIVITY } from '../constants/activity';
 import { commentCollectionAssetSchema } from '../schemas/asset/comment_collection_asset';
+import { addActivityEngagement } from '../utils/activity';
 import { getCollectionById, setCollectionById } from '../utils/collection';
 import { addCollectionCommentById } from '../utils/engagement';
 import { getBlockTimestamp } from '../utils/transaction';
@@ -23,6 +25,7 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
     transaction,
     stateStore,
   }: ApplyAssetContext<CommentCollectionProps>): Promise<void> {
+    const timestamp = getBlockTimestamp(stateStore);
     const collection = await getCollectionById(stateStore, asset.id);
     if (!collection) {
       throw new Error('Collection doesnt exists');
@@ -34,10 +37,17 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
       type: 'collection',
       owner: transaction.senderAddress,
       text: asset.text,
-      date: BigInt(getBlockTimestamp(stateStore)),
+      date: BigInt(timestamp),
       target: collection.id,
     };
     await addCollectionCommentById(stateStore, asset.id, comment);
     await setCollectionById(stateStore, asset.id, collection);
+
+    await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
+      transaction: transaction.id,
+      name: ACTIVITY.ENGAGEMENT.COMMENTCOLLECTION,
+      date: BigInt(timestamp),
+      target: collection.id,
+    });
   }
 }
