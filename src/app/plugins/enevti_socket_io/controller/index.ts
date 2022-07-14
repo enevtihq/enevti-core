@@ -16,12 +16,16 @@ import {
 } from './profile';
 import { onStakerUpdates } from './stake';
 import { onNewNFTLike } from './nft';
+import { onNewBlock } from './app';
 
 export function createEnevtiSocket(
   channel: BaseChannel,
   io: Server | Socket,
   firebaseAdmin: typeof admin | undefined,
 ) {
+  // App Socket
+  onNewBlock(channel, io);
+
   // Profile Socket
   onUsernameUpdated(channel, io);
   onBalanceChanged(channel, io);
