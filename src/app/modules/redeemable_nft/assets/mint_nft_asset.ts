@@ -121,10 +121,12 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
         creatorAccount.redeemableNft.pending.unshift(nft.id);
       }
 
-      await reducerHandler.invoke('token:debit', {
-        address: senderAddress,
-        amount: collection.minting.price.amount,
-      });
+      if (collection.minting.price.amount > BigInt(0)) {
+        await reducerHandler.invoke('token:debit', {
+          address: senderAddress,
+          amount: collection.minting.price.amount,
+        });
+      }
 
       await addActivityProfile(stateStore, senderAddress.toString('hex'), {
         transaction: transaction.id,
@@ -140,10 +142,12 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
       });
 
       if (nft.redeem.status !== 'pending-secret') {
-        await reducerHandler.invoke('token:credit', {
-          address: creatorAddress,
-          amount: collection.minting.price.amount,
-        });
+        if (collection.minting.price.amount > BigInt(0)) {
+          await reducerHandler.invoke('token:credit', {
+            address: creatorAddress,
+            amount: collection.minting.price.amount,
+          });
+        }
         await addActivityProfile(stateStore, creatorAddress.toString('hex'), {
           transaction: transaction.id,
           name: ACTIVITY.PROFILE.NFTSALE,

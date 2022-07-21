@@ -85,10 +85,12 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     nft.redeem.status = 'ready';
     nft.redeem.count += 1;
 
-    await reducerHandler.invoke('token:credit', {
-      address: senderAddress,
-      amount: nft.price.amount,
-    });
+    if (nft.price.amount > BigInt(0)) {
+      await reducerHandler.invoke('token:credit', {
+        address: senderAddress,
+        amount: nft.price.amount,
+      });
+    }
 
     await addActivityProfile(stateStore, senderAddress.toString('hex'), {
       transaction: transaction.id,
