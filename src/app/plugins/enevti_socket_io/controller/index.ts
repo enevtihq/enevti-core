@@ -11,6 +11,7 @@ import {
   onPendingUtilityDelivery,
   onSecretDelivered,
   onTotalNFTSoldChanged,
+  onTotalServeRateChanged,
   onTotalStakeChanged,
   onUsernameUpdated,
 } from './profile';
@@ -34,6 +35,7 @@ export function createEnevtiSocket(
   onNewPendingByAddress(channel, io);
   onPendingUtilityDelivery(channel, io, firebaseAdmin);
   onTotalNFTSoldChanged(channel, io);
+  onTotalServeRateChanged(channel, io);
   onSecretDelivered(channel, io);
 
   // Stake Socket

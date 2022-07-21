@@ -145,6 +145,16 @@ export function onTotalNFTSoldChanged(channel: BaseChannel, io: Server | Socket)
   });
 }
 
+export function onTotalServeRateChanged(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:totalServeRateChanged', async data => {
+    if (data) {
+      const payload = data as { address: string };
+      const account = await invokeGetAccount(channel, payload.address);
+      io.to(payload.address).emit(`totalServeRateChanged`, account.redeemableNft.serveRate);
+    }
+  });
+}
+
 export function onNewPendingByAddress(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newPendingByAddress', async data => {
     if (data) {

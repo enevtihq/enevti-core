@@ -307,6 +307,7 @@ export class RedeemableNftModule extends BaseModule {
     'pendingUtilityDelivery',
     'secretDelivered',
     'totalNFTSoldChanged',
+    'totalServeRateChanged',
     'newPendingByAddress',
     'newNFTMinted',
     'newActivityCollection',
@@ -568,11 +569,14 @@ export class RedeemableNftModule extends BaseModule {
     });
 
     if (accountWithNewPending.size > 0) {
-      accountWithNewPending.forEach(address =>
+      accountWithNewPending.forEach(address => {
         this._channel.publish('redeemableNft:newPendingByAddress', {
           address: address.toString('hex'),
-        }),
-      );
+        });
+        this._channel.publish('redeemableNft:totalServeRateChanged', {
+          address: address.toString('hex'),
+        });
+      });
     }
 
     if (accountWithNewCollection.size > 0) {

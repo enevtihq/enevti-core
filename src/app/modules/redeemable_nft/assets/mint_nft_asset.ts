@@ -168,8 +168,8 @@ export class MintNftAsset extends BaseAsset<MintNFTProps> {
 
     const serveRate = Number(
       (
-        (accountStats.serveRate.items.length * 10000) /
-        accountStats.serveRate.items.filter(t => t.status === 1).length
+        (accountStats.serveRate.items.filter(t => t.status === 1).length * 10000) /
+        accountStats.serveRate.items.length
       ).toFixed(0),
     );
 
