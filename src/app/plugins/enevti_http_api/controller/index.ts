@@ -42,6 +42,16 @@ import getTransactionBaseFee from './transaction/getTransactionBaseFee';
 import getTransactionDynamicBaseFee from './transaction/getTransactionDynamicBaseFee';
 import postTransaction from './transaction/postTransaction';
 import getWallet from './wallet/getWallet';
+import getCollectionComment from './engagement/getCollectionComment';
+import getCollectionLike from './engagement/getCollectionLike';
+import getComment from './engagement/getComment';
+import getCommentLike from './engagement/getCommentLike';
+import getCommentReply from './engagement/getCommentReply';
+import getLiked from './engagement/getLiked';
+import getNFTComment from './engagement/getNFTComment';
+import getNFTLike from './engagement/getNFTLike';
+import getReply from './engagement/getReply';
+import getReplyLike from './engagement/getReplyLike';
 
 export default {
   getActivityCollection,
@@ -88,4 +98,14 @@ export default {
   getTransactionDynamicBaseFee,
   postTransaction,
   getWallet,
+  getCollectionComment,
+  getCollectionLike,
+  getComment,
+  getCommentLike,
+  getCommentReply,
+  getLiked,
+  getNFTComment,
+  getNFTLike,
+  getReply,
+  getReplyLike,
 };

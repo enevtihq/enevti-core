@@ -6,7 +6,7 @@ import { commentNftAssetSchema } from '../schemas/asset/comment_nft_asset';
 import { addActivityEngagement } from '../utils/activity';
 import { addNFTCommentById } from '../utils/engagement';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { getBlockTimestamp } from '../utils/transaction';
+import { generateID, getBlockTimestamp } from '../utils/transaction';
 
 export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
   public name = 'commentNft';
@@ -34,11 +34,14 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
     nft.comment += 1;
 
     const comment: CommentAsset = {
+      id: generateID(transaction, stateStore, BigInt(0)),
       type: 'nft',
       owner: transaction.senderAddress,
       text: asset.text,
       date: BigInt(timestamp),
       target: nft.id,
+      like: 0,
+      reply: 0,
     };
     await addNFTCommentById(stateStore, asset.id, comment);
     await setNFTById(stateStore, asset.id, nft);

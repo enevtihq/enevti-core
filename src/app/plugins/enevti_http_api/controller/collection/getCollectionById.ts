@@ -2,10 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection } from '../../../../../types/core/chain/collection';
 import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
-import {
-  invokeGetCollection,
-  invokeGetCollectionLike,
-} from '../../utils/hook/redeemable_nft_module';
+import { invokeGetCollection, invokeGetLiked } from '../../utils/hook/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -18,16 +15,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     }
 
     const restCollection = await collectionChainToUI(channel, collection, false);
-    let liked = false;
-    if (viewer) {
-      const likeCollectionAsset = await invokeGetCollectionLike(channel, id);
-      if (likeCollectionAsset) {
-        liked =
-          likeCollectionAsset.address.findIndex(
-            t => Buffer.compare(Buffer.from(viewer, 'hex'), t) === 0,
-          ) !== -1;
-      }
-    }
+    const liked = viewer ? (await invokeGetLiked(channel, id, viewer)) === 1 : false;
     const response: Collection & { liked: boolean } = {
       ...collection,
       ...restCollection,

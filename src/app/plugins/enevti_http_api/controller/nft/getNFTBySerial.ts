@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
 import {
+  invokeGetLiked,
   invokeGetNFT,
   invokeGetNFTIdFromSerial,
-  invokeGetNFTLike,
 } from '../../utils/hook/redeemable_nft_module';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 
@@ -24,16 +24,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     }
 
     const restNFT = await nftChainToUI(channel, nft);
-    let liked = false;
-    if (viewer) {
-      const likeNFTAsset = await invokeGetNFTLike(channel, nft.id.toString('hex'));
-      if (likeNFTAsset) {
-        liked =
-          likeNFTAsset.address.findIndex(
-            t => Buffer.compare(Buffer.from(viewer, 'hex'), t) === 0,
-          ) !== -1;
-      }
-    }
+    const liked = viewer
+      ? (await invokeGetLiked(channel, nft.id.toString('hex'), viewer)) === 1
+      : false;
     const response: NFT & { liked: boolean } = {
       ...nft,
       ...restNFT,

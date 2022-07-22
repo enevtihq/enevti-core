@@ -5,7 +5,7 @@ import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
 import {
   invokeGetCollection,
   invokeGetCollectionIdFromName,
-  invokeGetCollectionLike,
+  invokeGetLiked,
 } from '../../utils/hook/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
@@ -24,19 +24,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     }
 
     const restCollection = await collectionChainToUI(channel, collection, false);
-    let liked = false;
-    if (viewer) {
-      const likeCollectionAsset = await invokeGetCollectionLike(
-        channel,
-        collection.id.toString('hex'),
-      );
-      if (likeCollectionAsset) {
-        liked =
-          likeCollectionAsset.address.findIndex(
-            t => Buffer.compare(Buffer.from(viewer, 'hex'), t) === 0,
-          ) !== -1;
-      }
-    }
+    const liked = viewer
+      ? (await invokeGetLiked(channel, collection.id.toString('hex'), viewer)) === 1
+      : false;
     const response: Collection & { liked: boolean } = {
       ...collection,
       ...restCollection,

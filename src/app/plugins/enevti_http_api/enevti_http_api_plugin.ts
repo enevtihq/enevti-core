@@ -114,6 +114,16 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     );
     this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
     this._app.get('/wallet/:address', controller.getWallet(this._channel));
+    this._app.get('/comment/:id', controller.getComment(this._channel));
+    this._app.get('/comment/nft/:id', controller.getNFTComment(this._channel));
+    this._app.get('/comment/collection/:id', controller.getCollectionComment(this._channel));
+    this._app.get('/like/nft/:id', controller.getNFTLike(this._channel));
+    this._app.get('/like/collection/:id', controller.getCollectionLike(this._channel));
+    this._app.get('/like/comment/:id', controller.getCommentLike(this._channel));
+    this._app.get('/like/reply/:id', controller.getReplyLike(this._channel));
+    this._app.get('/liked/:id/:address', controller.getLiked(this._channel));
+    this._app.get('/reply/:id', controller.getReply(this._channel));
+    this._app.get('/reply/comment/:id', controller.getCommentReply(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }

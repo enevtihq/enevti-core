@@ -8,7 +8,13 @@ import {
   CollectionActivityChain,
   CollectionAsset,
 } from '../../../../../types/core/chain/collection';
-import { AllCommentAsset, AllLikeAsset } from '../../../../../types/core/chain/engagement';
+import {
+  CommentAsset,
+  CommentAtAsset,
+  LikeAtAsset,
+  ReplyAsset,
+  ReplyAtAsset,
+} from '../../../../../types/core/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../../types/core/chain/id';
 import { NFTAsset } from '../../../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../../../types/core/chain/nft/NFTActivity';
@@ -60,26 +66,57 @@ export const invokeGetCollection = async (
   id: string,
 ): Promise<CollectionAsset | undefined> => channel.invoke('redeemableNft:getCollection', { id });
 
+export const invokeGetLiked = async (
+  channel: BaseChannel,
+  id: string,
+  address: string,
+): Promise<0 | 1> => channel.invoke('redeemableNft:getLiked', { id, address });
+
 export const invokeGetNFTLike = async (
   channel: BaseChannel,
   id: string,
-): Promise<AllLikeAsset | undefined> => channel.invoke('redeemableNft:getNFTLike', { id });
+): Promise<LikeAtAsset | undefined> => channel.invoke('redeemableNft:getNFTLike', { id });
 
 export const invokeGetCollectionLike = async (
   channel: BaseChannel,
   id: string,
-): Promise<AllLikeAsset | undefined> => channel.invoke('redeemableNft:getCollectionLike', { id });
+): Promise<LikeAtAsset | undefined> => channel.invoke('redeemableNft:getCollectionLike', { id });
+
+export const invokeGetCommentLike = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<LikeAtAsset | undefined> => channel.invoke('redeemableNft:getCommentLike', { id });
+
+export const invokeGetReplyLike = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<LikeAtAsset | undefined> => channel.invoke('redeemableNft:getReplyLike', { id });
+
+export const invokeGetComment = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<CommentAsset | undefined> => channel.invoke('redeemableNft:getComment', { id });
 
 export const invokeGetNFTComment = async (
   channel: BaseChannel,
   id: string,
-): Promise<AllCommentAsset | undefined> => channel.invoke('redeemableNft:getNFTComment', { id });
+): Promise<CommentAtAsset | undefined> => channel.invoke('redeemableNft:getNFTComment', { id });
 
 export const invokeGetCollectionComment = async (
   channel: BaseChannel,
   id: string,
-): Promise<AllCommentAsset | undefined> =>
+): Promise<CommentAtAsset | undefined> =>
   channel.invoke('redeemableNft:getCollectionComment', { id });
+
+export const invokeGetReply = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<ReplyAsset | undefined> => channel.invoke('redeemableNft:getReply', { id });
+
+export const invokeGetCommentReply = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<ReplyAtAsset | undefined> => channel.invoke('redeemableNft:getCommentReply', { id });
 
 export const invokeGetAllNFTId = async (
   channel: BaseChannel,

@@ -5,7 +5,7 @@ import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/hook/persona_module';
 import {
-  invokeGetCollectionLike,
+  invokeGetLiked,
   invokeGetUnavailableCollection,
 } from '../../utils/hook/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
@@ -27,19 +27,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       data: await Promise.all(
         unavailableCollections.data.map(
           async (item): Promise<FeedItem> => {
-            let liked = false;
-            if (viewer) {
-              const likeCollectionAsset = await invokeGetCollectionLike(
-                channel,
-                item.id.toString('hex'),
-              );
-              if (likeCollectionAsset) {
-                liked =
-                  likeCollectionAsset.address.findIndex(
-                    t => Buffer.compare(Buffer.from(viewer, 'hex'), t) === 0,
-                  ) !== -1;
-              }
-            }
+            const liked = viewer
+              ? (await invokeGetLiked(channel, item.id.toString('hex'), viewer)) === 1
+              : false;
             const owner = await addressBufferToPersona(channel, item.creator);
             const ownerAccount = await invokeGetAccount(channel, item.creator.toString('hex'));
             const stake = ownerAccount.dpos.delegate.totalVotesReceived.toString();
