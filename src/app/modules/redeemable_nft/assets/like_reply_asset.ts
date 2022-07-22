@@ -1,21 +1,20 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { LikeCollectionProps } from '../../../../types/core/asset/redeemable_nft/like_collection_asset';
+import { LikeReplyProps } from '../../../../types/core/asset/redeemable_nft/like_reply_asset';
 import { ACTIVITY } from '../constants/activity';
-import { likeCollectionAssetSchema } from '../schemas/asset/like_collection_asset';
+import { likeReplyAssetSchema } from '../schemas/asset/like_reply_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
-import { getCollectionById, setCollectionById } from '../utils/collection';
-import { addCollectionLikeById } from '../utils/engagement';
+import { addReplyLikeById, getReplyById, setReplyById } from '../utils/engagement';
 import { getBlockTimestamp } from '../utils/transaction';
 
-export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
-  public name = 'likeCollection';
-  public id = 5;
+export class LikeReplyAsset extends BaseAsset {
+  public name = 'likeReply';
+  public id = 9;
 
   // Define schema for asset
-  public schema = likeCollectionAssetSchema;
+  public schema = likeReplyAssetSchema;
 
-  public validate(_input: ValidateAssetContext<LikeCollectionProps>): void {
+  public validate(_input: ValidateAssetContext<LikeReplyProps>): void {
     // Validate your asset
   }
 
@@ -24,35 +23,34 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<LikeCollectionProps>): Promise<void> {
+  }: ApplyAssetContext<LikeReplyProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
-    const collection = await getCollectionById(stateStore, asset.id);
-    if (!collection) {
-      throw new Error('Collection doesnt exists');
+    const reply = await getReplyById(stateStore, asset.id);
+    if (!reply) {
+      throw new Error('Reply doesnt exists');
     }
 
-    collection.like += 1;
-    await addCollectionLikeById(stateStore, asset.id, transaction.senderAddress);
-    await setCollectionById(stateStore, asset.id, collection);
+    reply.like += 1;
+    await addReplyLikeById(stateStore, asset.id, transaction.senderAddress);
+    await setReplyById(stateStore, asset.id, reply);
 
     await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
       transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.LIKECOLLECTION,
+      name: ACTIVITY.ENGAGEMENT.LIKEREPLY,
       date: BigInt(timestamp),
-      target: collection.id,
+      target: reply.id,
     });
 
     const accountStats = await getAccountStats(
       stateStore,
       transaction.senderAddress.toString('hex'),
     );
-    accountStats.likeSent.collection.unshift(collection.id);
+    accountStats.likeSent.reply.unshift(reply.id);
     accountStats.likeSent.total =
       accountStats.likeSent.nft.length +
       accountStats.likeSent.collection.length +
       accountStats.likeSent.comment.length +
       accountStats.likeSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
-    // TODO: implement buyback logic
   }
 }

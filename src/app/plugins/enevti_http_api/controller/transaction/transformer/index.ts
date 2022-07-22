@@ -27,9 +27,17 @@ import {
   LikeCollectionUI,
 } from '../../../../../../types/core/asset/redeemable_nft/like_collection_asset';
 import {
+  LikeCommentProps,
+  LikeCommentUI,
+} from '../../../../../../types/core/asset/redeemable_nft/like_comment_asset';
+import {
   LikeNFTProps,
   LikeNFTUI,
 } from '../../../../../../types/core/asset/redeemable_nft/like_nft_asset';
+import {
+  LikeReplyProps,
+  LikeReplyUI,
+} from '../../../../../../types/core/asset/redeemable_nft/like_reply_asset';
 import {
   MintNFTProps,
   MintNFTUI,
@@ -38,6 +46,10 @@ import {
   MintNFTByQRProps,
   MintNFTByQRUI,
 } from '../../../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
+import {
+  ReplyCommentProps,
+  ReplyCommentUI,
+} from '../../../../../../types/core/asset/redeemable_nft/reply_comment_asset';
 import {
   TransferTokenProps,
   TransferTokenUI,
@@ -104,6 +116,18 @@ function likeCollection(
   return payload;
 }
 
+function likeComment(payload: AppTransaction<LikeCommentUI>): AppTransaction<LikeCommentProps> {
+  return payload;
+}
+
+function likeReply(payload: AppTransaction<LikeReplyUI>): AppTransaction<LikeReplyProps> {
+  return payload;
+}
+
+function replyComment(payload: AppTransaction<ReplyCommentUI>): AppTransaction<ReplyCommentProps> {
+  return payload;
+}
+
 function commentNFT(payload: AppTransaction<CommentNFTUI>): AppTransaction<CommentNFTProps> {
   return payload;
 }
@@ -163,6 +187,12 @@ export default function transformAsset(payload: Record<string, unknown>) {
           return commentNFT((payload as unknown) as AppTransaction<CommentNFTUI>);
         case 7:
           return commentCollection((payload as unknown) as AppTransaction<CommentCollectionUI>);
+        case 8:
+          return likeComment((payload as unknown) as AppTransaction<LikeCommentUI>);
+        case 9:
+          return likeReply((payload as unknown) as AppTransaction<LikeReplyUI>);
+        case 10:
+          return replyComment((payload as unknown) as AppTransaction<ReplyCommentUI>);
         default:
           return payload;
       }

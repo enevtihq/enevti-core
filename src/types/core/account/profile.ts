@@ -35,6 +35,8 @@ export type RedeemableNFTAccountStatsChain = {
     total: number;
     nft: Buffer[];
     collection: Buffer[];
+    comment: Buffer[];
+    reply: Buffer[];
   };
 };
 
@@ -88,9 +90,11 @@ export type ProfileActivityChain = {
 export type EngagementActivityName =
   | 'likeNft'
   | 'likeCollection'
+  | 'likeComment'
+  | 'likeReply'
   | 'commentNft'
   | 'commentCollection'
-  | 'reply';
+  | 'replyComment';
 
 export type EngagementActivity = Omit<ActivityBase, 'name' | 'to' | 'value'> & {
   name: EngagementActivityName;

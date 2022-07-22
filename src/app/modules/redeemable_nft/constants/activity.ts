@@ -35,8 +35,10 @@ export const ACTIVITY: {
   ENGAGEMENT: {
     LIKENFT: 'likeNft',
     LIKECOLLECTION: 'likeCollection',
+    LIKECOMMENT: 'likeComment',
+    LIKEREPLY: 'likeReply',
     COMMENTNFT: 'commentNft',
     COMMENTCOLLECTION: 'commentCollection',
-    REPLY: 'reply',
+    REPLYCOMMENT: 'replyComment',
   },
 };

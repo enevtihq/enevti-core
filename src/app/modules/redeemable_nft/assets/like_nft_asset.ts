@@ -48,8 +48,10 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
     );
     accountStats.likeSent.nft.unshift(nft.id);
     accountStats.likeSent.total =
-      accountStats.likeSent.nft.length + accountStats.likeSent.collection.length;
+      accountStats.likeSent.nft.length +
+      accountStats.likeSent.collection.length +
+      accountStats.likeSent.comment.length +
+      accountStats.likeSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
-    // TODO: implement buyback logic
   }
 }

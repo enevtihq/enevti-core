@@ -9,15 +9,15 @@ import {
   TransactionApplyContext,
 } from 'lisk-sdk';
 import {
-  RedeemableNFTAccountStatsChain,
-  ProfileActivityChain,
   EngagementActivityChain,
+  ProfileActivityChain,
+  RedeemableNFTAccountStatsChain,
 } from '../../../types/core/account/profile';
-import { CollectionAsset, CollectionActivityChain } from '../../../types/core/chain/collection';
+import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
 import {
-  LikeAtAsset,
   CommentAsset,
   CommentAtAsset,
+  LikeAtAsset,
   ReplyAsset,
   ReplyAtAsset,
 } from '../../../types/core/chain/engagement';
@@ -30,50 +30,52 @@ import { CommentNftAsset } from './assets/comment_nft_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { LikeCollectionAsset } from './assets/like_collection_asset';
+import { LikeCommentAsset } from './assets/like_comment_asset';
 import { LikeNftAsset } from './assets/like_nft_asset';
+import { LikeReplyAsset } from './assets/like_reply_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
+import { ReplyCommentAsset } from './assets/reply_comment_asset';
 import redeemableNftAfterBlockApply from './hook/afterBlockApply';
 import redeemableNftAfterGenesisBlockApply from './hook/afterGenesisBlockApply';
 import { redeemableNftAccountSchema } from './schemas/account';
-
 import { collectionSchema } from './schemas/chain/collection';
 import { nftTemplateSchema } from './schemas/chain/nft_template';
 import { redeemableNFTSchema } from './schemas/chain/redeemable_nft';
 import { accessAccountStats } from './utils/account_stats';
 import {
-  accessActivityNFT,
   accessActivityCollection,
-  accessActivityProfile,
   accessActivityEngagement,
+  accessActivityNFT,
+  accessActivityProfile,
 } from './utils/activity';
 import {
   accessAllCollection,
-  accessCollectionById,
   accessAllUnavailableCollection,
+  accessCollectionById,
 } from './utils/collection';
 import {
-  accessLiked,
-  accessNFTLikeById,
-  accessCollectionLikeById,
-  accessCommentLikeById,
-  accessReplyLikeById,
-  accessCommentById,
-  accessNFTCommentById,
   accessCollectionCommentById,
-  accessReplyById,
+  accessCollectionLikeById,
+  accessCommentById,
+  accessCommentLikeById,
   accessCommentReplyById,
+  accessLiked,
+  accessNFTCommentById,
+  accessNFTLikeById,
+  accessReplyById,
+  accessReplyLikeById,
 } from './utils/engagement';
 import {
   accessAllNFTTemplate,
-  accessNFTTemplateById,
   accessAllNFTTemplateGenesis,
+  accessNFTTemplateById,
 } from './utils/nft_template';
 import { accessAllNFT, accessNFTById } from './utils/redeemable_nft';
 import {
   accessRegisteredName,
-  accessRegisteredSymbol,
   accessRegisteredSerial,
+  accessRegisteredSymbol,
 } from './utils/registrar';
 
 export class RedeemableNftModule extends BaseModule {
@@ -322,6 +324,9 @@ export class RedeemableNftModule extends BaseModule {
     new LikeCollectionAsset(),
     new CommentNftAsset(),
     new CommentCollectionAsset(),
+    new LikeCommentAsset(),
+    new LikeReplyAsset(),
+    new ReplyCommentAsset(),
   ];
   public events = [
     'newCollection',

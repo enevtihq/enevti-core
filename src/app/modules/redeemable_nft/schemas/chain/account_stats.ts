@@ -55,7 +55,7 @@ export const accountStatsSchema: SchemaWithDefault = {
     likeSent: {
       fieldNumber: 4,
       type: 'object',
-      required: ['total', 'nft', 'collection'],
+      required: ['total', 'nft', 'collection', 'comment', 'reply'],
       properties: {
         total: {
           dataType: 'uint32',
@@ -70,6 +70,20 @@ export const accountStatsSchema: SchemaWithDefault = {
         },
         collection: {
           fieldNumber: 3,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        comment: {
+          fieldNumber: 4,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        reply: {
+          fieldNumber: 5,
           type: 'array',
           items: {
             dataType: 'bytes',

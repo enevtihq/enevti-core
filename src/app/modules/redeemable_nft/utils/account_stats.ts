@@ -13,7 +13,7 @@ export const accessAccountStats = async (
       nftSold: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
-      likeSent: { total: 0, nft: [], collection: [] },
+      likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },
     };
   }
   return codec.decode<RedeemableNFTAccountStatsChain>(accountStatsSchema, accountStats);
@@ -29,7 +29,7 @@ export const getAccountStats = async (
       nftSold: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
-      likeSent: { total: 0, nft: [], collection: [] },
+      likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },
     };
   }
   return codec.decode<RedeemableNFTAccountStatsChain>(accountStatsSchema, accountStats);
