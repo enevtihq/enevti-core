@@ -16,7 +16,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       BigInt(0),
     );
 
-    const wallet: WalletView = {
+    const wallet: Omit<WalletView, 'version' | 'fetchedVersion'> = {
       balance: account.token.balance.toString(),
       staked: staked.toString(),
       history: [],
