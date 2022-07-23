@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Reply } from '../../../../../types/core/chain/engagement';
 import { invokeGetLiked, invokeGetReply } from '../../utils/hook/redeemable_nft_module';
+import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
@@ -20,7 +21,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ...reply,
       id: reply.id.toString('hex'),
       date: chainDateToUI(reply.date),
-      owner: reply.owner.toString('hex'),
+      owner: await addressBufferToPersona(channel, reply.owner),
       target: reply.target.toString('hex'),
       liked,
     };

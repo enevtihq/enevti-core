@@ -7,6 +7,7 @@ import {
 } from '../../utils/hook/redeemable_nft_module';
 import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
+import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -38,7 +39,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
               ...commentAsset,
               id: commentAsset.id.toString('hex'),
               date: chainDateToUI(commentAsset.date),
-              owner: commentAsset.owner.toString('hex'),
+              owner: await addressBufferToPersona(channel, commentAsset.owner),
               target: commentAsset.target.toString('hex'),
               liked,
             };

@@ -45,7 +45,7 @@ export class LikeCommentAsset extends BaseAsset {
       stateStore,
       transaction.senderAddress.toString('hex'),
     );
-    accountStats.likeSent.reply.unshift(comment.id);
+    accountStats.likeSent.comment.unshift(comment.id);
     accountStats.likeSent.total =
       accountStats.likeSent.nft.length +
       accountStats.likeSent.collection.length +
