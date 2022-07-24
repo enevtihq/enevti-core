@@ -5,7 +5,7 @@ import { ACTIVITY } from '../constants/activity';
 import { replyCommentAssetSchema } from '../schemas/asset/reply_comment_asset';
 import { addActivityEngagement } from '../utils/activity';
 import { addCommentReplyById, getCommentById, setCommentById } from '../utils/engagement';
-import { generateID, getBlockTimestamp } from '../utils/transaction';
+import { getBlockTimestamp } from '../utils/transaction';
 
 export class ReplyCommentAsset extends BaseAsset {
   public name = 'replyComment';
@@ -33,7 +33,7 @@ export class ReplyCommentAsset extends BaseAsset {
     comment.reply += 1;
 
     const reply: ReplyAsset = {
-      id: generateID(transaction, stateStore, BigInt(0)),
+      id: transaction.id,
       owner: transaction.senderAddress,
       text: asset.text,
       date: BigInt(timestamp),

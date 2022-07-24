@@ -34,9 +34,9 @@ export const invokeGetCollectionIdFromSymbol = async (
 
 export const invokeGetNFTIdFromSerial = async (
   channel: BaseChannel,
-  symbol: string,
+  serial: string,
 ): Promise<NFTIdAsset | undefined> =>
-  channel.invoke('redeemableNft:getNFTIdFromSerial', { symbol });
+  channel.invoke('redeemableNft:getNFTIdFromSerial', { serial });
 
 export const invokeGetAllCollectionId = async (
   channel: BaseChannel,

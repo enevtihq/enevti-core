@@ -6,7 +6,7 @@ import { commentCollectionAssetSchema } from '../schemas/asset/comment_collectio
 import { addActivityEngagement } from '../utils/activity';
 import { getCollectionById, setCollectionById } from '../utils/collection';
 import { addCollectionCommentById } from '../utils/engagement';
-import { generateID, getBlockTimestamp } from '../utils/transaction';
+import { getBlockTimestamp } from '../utils/transaction';
 
 export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
   public name = 'commentCollection';
@@ -34,7 +34,7 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
     collection.comment += 1;
 
     const comment: CommentAsset = {
-      id: generateID(transaction, stateStore, BigInt(0)),
+      id: transaction.id,
       type: 'collection',
       owner: transaction.senderAddress,
       text: asset.text,

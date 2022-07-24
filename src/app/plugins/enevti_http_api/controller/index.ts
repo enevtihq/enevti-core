@@ -52,6 +52,9 @@ import getNFTComment from './engagement/getNFTComment';
 import getNFTLike from './engagement/getNFTLike';
 import getReply from './engagement/getReply';
 import getReplyLike from './engagement/getReplyLike';
+import getCollectionTag from './tag/getCollectionTag';
+import getNFTTag from './tag/getNFTTag';
+import getUsernameTag from './tag/getUsernameTag';
 
 export default {
   getActivityCollection,
@@ -108,4 +111,7 @@ export default {
   getNFTLike,
   getReply,
   getReplyLike,
+  getCollectionTag,
+  getNFTTag,
+  getUsernameTag,
 };
