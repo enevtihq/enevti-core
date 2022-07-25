@@ -62,21 +62,18 @@ export const setLiked = async (
 export const accessNFTLikeById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeNftBuffer = await dataAccess.getChainState(`${CHAIN_STATE_LIKE}:nft:${id}`);
   if (!likeNftBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeNftBuffer);
 };
 
-export const getNFTLikeById = async (
-  stateStore: StateStore,
-  id: string,
-): Promise<LikeAtAsset | undefined> => {
+export const getNFTLikeById = async (stateStore: StateStore, id: string): Promise<LikeAtAsset> => {
   const likeNftBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:nft:${id}`);
   if (!likeNftBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeNftBuffer);
 };
@@ -106,12 +103,12 @@ export const addNFTLikeById = async (stateStore: StateStore, id: string, address
 export const accessCollectionLikeById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeCollectionBuffer = await dataAccess.getChainState(
     `${CHAIN_STATE_LIKE}:collection:${id}`,
   );
   if (!likeCollectionBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeCollectionBuffer);
 };
@@ -119,10 +116,10 @@ export const accessCollectionLikeById = async (
 export const getCollectionLikeById = async (
   stateStore: StateStore,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeCollectionBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:collection:${id}`);
   if (!likeCollectionBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeCollectionBuffer);
 };
@@ -163,10 +160,10 @@ export const addCollectionLikeById = async (
 export const accessCommentLikeById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeCommentBuffer = await dataAccess.getChainState(`${CHAIN_STATE_LIKE}:comment:${id}`);
   if (!likeCommentBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeCommentBuffer);
 };
@@ -174,10 +171,10 @@ export const accessCommentLikeById = async (
 export const getCommentLikeById = async (
   stateStore: StateStore,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeCommentBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:comment:${id}`);
   if (!likeCommentBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeCommentBuffer);
 };
@@ -207,10 +204,10 @@ export const addCommentLikeById = async (stateStore: StateStore, id: string, add
 export const accessReplyLikeById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeReplyBuffer = await dataAccess.getChainState(`${CHAIN_STATE_LIKE}:reply:${id}`);
   if (!likeReplyBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeReplyBuffer);
 };
@@ -218,10 +215,10 @@ export const accessReplyLikeById = async (
 export const getReplyLikeById = async (
   stateStore: StateStore,
   id: string,
-): Promise<LikeAtAsset | undefined> => {
+): Promise<LikeAtAsset> => {
   const likeReplyBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:reply:${id}`);
   if (!likeReplyBuffer) {
-    return undefined;
+    return { address: [] };
   }
   return codec.decode<LikeAtAsset>(likeAtSchema, likeReplyBuffer);
 };
@@ -277,10 +274,10 @@ export const setCommentById = async (stateStore: StateStore, id: string, comment
 export const accessNFTCommentById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<CommentAtAsset | undefined> => {
+): Promise<CommentAtAsset> => {
   const commentNftBuffer = await dataAccess.getChainState(`${CHAIN_STATE_COMMENT}:nft:${id}`);
   if (!commentNftBuffer) {
-    return undefined;
+    return { comment: [] };
   }
   return codec.decode<CommentAtAsset>(commentAtSchema, commentNftBuffer);
 };
@@ -288,10 +285,10 @@ export const accessNFTCommentById = async (
 export const getNFTCommentById = async (
   stateStore: StateStore,
   id: string,
-): Promise<CommentAtAsset | undefined> => {
+): Promise<CommentAtAsset> => {
   const commentNftBuffer = await stateStore.chain.get(`${CHAIN_STATE_COMMENT}:nft:${id}`);
   if (!commentNftBuffer) {
-    return undefined;
+    return { comment: [] };
   }
   return codec.decode<CommentAtAsset>(commentAtSchema, commentNftBuffer);
 };
@@ -332,12 +329,12 @@ export const addNFTCommentById = async (
 export const accessCollectionCommentById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<CommentAtAsset | undefined> => {
+): Promise<CommentAtAsset> => {
   const commentCollectionBuffer = await dataAccess.getChainState(
     `${CHAIN_STATE_COMMENT}:collection:${id}`,
   );
   if (!commentCollectionBuffer) {
-    return undefined;
+    return { comment: [] };
   }
   return codec.decode<CommentAtAsset>(commentAtSchema, commentCollectionBuffer);
 };
@@ -345,12 +342,12 @@ export const accessCollectionCommentById = async (
 export const getCollectionCommentById = async (
   stateStore: StateStore,
   id: string,
-): Promise<CommentAtAsset | undefined> => {
+): Promise<CommentAtAsset> => {
   const commentCollectionBuffer = await stateStore.chain.get(
     `${CHAIN_STATE_COMMENT}:collection:${id}`,
   );
   if (!commentCollectionBuffer) {
-    return undefined;
+    return { comment: [] };
   }
   return codec.decode<CommentAtAsset>(commentAtSchema, commentCollectionBuffer);
 };
@@ -417,10 +414,10 @@ export const setReplyById = async (stateStore: StateStore, id: string, reply: Re
 export const accessCommentReplyById = async (
   dataAccess: BaseModuleDataAccess,
   id: string,
-): Promise<ReplyAtAsset | undefined> => {
+): Promise<ReplyAtAsset> => {
   const commentReplyBuffer = await dataAccess.getChainState(`${CHAIN_STATE_REPLY}:comment:${id}`);
   if (!commentReplyBuffer) {
-    return undefined;
+    return { reply: [] };
   }
   return codec.decode<ReplyAtAsset>(replyAtSchema, commentReplyBuffer);
 };
@@ -428,10 +425,10 @@ export const accessCommentReplyById = async (
 export const getCommentReplyById = async (
   stateStore: StateStore,
   id: string,
-): Promise<ReplyAtAsset | undefined> => {
+): Promise<ReplyAtAsset> => {
   const commentReplyBuffer = await stateStore.chain.get(`${CHAIN_STATE_REPLY}:comment:${id}`);
   if (!commentReplyBuffer) {
-    return undefined;
+    return { reply: [] };
   }
   return codec.decode<ReplyAtAsset>(replyAtSchema, commentReplyBuffer);
 };

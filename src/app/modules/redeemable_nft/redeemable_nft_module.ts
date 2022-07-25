@@ -88,22 +88,22 @@ export class RedeemableNftModule extends BaseModule {
     getNFTLike: async (params): Promise<LikeAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const likeNft = await accessNFTLikeById(this._dataAccess, id);
-      return likeNft ?? undefined;
+      return likeNft;
     },
     getCollectionLike: async (params): Promise<LikeAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const likeCollection = await accessCollectionLikeById(this._dataAccess, id);
-      return likeCollection ?? undefined;
+      return likeCollection;
     },
     getCommentLike: async (params): Promise<LikeAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const likeComment = await accessCommentLikeById(this._dataAccess, id);
-      return likeComment ?? undefined;
+      return likeComment;
     },
     getReplyLike: async (params): Promise<LikeAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const likeReply = await accessReplyLikeById(this._dataAccess, id);
-      return likeReply ?? undefined;
+      return likeReply;
     },
     getComment: async (params): Promise<CommentAsset | undefined> => {
       const { id } = params as Record<string, string>;
@@ -113,12 +113,12 @@ export class RedeemableNftModule extends BaseModule {
     getNFTComment: async (params): Promise<CommentAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const commentNft = await accessNFTCommentById(this._dataAccess, id);
-      return commentNft ?? undefined;
+      return commentNft;
     },
     getCollectionComment: async (params): Promise<CommentAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const commentCollection = await accessCollectionCommentById(this._dataAccess, id);
-      return commentCollection ?? undefined;
+      return commentCollection;
     },
     getReply: async (params): Promise<ReplyAsset | undefined> => {
       const { id } = params as Record<string, string>;
@@ -128,7 +128,7 @@ export class RedeemableNftModule extends BaseModule {
     getCommentReply: async (params): Promise<ReplyAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const commentReply = await accessCommentReplyById(this._dataAccess, id);
-      return commentReply ?? undefined;
+      return commentReply;
     },
     getCollectionIdFromName: async (params): Promise<CollectionIdAsset | undefined> => {
       const { name } = params as Record<string, string>;
