@@ -1,4 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
+import { apiClient } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
 import * as admin from 'firebase-admin';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
@@ -23,9 +24,10 @@ export function createEnevtiSocket(
   channel: BaseChannel,
   io: Server | Socket,
   firebaseAdmin: typeof admin | undefined,
+  client: apiClient.APIClient,
 ) {
   // App Socket
-  onNewBlock(channel, io);
+  onNewBlock(channel, io, client);
 
   // Profile Socket
   onUsernameUpdated(channel, io);

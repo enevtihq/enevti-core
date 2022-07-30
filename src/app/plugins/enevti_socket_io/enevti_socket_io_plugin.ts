@@ -1,4 +1,4 @@
-import { BasePlugin, PluginInfo } from 'lisk-sdk';
+import { apiClient, BasePlugin, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
 import * as http from 'http';
 import * as express from 'express';
@@ -16,6 +16,14 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
   private _io: Server | undefined = undefined;
   private _channel: BaseChannel | undefined = undefined;
   private _admin: typeof admin | undefined = undefined;
+  private _client: apiClient.APIClient | undefined = undefined;
+
+  public async getClient() {
+    if (!this._client) {
+      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
+    }
+    return this._client;
+  }
 
   public static get alias(): string {
     return 'enevtiSocketIo';
@@ -71,13 +79,15 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
       this._logger.warn('please put firebase.json on this plugin service directory');
     }
 
+    const client = await this.getClient();
+
     this._app = express();
     this._channel = channel;
     this._server = http.createServer(this._app);
     this._io = new Server(this._server);
 
     registerAccountSocket(this._io);
-    createEnevtiSocket(this._channel, this._io, this._admin);
+    createEnevtiSocket(this._channel, this._io, this._admin, client);
 
     this._server.listen(8082);
   }
