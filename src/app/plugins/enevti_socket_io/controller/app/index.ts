@@ -12,3 +12,17 @@ export function onNewBlock(channel: BaseChannel, io: Server | Socket, client: ap
     io.to('chain').emit(`newBlock`, Date.now());
   });
 }
+
+export function onDeletedBlock(
+  channel: BaseChannel,
+  io: Server | Socket,
+  client: apiClient.APIClient,
+) {
+  channel.subscribe('app:block:delete', data => {
+    const payload = data as { block: string; accounts: string[] };
+    const block = client.block.decode(payload.block);
+    (block as { payload: Transaction[] }).payload.forEach((transaction: Transaction) => {
+      io.to(`transaction:${transaction.id.toString('hex')}`).emit('deleted');
+    });
+  });
+}

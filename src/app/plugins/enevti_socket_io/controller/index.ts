@@ -18,7 +18,7 @@ import {
 } from './profile';
 import { onStakerUpdates } from './stake';
 import { onNewNFTLike } from './nft';
-import { onNewBlock } from './app';
+import { onDeletedBlock, onNewBlock } from './app';
 
 export function createEnevtiSocket(
   channel: BaseChannel,
@@ -28,6 +28,7 @@ export function createEnevtiSocket(
 ) {
   // App Socket
   onNewBlock(channel, io, client);
+  onDeletedBlock(channel, io, client);
 
   // Profile Socket
   onUsernameUpdated(channel, io);
