@@ -37,6 +37,8 @@ import nameToCollection from './registrar/nameToCollection';
 import symbolToCollection from './registrar/symbolToCollection';
 import serialToNFT from './registrar/serialToNFT';
 import usernameToAddress from './registrar/usernameToAddress';
+import getTransactionById from './transaction/getTransactionById';
+import getTransactionStatus from './transaction/getTransactionStatus';
 import getTransactionFee from './transaction/getTransactionFee';
 import getTransactionBaseFee from './transaction/getTransactionBaseFee';
 import getTransactionDynamicBaseFee from './transaction/getTransactionDynamicBaseFee';
@@ -96,6 +98,8 @@ export default {
   symbolToCollection,
   serialToNFT,
   usernameToAddress,
+  getTransactionById,
+  getTransactionStatus,
   getTransactionFee,
   getTransactionBaseFee,
   getTransactionDynamicBaseFee,

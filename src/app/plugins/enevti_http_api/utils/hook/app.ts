@@ -13,3 +13,20 @@ export const invokePostTransaction = async (
   channel.invoke('app:postTransaction', {
     transaction,
   });
+
+export const invokeGetTransactionsFromPool = async (channel: BaseChannel): Promise<string[]> =>
+  channel.invoke('app:getTransactionsFromPool');
+
+export const invokeGetTransactionById = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<string | undefined> => {
+  try {
+    const ret = await channel.invoke('app:getTransactionByID', {
+      id,
+    });
+    return ret as string;
+  } catch {
+    return undefined;
+  }
+};

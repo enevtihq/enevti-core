@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { BasePlugin, PluginInfo } from 'lisk-sdk';
+import { apiClient, BasePlugin, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
 import { Server } from 'http';
 import * as express from 'express';
@@ -12,6 +12,14 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
   private _server: Server | undefined = undefined;
   private _app: express.Express | undefined = undefined;
   private _channel: BaseChannel | undefined = undefined;
+  private _client: apiClient.APIClient | undefined = undefined;
+
+  public async getClient() {
+    if (!this._client) {
+      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
+    }
+    return this._client;
+  }
 
   public static get alias(): string {
     return 'enevtiHttpApi';
@@ -52,6 +60,8 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(channel: BaseChannel): Promise<void> {
+    const client = await this.getClient();
+
     this._app = express();
     this._channel = channel;
 
@@ -103,6 +113,11 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/registrar/serial/:serial/id', controller.serialToNFT(this._channel));
     this._app.get('/registrar/username/:username', controller.isUsernameExists(this._channel));
     this._app.get('/registrar/username/:username/id', controller.usernameToAddress(this._channel));
+    this._app.get('/transaction/:id', controller.getTransactionById(this._channel, client));
+    this._app.get(
+      '/transaction/:id/status',
+      controller.getTransactionStatus(this._channel, client),
+    );
     this._app.post('/transaction/fee', controller.getTransactionFee(this._channel));
     this._app.post(
       '/transaction/dynamicBaseFee',
