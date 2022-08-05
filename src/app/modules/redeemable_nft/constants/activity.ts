@@ -13,15 +13,18 @@ export const ACTIVITY: {
 } = {
   NFT: {
     MINT: 'mint',
+    RAFFLED: 'raffled',
     REDEEM: 'redeem',
     SECRETDELIVERED: 'secretDelivered',
   },
   COLLECTION: {
+    RAFFLED: 'raffled',
     CREATED: 'created',
     MINTED: 'minted',
     SECRETDELIVERED: 'secretDelivered',
   },
   PROFILE: {
+    WINRAFFLE: 'winRaffle',
     TOKENSENT: 'tokenSent',
     TOKENRECEIVED: 'tokenReceived',
     REGISTERUSERNAME: 'registerUsername',

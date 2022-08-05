@@ -1,11 +1,13 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { LikeCollectionProps } from '../../../../types/core/asset/redeemable_nft/like_collection_asset';
+import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import { ACTIVITY } from '../constants/activity';
 import { likeCollectionAssetSchema } from '../schemas/asset/like_collection_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
 import { getCollectionById, setCollectionById } from '../utils/collection';
 import { addCollectionLikeById } from '../utils/engagement';
+import { addSocialRaffleRegistrar, isCollectionEligibleForRaffle } from '../utils/social_raffle';
 import { getBlockTimestamp } from '../utils/transaction';
 
 export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
@@ -24,6 +26,7 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
     asset,
     transaction,
     stateStore,
+    reducerHandler,
   }: ApplyAssetContext<LikeCollectionProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
     const collection = await getCollectionById(stateStore, asset.id);
@@ -53,6 +56,19 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
       accountStats.likeSent.comment.length +
       accountStats.likeSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
-    // TODO: implement buyback logic
+
+    if (collection.raffled) {
+      const socialRaffleConfig: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
+        'redeemableNft:getSocialRaffleConfig',
+      );
+      if (isCollectionEligibleForRaffle(collection, socialRaffleConfig)) {
+        await addSocialRaffleRegistrar(
+          stateStore,
+          collection.id,
+          transaction.senderPublicKey,
+          BigInt(1),
+        );
+      }
+    }
   }
 }

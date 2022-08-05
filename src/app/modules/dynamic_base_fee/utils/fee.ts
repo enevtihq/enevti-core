@@ -1,5 +1,6 @@
 import { Transaction, GenesisConfig } from 'lisk-sdk';
 import { Block } from '@liskhq/lisk-chain';
+import { DynamicBaseFeeGenesisConfig } from '../../../../types/core/chain/config/DynamicBaseFeeGenesisConfig';
 
 export function getBaseFee(config: GenesisConfig, tx: { moduleID: number; assetID: number }) {
   let ret = '0';
@@ -11,10 +12,7 @@ export function getBaseFee(config: GenesisConfig, tx: { moduleID: number; assetI
 }
 
 export function getDynamicBaseFeePerByte(
-  config: GenesisConfig & {
-    dynamicBaseFees?: { moduleID: number; assetID: number; minFeePerByte: number }[];
-    defaultMinFeePerByte?: number;
-  },
+  config: GenesisConfig & DynamicBaseFeeGenesisConfig,
   tx: { moduleID: number; assetID: number },
 ) {
   if (!config.defaultMinFeePerByte || !config.dynamicBaseFees) return 0;
@@ -29,10 +27,7 @@ export function getDynamicBaseFeePerByte(
 }
 
 export function getDynamicBaseFee(
-  config: GenesisConfig & {
-    dynamicBaseFees?: { moduleID: number; assetID: number; minFeePerByte: number }[];
-    defaultMinFeePerByte?: number;
-  },
+  config: GenesisConfig & DynamicBaseFeeGenesisConfig,
   transaction: Transaction,
 ) {
   if (!config.defaultMinFeePerByte || !config.dynamicBaseFees) return BigInt(0);
@@ -41,13 +36,7 @@ export function getDynamicBaseFee(
   return minFee;
 }
 
-export const getTotalFees = (
-  config: GenesisConfig & {
-    dynamicBaseFees?: { moduleID: number; assetID: number; minFeePerByte: number }[];
-    defaultMinFeePerByte?: number;
-  },
-  block: Block,
-) =>
+export const getTotalFees = (config: GenesisConfig & DynamicBaseFeeGenesisConfig, block: Block) =>
   block.payload.reduce(
     (prev, current) => {
       const baseFee =

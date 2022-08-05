@@ -15,7 +15,7 @@ const LIKE_CHAIN_PREFIX = 'likeChain';
 const LIKED_CHAIN_PREFIX = 'likedChain';
 const COMMENT_CHAIN_PREFIX = 'commentChain';
 const REPLY_CHAIN_PREFIX = 'replyChain';
-const BUYBACK_CHAIN_PREFIX = 'buybackChain';
+const SOCIAL_RAFFLE_CHAIN_PREFIX = 'socialRaffleChain';
 
 export const CHAIN_STATE_ALL_NFT = `${REDEEMABLE_NFT_CHAIN_PREFIX}:all`;
 export const CHAIN_STATE_NFT = REDEEMABLE_NFT_CHAIN_PREFIX;
@@ -37,4 +37,4 @@ export const CHAIN_STATE_LIKE = `${LIKE_CHAIN_PREFIX}`;
 export const CHAIN_STATE_LIKED = `${LIKED_CHAIN_PREFIX}`;
 export const CHAIN_STATE_COMMENT = `${COMMENT_CHAIN_PREFIX}`;
 export const CHAIN_STATE_REPLY = `${REPLY_CHAIN_PREFIX}`;
-export const CHAIN_STATE_BUYBACK = `${BUYBACK_CHAIN_PREFIX}`;
+export const CHAIN_STATE_SOCIAL_RAFFLE = `${SOCIAL_RAFFLE_CHAIN_PREFIX}`;

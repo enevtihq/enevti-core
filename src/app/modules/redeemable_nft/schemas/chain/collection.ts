@@ -53,6 +53,7 @@ export const collectionSchema: SchemaWithDefault = {
     'minted',
     'social',
     'promoted',
+    'raffled',
   ],
   properties: {
     id: {
@@ -183,6 +184,10 @@ export const collectionSchema: SchemaWithDefault = {
     promoted: {
       dataType: 'boolean',
       fieldNumber: 17,
+    },
+    raffled: {
+      dataType: 'boolean',
+      fieldNumber: 18,
     },
   },
 };

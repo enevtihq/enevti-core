@@ -36,6 +36,7 @@ import {
   getBlockTimestamp,
   getNetworkIdentifier,
 } from '../utils/transaction';
+import { isCollectionEligibleForRaffle } from '../utils/social_raffle';
 
 export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public name = 'createOnekindNft';
@@ -122,6 +123,10 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       throw new Error('secret cipher not verified!');
     }
 
+    if (asset.raffled && !isCollectionEligibleForRaffle) {
+      throw new Error('parameter not eligible for raffle activation');
+    }
+
     const allNFTTemplate = await getAllNFTTemplate(stateStore);
     if (allNFTTemplate.items.includes(asset.template))
       throw new Error('template not exist on chain!');
@@ -189,6 +194,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         twitter: '',
       },
       promoted: false,
+      raffled: !!asset.raffled,
     };
 
     idCounter += 1;

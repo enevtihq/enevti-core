@@ -25,6 +25,11 @@
         "baseFee": "1000000000"
       }
     ],
+    "socialRaffle": {
+      "maxPrice": -1,
+      "rewardsCutPercentage": 10,
+      "blockInterval": 10
+    },
     "defaultMinFeePerByte": 1000,
     "dynamicBaseFees": [
       {

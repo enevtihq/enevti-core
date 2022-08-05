@@ -1,18 +1,22 @@
 import { SchemaWithDefault } from 'lisk-framework';
 
-export const buybackSchema: SchemaWithDefault = {
-  $id: 'enevti/redeemableNft/buyback',
+export const socialRaffleSchema: SchemaWithDefault = {
+  $id: 'enevti/redeemableNft/socialRaffle',
   type: 'object',
-  required: ['registrar'],
+  required: ['pool', 'registrar'],
   properties: {
-    registrar: {
+    pool: {
       fieldNumber: 1,
+      dataType: 'uint64',
+    },
+    registrar: {
+      fieldNumber: 2,
       type: 'array',
       items: {
         type: 'object',
-        required: ['collectionId', 'weight', 'candidate'],
+        required: ['id', 'weight', 'candidate'],
         properties: {
-          collectionId: {
+          id: {
             dataType: 'bytes',
             fieldNumber: 1,
           },

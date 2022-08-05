@@ -11,45 +11,24 @@ import {
   MintNFTByQRProps,
   MintNFTByQR,
 } from '../../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
-import { CollectionAsset } from '../../../../../types/core/chain/collection';
 import { ACTIVITY } from '../../constants/activity';
 import { COIN_NAME } from '../../constants/chain';
 import { addActivityProfile } from '../../utils/activity';
-import {
-  getAllCollection,
-  getCollectionById,
-  getAllUnavailableCollection,
-  isMintingAvailable,
-  setAllCollection,
-  setAllUnavailableCollection,
-} from '../../utils/collection';
+import { getCollectionById } from '../../utils/collection';
+import { collectionMintingAvailabilityMonitor } from './collectionMintingAvailabilityMonitor';
+import { socialRaffleMonitor } from './socialRaffleMonitor';
 import { getNFTById } from '../../utils/redeemable_nft';
 import { asyncForEach, addInObject } from '../../utils/transaction';
+import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 
 export default async function redeemableNftAfterBlockApply(
   input: AfterBlockApplyContext,
   channel: BaseModuleChannel,
+  config: Record<string, unknown>,
   client: apiClient.APIClient,
 ) {
-  const allCollection = await getAllCollection(input.stateStore);
-  const allCollectionAsset: CollectionAsset[] = await Promise.all(
-    allCollection.items.map(async id => {
-      const collection = await getCollectionById(input.stateStore, id.toString('hex'));
-      if (!collection) throw new Error('undefined collection while iterating allCollection');
-      return collection;
-    }),
-  );
-  const allUnavailableCollection = await getAllUnavailableCollection(input.stateStore);
-  allCollectionAsset.forEach(collection => {
-    if (!isMintingAvailable(collection, input.block.header.timestamp)) {
-      const index = allCollection.items.findIndex(t => Buffer.compare(t, collection.id) === 0);
-      if (index === -1) throw new Error('findindex failed in afterblock apply');
-      allCollection.items.splice(index, 1);
-      allUnavailableCollection.items.unshift(collection.id);
-    }
-  });
-  await setAllCollection(input.stateStore, allCollection);
-  await setAllUnavailableCollection(input.stateStore, allUnavailableCollection);
+  await collectionMintingAvailabilityMonitor(input);
+  await socialRaffleMonitor(input, config as SocialRaffleGenesisConfig, channel);
 
   const prevBlock = (await client.block.get(input.block.header.previousBlockID)) as {
     header: BlockHeader;

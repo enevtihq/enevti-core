@@ -7,6 +7,8 @@ import {
   BaseModule,
   BeforeBlockApplyContext,
   TransactionApplyContext,
+  StateStore,
+  GenesisConfig,
 } from 'lisk-sdk';
 import {
   EngagementActivityChain,
@@ -14,6 +16,7 @@ import {
   RedeemableNFTAccountStatsChain,
 } from '../../../types/core/account/profile';
 import { CollectionActivityChain, CollectionAsset } from '../../../types/core/chain/collection';
+import { SocialRaffleGenesisConfig } from '../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import {
   CommentAsset,
   CommentAtAsset,
@@ -66,6 +69,7 @@ import {
   accessReplyById,
   accessReplyLikeById,
 } from './utils/engagement';
+import { mintNFT, MintNFTUtilsFunctionProps } from './utils/mint';
 import {
   accessAllNFTTemplate,
   accessAllNFTTemplateGenesis,
@@ -311,9 +315,44 @@ export class RedeemableNftModule extends BaseModule {
       const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
       return !!serialRegistrar;
     },
+    // eslint-disable-next-line @typescript-eslint/require-await
+    getSocialRaffleConfig: async (): Promise<SocialRaffleGenesisConfig['socialRaffle']> => {
+      const { socialRaffle } = this.config as GenesisConfig & SocialRaffleGenesisConfig;
+      return socialRaffle;
+    },
   };
 
-  public reducers = {};
+  public reducers = {
+    getSocialRaffleConfig: async (
+      _params: Record<string, unknown>,
+      _stateStore: StateStore,
+      // eslint-disable-next-line @typescript-eslint/require-await
+    ): Promise<SocialRaffleGenesisConfig['socialRaffle']> => {
+      const { socialRaffle } = this.config as GenesisConfig & SocialRaffleGenesisConfig;
+      return socialRaffle;
+    },
+    mintNFT: async (params: Record<string, unknown>, stateStore: StateStore): Promise<Buffer[]> => {
+      const {
+        id,
+        quantity,
+        reducerHandler,
+        transactionId,
+        senderPublicKey,
+        type,
+      } = params as MintNFTUtilsFunctionProps;
+      const boughtItem = await mintNFT({
+        id,
+        quantity,
+        reducerHandler,
+        transactionId,
+        senderPublicKey,
+        type,
+        stateStore,
+      });
+      return boughtItem;
+    },
+  };
+
   public name = 'redeemableNft';
   public transactionAssets = [
     new CreateOnekindNftAsset(),
@@ -342,6 +381,7 @@ export class RedeemableNftModule extends BaseModule {
     'newActivityProfile',
     'newNFTLike',
     'newCollectionLike',
+    'newRaffled',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
@@ -367,7 +407,7 @@ export class RedeemableNftModule extends BaseModule {
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
     const client = await this.getClient();
-    await redeemableNftAfterBlockApply(_input, this._channel, client);
+    await redeemableNftAfterBlockApply(_input, this._channel, this.config, client);
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {

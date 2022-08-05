@@ -67,7 +67,8 @@ export type ProfileActivityName =
   | 'createNFT'
   | 'mintNFT'
   | 'NFTSale'
-  | 'deliverSecret';
+  | 'deliverSecret'
+  | 'winRaffle';
 
 export type ProfileActivity = Omit<ActivityBase, 'name'> & {
   name: ProfileActivityName;
