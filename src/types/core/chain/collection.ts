@@ -62,7 +62,7 @@ export interface Collection extends CollectionBase {
   creator: Persona;
   activity: CollectionActivity[];
   promoted: boolean;
-  raffled: boolean;
+  raffled: number;
 }
 
 export interface CollectionAsset

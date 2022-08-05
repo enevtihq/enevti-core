@@ -186,7 +186,7 @@ export const collectionSchema: SchemaWithDefault = {
       fieldNumber: 17,
     },
     raffled: {
-      dataType: 'boolean',
+      dataType: 'sint32',
       fieldNumber: 18,
     },
   },

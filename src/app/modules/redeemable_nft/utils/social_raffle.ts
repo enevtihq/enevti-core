@@ -1,4 +1,5 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
+import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { CollectionAsset } from '../../../../types/core/chain/collection';
 import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import {
@@ -101,4 +102,16 @@ export const resetSocialRaffleState = async (stateStore: StateStore) => {
 export const isCollectionEligibleForRaffle = (
   collection: CollectionAsset,
   config: SocialRaffleGenesisConfig['socialRaffle'],
-) => collection.minting.price.amount < config.maxPrice;
+) =>
+  collection.minting.price.amount < config.maxPrice &&
+  (config.maxRaffledPerCollection > -1
+    ? collection.raffled < config.maxRaffledPerCollection
+    : true);
+
+export const isProfileEligibleForRaffle = (
+  profile: RedeemableNFTAccountProps,
+  config: SocialRaffleGenesisConfig['socialRaffle'],
+) =>
+  config.maxRaffledPerProfile > -1
+    ? profile.redeemableNft.raffled < config.maxRaffledPerProfile
+    : true;

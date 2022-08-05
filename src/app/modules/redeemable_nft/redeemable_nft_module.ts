@@ -382,6 +382,7 @@ export class RedeemableNftModule extends BaseModule {
     'newNFTLike',
     'newCollectionLike',
     'newRaffled',
+    'wonRaffle',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;

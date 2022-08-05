@@ -54,7 +54,7 @@ export type CreateOneKindNFTProps = {
   };
   quantity: number;
   mintingExpire: number;
-  raffled: boolean;
+  raffled: number;
 };
 
 export type CreateOneKindNFTUI = Omit<CreateOneKindNFTProps, 'price'> & {

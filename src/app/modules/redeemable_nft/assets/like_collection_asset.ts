@@ -57,7 +57,7 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
       accountStats.likeSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
 
-    if (collection.raffled) {
+    if (collection.raffled > -1) {
       const socialRaffleConfig: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
         'redeemableNft:getSocialRaffleConfig',
       );

@@ -37,6 +37,7 @@ import {
   getNetworkIdentifier,
 } from '../utils/transaction';
 import { isCollectionEligibleForRaffle } from '../utils/social_raffle';
+import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 
 export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public name = 'createOnekindNft';
@@ -91,7 +92,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       throw new Error(`asset.mintingExpire can't be negative`);
     }
     if (asset.royalty.creator < 0) {
-      throw new Error(`asset.royalty.origin can't be negative`);
+      throw new Error(`asset.royalty.creator can't be negative`);
     }
     if (asset.royalty.staker < 0) {
       throw new Error(`asset.royalty.staker can't be negative`);
@@ -121,10 +122,6 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       )
     ) {
       throw new Error('secret cipher not verified!');
-    }
-
-    if (asset.raffled && !isCollectionEligibleForRaffle) {
-      throw new Error('parameter not eligible for raffle activation');
     }
 
     const allNFTTemplate = await getAllNFTTemplate(stateStore);
@@ -194,8 +191,15 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         twitter: '',
       },
       promoted: false,
-      raffled: !!asset.raffled,
+      raffled: asset.raffled,
     };
+
+    const config: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
+      'redeemableNft:getSocialRaffleConfig',
+    );
+    if (!isCollectionEligibleForRaffle(collection, config)) {
+      throw new Error('parameter not eligible for raffle activation');
+    }
 
     idCounter += 1;
 

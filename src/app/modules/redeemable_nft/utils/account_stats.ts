@@ -11,6 +11,7 @@ export const accessAccountStats = async (
   if (!accountStats) {
     return {
       nftSold: [],
+      raffled: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
       likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },
@@ -27,6 +28,7 @@ export const getAccountStats = async (
   if (!accountStats) {
     return {
       nftSold: [],
+      raffled: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
       likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },

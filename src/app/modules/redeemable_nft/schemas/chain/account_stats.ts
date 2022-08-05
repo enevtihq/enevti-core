@@ -3,7 +3,7 @@ import { SchemaWithDefault } from 'lisk-framework';
 export const accountStatsSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/accountStats',
   type: 'object',
-  required: ['nftSold', 'treasuryAct', 'serveRate', 'likeSent'],
+  required: ['nftSold', 'raffled', 'treasuryAct', 'serveRate', 'likeSent'],
   properties: {
     nftSold: {
       fieldNumber: 1,
@@ -12,15 +12,22 @@ export const accountStatsSchema: SchemaWithDefault = {
         dataType: 'bytes',
       },
     },
-    treasuryAct: {
+    raffled: {
       fieldNumber: 2,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
-    serveRate: {
+    treasuryAct: {
       fieldNumber: 3,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
+    serveRate: {
+      fieldNumber: 4,
       type: 'object',
       required: ['score', 'items'],
       properties: {
@@ -53,7 +60,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     likeSent: {
-      fieldNumber: 4,
+      fieldNumber: 5,
       type: 'object',
       required: ['total', 'nft', 'collection', 'comment', 'reply'],
       properties: {

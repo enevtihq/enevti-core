@@ -36,6 +36,7 @@ export function getDefaultAccount(
       nftSold: 0,
       treasuryAct: 0,
       serveRate: 0,
+      raffled: 0,
       owned: [],
       onSale: [],
       collection: [],

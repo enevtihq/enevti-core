@@ -3,5 +3,7 @@ export type SocialRaffleGenesisConfig = {
     maxPrice: number;
     rewardsCutPercentage: number;
     blockInterval: number;
+    maxRaffledPerCollection: number;
+    maxRaffledPerProfile: number;
   };
 };
