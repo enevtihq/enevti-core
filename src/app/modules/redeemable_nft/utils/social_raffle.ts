@@ -103,7 +103,7 @@ export const isCollectionEligibleForRaffle = (
   collection: CollectionAsset,
   config: SocialRaffleGenesisConfig['socialRaffle'],
 ) =>
-  collection.minting.price.amount < config.maxPrice &&
+  (config.maxPrice > -1 ? collection.minting.price.amount < config.maxPrice : true) &&
   (config.maxRaffledPerCollection > -1
     ? collection.raffled < config.maxRaffledPerCollection
     : true);
