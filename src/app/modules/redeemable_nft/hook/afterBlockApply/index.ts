@@ -28,7 +28,6 @@ export default async function redeemableNftAfterBlockApply(
   client: apiClient.APIClient,
 ) {
   await collectionMintingAvailabilityMonitor(input);
-  await socialRaffleMonitor(input, config as SocialRaffleGenesisConfig, channel);
 
   const prevBlock = (await client.block.get(input.block.header.previousBlockID)) as {
     header: BlockHeader;
@@ -53,6 +52,17 @@ export default async function redeemableNftAfterBlockApply(
   const nftWithNewLike: Set<Buffer> = new Set<Buffer>();
   const totalNftMintedInCollection: { [collection: string]: number } = {};
   const totalCollectionCreatedByAddress: { [address: string]: number } = {};
+
+  await socialRaffleMonitor(
+    input,
+    config as SocialRaffleGenesisConfig,
+    channel,
+    collectionWithNewActivity,
+    accountWithNewActivity,
+    totalNftMintedInCollection,
+    pendingNFTBuffer,
+    accountWithNewPending,
+  );
 
   for (const payload of prevBlock.payload) {
     const senderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);

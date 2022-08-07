@@ -42,7 +42,7 @@
     ],
     "rewards": {
       "milestones": ["500000000", "400000000", "300000000", "200000000", "100000000"],
-      "offset": 2160,
+      "offset": 1,
       "distance": 3000000
     },
     "minRemainingBalance": "5000000",

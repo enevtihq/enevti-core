@@ -8,3 +8,11 @@ export type SocialRaffleRegistrarItem = {
   weight: bigint;
   candidate: Buffer[];
 };
+
+export type SocialRaffleRecord = {
+  items: {
+    id: Buffer;
+    winner: Buffer;
+    raffled: Buffer[];
+  }[];
+};

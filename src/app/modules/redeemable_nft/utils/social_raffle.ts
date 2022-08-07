@@ -4,10 +4,11 @@ import { CollectionAsset } from '../../../../types/core/chain/collection';
 import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import {
   SocialRaffleChain,
+  SocialRaffleRecord,
   SocialRaffleRegistrarItem,
 } from '../../../../types/core/chain/socialRaffle';
 import { CHAIN_STATE_SOCIAL_RAFFLE } from '../constants/codec';
-import { socialRaffleSchema } from '../schemas/chain/social_raffle';
+import { socialRaffleRecordSchema, socialRaffleSchema } from '../schemas/chain/social_raffle';
 
 export const accessSocialRaffleState = async (
   dataAccess: BaseModuleDataAccess,
@@ -34,6 +35,43 @@ export const setSocialRaffleState = async (
   await stateStore.chain.set(
     `${CHAIN_STATE_SOCIAL_RAFFLE}`,
     codec.encode(socialRaffleSchema, socialRaffle),
+  );
+};
+
+export const accessSocialRaffleRecord = async (
+  dataAccess: BaseModuleDataAccess,
+  blockHeight: number,
+): Promise<SocialRaffleRecord | undefined> => {
+  const socialRaffleRecordBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_SOCIAL_RAFFLE}:${blockHeight}`,
+  );
+  if (!socialRaffleRecordBuffer) {
+    return undefined;
+  }
+  return codec.decode<SocialRaffleRecord>(socialRaffleRecordSchema, socialRaffleRecordBuffer);
+};
+
+export const getSocialRaffleRecord = async (
+  stateStore: StateStore,
+  blockHeight: number,
+): Promise<SocialRaffleRecord | undefined> => {
+  const socialRaffleRecordBuffer = await stateStore.chain.get(
+    `${CHAIN_STATE_SOCIAL_RAFFLE}:${blockHeight}`,
+  );
+  if (!socialRaffleRecordBuffer) {
+    return undefined;
+  }
+  return codec.decode<SocialRaffleRecord>(socialRaffleRecordSchema, socialRaffleRecordBuffer);
+};
+
+export const setSocialRaffleRecord = async (
+  stateStore: StateStore,
+  blockHeight: number,
+  socialRaffleRecord: SocialRaffleRecord,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_SOCIAL_RAFFLE}:${blockHeight}`,
+    codec.encode(socialRaffleRecordSchema, socialRaffleRecord),
   );
 };
 
@@ -95,6 +133,11 @@ export const addSocialRaffleRegistrar = async (
   await addSocialRaffleWeight(stateStore, id, weight);
 };
 
+export const resetSocialRaffleStateRegistrar = async (stateStore: StateStore) => {
+  const socialRaffleState = await getSocialRaffleState(stateStore);
+  await setSocialRaffleState(stateStore, { pool: socialRaffleState.pool, registrar: [] });
+};
+
 export const resetSocialRaffleState = async (stateStore: StateStore) => {
   await setSocialRaffleState(stateStore, { pool: BigInt(0), registrar: [] });
 };
@@ -104,8 +147,11 @@ export const isCollectionEligibleForRaffle = (
   config: SocialRaffleGenesisConfig['socialRaffle'],
 ) =>
   (config.maxPrice > -1 ? collection.minting.price.amount < config.maxPrice : true) &&
+  // eslint-disable-next-line no-nested-ternary
   (config.maxRaffledPerCollection > -1
-    ? collection.raffled < config.maxRaffledPerCollection
+    ? collection.raffled > -1
+      ? collection.raffled < config.maxRaffledPerCollection
+      : false
     : true);
 
 export const isProfileEligibleForRaffle = (

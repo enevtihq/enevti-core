@@ -25,8 +25,44 @@ export const socialRaffleSchema: SchemaWithDefault = {
             fieldNumber: 2,
           },
           candidate: {
-            dataType: 'bytes',
             fieldNumber: 3,
+            type: 'array',
+            items: {
+              dataType: 'bytes',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const socialRaffleRecordSchema: SchemaWithDefault = {
+  $id: 'enevti/redeemableNft/socialRaffleRecord',
+  type: 'object',
+  required: ['items'],
+  properties: {
+    items: {
+      fieldNumber: 1,
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'winner', 'raffled'],
+        properties: {
+          id: {
+            dataType: 'bytes',
+            fieldNumber: 1,
+          },
+          winner: {
+            dataType: 'bytes',
+            fieldNumber: 2,
+          },
+          raffled: {
+            fieldNumber: 3,
+            type: 'array',
+            items: {
+              dataType: 'bytes',
+            },
           },
         },
       },

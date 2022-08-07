@@ -191,14 +191,16 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         twitter: '',
       },
       promoted: false,
-      raffled: asset.raffled,
+      raffled: 0, // TODO: change to asset.raffled
     };
 
-    const config: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
-      'redeemableNft:getSocialRaffleConfig',
-    );
-    if (!isCollectionEligibleForRaffle(collection, config)) {
-      throw new Error('parameter not eligible for raffle activation');
+    if (collection.raffled > -1) {
+      const config: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
+        'redeemableNft:getSocialRaffleConfig',
+      );
+      if (!isCollectionEligibleForRaffle(collection, config)) {
+        throw new Error('parameter not eligible for raffle activation');
+      }
     }
 
     idCounter += 1;
