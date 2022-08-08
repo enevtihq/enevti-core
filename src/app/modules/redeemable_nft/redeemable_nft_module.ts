@@ -422,6 +422,8 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterGenesisBlockApply(_input: AfterGenesisBlockApplyContext) {
+    if ((this.config as GenesisConfig & SocialRaffleGenesisConfig).socialRaffle.blockInterval < 2)
+      throw new Error('config.socialRaffle.blockInterval must be 2 or higher');
     await redeemableNftAfterGenesisBlockApply(_input);
   }
 }
