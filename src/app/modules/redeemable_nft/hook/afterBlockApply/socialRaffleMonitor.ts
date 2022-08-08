@@ -3,7 +3,7 @@ import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { cryptography } from 'lisk-sdk';
 import * as seedrandom from 'seedrandom';
 import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
-import { getCollectionById, setCollectionById } from '../../utils/collection';
+import { getCollectionById, isMintingAvailable, setCollectionById } from '../../utils/collection';
 import {
   getSocialRaffleState,
   addSocialRafflePool,
@@ -15,7 +15,7 @@ import {
 } from '../../utils/social_raffle';
 import { debitBlockReward } from '../../utils/block_rewards';
 import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
-import { addInObject, asyncForEach } from '../../utils/transaction';
+import { addInObject, asyncForEach, getBlockTimestamp } from '../../utils/transaction';
 import { SocialRaffleRecord } from '../../../../../types/core/chain/socialRaffle';
 import { MintNFTUtilsFunctionProps } from '../../utils/mint';
 
@@ -69,6 +69,7 @@ export const socialRaffleMonitor = async (
     for (const registrar of socialRaffleState.registrar) {
       if (socialRafflePool <= BigInt(0)) break;
 
+      const timestamp = getBlockTimestamp(input.stateStore);
       const collection = await getCollectionById(input.stateStore, registrar.id.toString('hex'));
       if (!collection) throw new Error('Collection not found while monintorng social raffle');
 
@@ -77,6 +78,8 @@ export const socialRaffleMonitor = async (
       );
 
       if (
+        isMintingAvailable(collection, timestamp) &&
+        collection.minting.available.length < collection.packSize &&
         isCollectionEligibleForRaffle(collection, config.socialRaffle) &&
         isProfileEligibleForRaffle(creatorAccount, config.socialRaffle) &&
         collection.minting.price.amount < socialRafflePool
