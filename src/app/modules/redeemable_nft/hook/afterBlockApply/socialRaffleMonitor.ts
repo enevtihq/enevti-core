@@ -59,7 +59,7 @@ export const socialRaffleMonitor = async (
 
   if (input.block.header.height % config.socialRaffle.blockInterval === 0) {
     const pnrg = seedrandom(input.stateStore.chain.lastBlockHeaders[0].id.toString('hex'));
-    const creatorWithNewRaffled: { [address: string]: number } = {};
+    const collectionWithNewRaffled: { [address: string]: number } = {};
     const socialRaffleRecord: SocialRaffleRecord = { items: [] };
 
     const socialRaffleState = await getSocialRaffleState(input.stateStore);
@@ -120,12 +120,12 @@ export const socialRaffleMonitor = async (
         });
 
         newCollection.raffled += 1;
-        await setCollectionById(input.stateStore, newCollection.id.toString('hex'), newCollection); // TODO: disini akun jadi ke reset
+        await setCollectionById(input.stateStore, newCollection.id.toString('hex'), newCollection);
 
         newCreatorAccount.redeemableNft.raffled += 1;
-        await input.stateStore.account.set(newCollection.creator, newCreatorAccount); // TODO: disini akun jadi ke reset
+        await input.stateStore.account.set(newCollection.creator, newCreatorAccount);
 
-        addInObject(creatorWithNewRaffled, newCollection.creator, 1);
+        addInObject(collectionWithNewRaffled, newCollection.id, raffledNft.length);
         channel.publish('redeemableNft:wonRaffle', {
           collection: newCollection.id.toString('hex'),
           address: cryptography
@@ -138,10 +138,13 @@ export const socialRaffleMonitor = async (
 
     await setSocialRaffleRecord(input.stateStore, input.block.header.height, socialRaffleRecord);
 
-    for (const address of Object.keys(creatorWithNewRaffled)) {
+    for (const collectionId of Object.keys(collectionWithNewRaffled)) {
+      const collection = await getCollectionById(input.stateStore, collectionId);
+      if (!collection) throw new Error('Collection not found while monintorng social raffle');
       channel.publish('redeemableNft:newRaffled', {
-        address,
-        total: creatorWithNewRaffled[address],
+        address: collection.creator.toString('hex'),
+        collection: collection.id.toString('hex'),
+        total: collectionWithNewRaffled[collection.id.toString('hex')],
       });
     }
 

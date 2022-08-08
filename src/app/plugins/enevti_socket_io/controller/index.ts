@@ -19,6 +19,7 @@ import {
 import { onStakerUpdates } from './stake';
 import { onNewNFTLike } from './nft';
 import { onDeletedBlock, onNewBlock } from './app';
+import { onNewRaffled, onWonRaffle } from './raffle';
 
 export function createEnevtiSocket(
   channel: BaseChannel,
@@ -58,6 +59,10 @@ export function createEnevtiSocket(
   onNewActivityCollection(channel, io);
   onNewActivityNFT(channel, io);
   onNewActivityProfile(channel, io);
+
+  // Social Raffle
+  onNewRaffled(channel, io, firebaseAdmin);
+  onWonRaffle(channel, io, firebaseAdmin);
 }
 
 export function registerAccountSocket(io: Server) {

@@ -6,6 +6,7 @@ import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
+import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
@@ -87,26 +88,7 @@ export function onPendingUtilityDelivery(
       await asyncForEach(Object.keys(accountMap), async address => {
         if (firebaseAdmin) {
           try {
-            await admin.messaging().send({
-              topic: address,
-              data: {
-                type: 'deliverSecretNotif',
-                payload: address,
-              },
-              android: { priority: 'high' },
-              apns: {
-                payload: {
-                  aps: {
-                    contentAvailable: true,
-                  },
-                },
-                headers: {
-                  'apns-push-type': 'background',
-                  'apns-priority': '5',
-                  'apns-topic': 'com.enevti.app',
-                },
-              },
-            });
+            await sendDataOnlyTopicMessaging(address, 'deliverSecretNotif', address);
           } catch (err) {
             io.to(address).emit('deliverSecretNotif', address);
           }
