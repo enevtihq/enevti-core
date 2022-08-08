@@ -28,6 +28,7 @@ import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../types/c
 import { NFTAsset } from '../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../types/core/chain/nft/NFTTemplate';
+import { SocialRaffleChain, SocialRaffleRecord } from '../../../types/core/chain/socialRaffle';
 import { CommentCollectionAsset } from './assets/comment_collection_asset';
 import { CommentNftAsset } from './assets/comment_nft_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
@@ -81,6 +82,7 @@ import {
   accessRegisteredSerial,
   accessRegisteredSymbol,
 } from './utils/registrar';
+import { accessSocialRaffleRecord, accessSocialRaffleState } from './utils/social_raffle';
 
 export class RedeemableNftModule extends BaseModule {
   public actions = {
@@ -314,6 +316,15 @@ export class RedeemableNftModule extends BaseModule {
       const { serial } = params as Record<string, string>;
       const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
       return !!serialRegistrar;
+    },
+    getSocialRaffleRecord: async (params): Promise<SocialRaffleRecord> => {
+      const { height } = params as { height: number };
+      const raffleRecord = await accessSocialRaffleRecord(this._dataAccess, height);
+      return raffleRecord ?? { items: [] };
+    },
+    getSocialRaffleState: async (): Promise<SocialRaffleChain> => {
+      const raffleState = await accessSocialRaffleState(this._dataAccess);
+      return raffleState;
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     getSocialRaffleConfig: async (): Promise<SocialRaffleGenesisConfig['socialRaffle']> => {

@@ -57,6 +57,9 @@ import getReplyLike from './engagement/getReplyLike';
 import getCollectionTag from './tag/getCollectionTag';
 import getNFTTag from './tag/getNFTTag';
 import getUsernameTag from './tag/getUsernameTag';
+import getSocialRaffleRecord from './raffle/getSocialRaffleRecord';
+import getSocialRaffleState from './raffle/getSocialRaffleState';
+import getSocialRaffleConfig from './raffle/getSocialRaffleConfig';
 
 export default {
   getActivityCollection,
@@ -118,4 +121,7 @@ export default {
   getCollectionTag,
   getNFTTag,
   getUsernameTag,
+  getSocialRaffleConfig,
+  getSocialRaffleRecord,
+  getSocialRaffleState,
 };

@@ -8,6 +8,7 @@ import {
   CollectionActivityChain,
   CollectionAsset,
 } from '../../../../../types/core/chain/collection';
+import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import {
   CommentAsset,
   CommentAtAsset,
@@ -19,6 +20,10 @@ import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../../t
 import { NFTAsset } from '../../../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../../../types/core/chain/nft/NFTTemplate';
+import {
+  SocialRaffleChain,
+  SocialRaffleRecord,
+} from '../../../../../types/core/chain/socialRaffle';
 
 export const invokeGetCollectionIdFromName = async (
   channel: BaseChannel,
@@ -204,3 +209,17 @@ export const invokeIsSerialExists = async (
   channel: BaseChannel,
   serial: string,
 ): Promise<boolean> => channel.invoke('redeemableNft:isSerialExists', { serial });
+
+export const invokeGetSocialRaffleRecord = async (
+  channel: BaseChannel,
+  height: number,
+): Promise<SocialRaffleRecord> => channel.invoke('redeemableNft:getSocialRaffleRecord', { height });
+
+export const invokeGetSocialRaffleState = async (
+  channel: BaseChannel,
+): Promise<SocialRaffleChain> => channel.invoke('redeemableNft:getSocialRaffleState');
+
+export const invokeGetSocialRaffleConfig = async (
+  channel: BaseChannel,
+): Promise<SocialRaffleGenesisConfig['socialRaffle']> =>
+  channel.invoke('redeemableNft:getSocialRaffleConfig');

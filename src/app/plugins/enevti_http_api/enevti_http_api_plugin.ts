@@ -142,6 +142,9 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/tag/collection', controller.getCollectionTag(this._channel));
     this._app.get('/tag/username', controller.getUsernameTag(this._channel));
     this._app.get('/tag/nft', controller.getNFTTag(this._channel));
+    this._app.get('/raffle', controller.getSocialRaffleState(this._channel));
+    this._app.get('/raffle/:height', controller.getSocialRaffleRecord(this._channel));
+    this._app.get('/config/raffle', controller.getSocialRaffleConfig(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }
