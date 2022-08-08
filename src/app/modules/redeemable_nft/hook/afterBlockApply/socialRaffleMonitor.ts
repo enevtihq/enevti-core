@@ -17,7 +17,7 @@ import { debitBlockReward } from '../../utils/block_rewards';
 import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
 import { addInObject, asyncForEach } from '../../utils/transaction';
 import { SocialRaffleRecord } from '../../../../../types/core/chain/socialRaffle';
-import { mintNFT, MintNFTUtilsFunctionProps } from '../../utils/mint';
+import { MintNFTUtilsFunctionProps } from '../../utils/mint';
 
 export const socialRaffleMonitor = async (
   input: AfterBlockApplyContext,
@@ -94,32 +94,37 @@ export const socialRaffleMonitor = async (
           type: 'raffle',
         };
 
-        // const raffledNft: Buffer[] = await input.reducerHandler.invoke(
-        //   'redeemableNft:mintNFT',
-        //   mintNFTProps,
-        // );
+        const raffledNft: Buffer[] = await input.reducerHandler.invoke(
+          'redeemableNft:mintNFT',
+          mintNFTProps,
+        );
 
-        const raffledNft: Buffer[] = await mintNFT({
-          ...mintNFTProps,
-          stateStore: input.stateStore,
-        });
+        const newCollection = await getCollectionById(
+          input.stateStore,
+          registrar.id.toString('hex'),
+        );
+        if (!newCollection) throw new Error('Collection not found while monintorng social raffle');
 
-        socialRafflePool -= collection.minting.price.amount;
+        const newCreatorAccount = await input.stateStore.account.get<RedeemableNFTAccountProps>(
+          newCollection.creator,
+        );
+
+        socialRafflePool -= newCollection.minting.price.amount;
         socialRaffleRecord.items.push({
-          id: collection.id,
+          id: newCollection.id,
           winner: cryptography.getAddressFromPublicKey(registrar.candidate[selectedCandidateIndex]),
           raffled: raffledNft,
         });
 
-        collection.raffled += 1;
-        await setCollectionById(input.stateStore, collection.id.toString('hex'), collection);
+        newCollection.raffled += 1;
+        await setCollectionById(input.stateStore, newCollection.id.toString('hex'), newCollection); // TODO: disini akun jadi ke reset
 
-        creatorAccount.redeemableNft.raffled += 1;
-        await input.stateStore.account.set(collection.creator, creatorAccount);
+        newCreatorAccount.redeemableNft.raffled += 1;
+        await input.stateStore.account.set(newCollection.creator, newCreatorAccount); // TODO: disini akun jadi ke reset
 
-        addInObject(creatorWithNewRaffled, collection.creator, 1);
+        addInObject(creatorWithNewRaffled, newCollection.creator, 1);
         channel.publish('redeemableNft:wonRaffle', {
-          collection: collection.id.toString('hex'),
+          collection: newCollection.id.toString('hex'),
           address: cryptography
             .getAddressFromPublicKey(registrar.candidate[selectedCandidateIndex])
             .toString('hex'),
