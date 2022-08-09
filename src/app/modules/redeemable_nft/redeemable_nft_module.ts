@@ -391,7 +391,9 @@ export class RedeemableNftModule extends BaseModule {
     'newActivityNFT',
     'newActivityProfile',
     'newNFTLike',
+    'newNFTComment',
     'newCollectionLike',
+    'newCollectionComment',
     'newRaffled',
     'wonRaffle',
   ];

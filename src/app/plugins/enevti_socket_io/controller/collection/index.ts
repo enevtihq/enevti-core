@@ -43,3 +43,16 @@ export function onNewCollectionLike(channel: BaseChannel, io: Server | Socket) {
     }
   });
 }
+
+export function onNewCollectionComment(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:newCollectionComment', async data => {
+    if (data) {
+      const payload = data as { id: string };
+      const collection = await invokeGetCollection(channel, payload.id);
+      if (!collection)
+        throw new Error('undefined Collection id while subscribing newCollectionLike');
+
+      io.to(collection.id.toString('hex')).emit(`newComment`, collection.comment);
+    }
+  });
+}

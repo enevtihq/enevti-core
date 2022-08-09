@@ -20,6 +20,8 @@ import { socialRaffleMonitor } from './socialRaffleMonitor';
 import { getNFTById } from '../../utils/redeemable_nft';
 import { asyncForEach, addInObject } from '../../utils/transaction';
 import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { CommentNFTProps } from '../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
+import { CommentCollectionProps } from '../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
 
 export default async function redeemableNftAfterBlockApply(
   input: AfterBlockApplyContext,
@@ -48,8 +50,10 @@ export default async function redeemableNftAfterBlockApply(
   const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
   const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
   const collectionWithNewLike: Set<Buffer> = new Set<Buffer>();
+  const collectionWithNewComment: Set<Buffer> = new Set<Buffer>();
   const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
   const nftWithNewLike: Set<Buffer> = new Set<Buffer>();
+  const nftWithNewComment: Set<Buffer> = new Set<Buffer>();
   const totalNftMintedInCollection: { [collection: string]: number } = {};
   const totalCollectionCreatedByAddress: { [address: string]: number } = {};
 
@@ -207,6 +211,18 @@ export default async function redeemableNftAfterBlockApply(
       const likeCollectionAsset = (payload.asset as unknown) as LikeCollectionProps;
       collectionWithNewLike.add(Buffer.from(likeCollectionAsset.id, 'hex'));
     }
+
+    // commentNftAsset
+    if (payload.moduleID === 1000 && payload.assetID === 6) {
+      const commentNFTAsset = (payload.asset as unknown) as CommentNFTProps;
+      nftWithNewComment.add(Buffer.from(commentNFTAsset.id, 'hex'));
+    }
+
+    // commentCollectionAsset
+    if (payload.moduleID === 1000 && payload.assetID === 7) {
+      const commentCollectionAsset = (payload.asset as unknown) as CommentCollectionProps;
+      collectionWithNewComment.add(Buffer.from(commentCollectionAsset.id, 'hex'));
+    }
   }
 
   await asyncForEach(Object.keys(totalCollectionCreatedByAddress), async address => {
@@ -305,8 +321,20 @@ export default async function redeemableNftAfterBlockApply(
   }
 
   if (collectionWithNewLike.size > 0) {
-    collectionWithNewLike.forEach(nft =>
-      channel.publish('redeemableNft:newCollectionLike', { id: nft.toString('hex') }),
+    collectionWithNewLike.forEach(collection =>
+      channel.publish('redeemableNft:newCollectionLike', { id: collection.toString('hex') }),
+    );
+  }
+
+  if (nftWithNewComment.size > 0) {
+    nftWithNewComment.forEach(nft =>
+      channel.publish('redeemableNft:newNFTComment', { id: nft.toString('hex') }),
+    );
+  }
+
+  if (collectionWithNewComment.size > 0) {
+    collectionWithNewComment.forEach(collection =>
+      channel.publish('redeemableNft:newCollectionComment', { id: collection.toString('hex') }),
     );
   }
 }

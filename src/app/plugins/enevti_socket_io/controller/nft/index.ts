@@ -13,3 +13,15 @@ export function onNewNFTLike(channel: BaseChannel, io: Server | Socket) {
     }
   });
 }
+
+export function onNewNFTComment(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:newNFTComment', async data => {
+    if (data) {
+      const payload = data as { id: string };
+      const nft = await invokeGetNFT(channel, payload.id);
+      if (!nft) throw new Error('undefined NFT id while subscribing newNFTLike');
+
+      io.to(nft.id.toString('hex')).emit(`newComment`, nft.comment);
+    }
+  });
+}

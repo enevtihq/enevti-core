@@ -1,11 +1,15 @@
 import * as admin from 'firebase-admin';
 
-export async function sendDataOnlyTopicMessaging(topic: string, type: string, payload: string) {
+export async function sendDataOnlyTopicMessaging(
+  topic: string,
+  type: string,
+  payload: Record<string, unknown>,
+) {
   await admin.messaging().send({
     topic,
     data: {
       type,
-      payload,
+      payload: JSON.stringify(payload),
     },
     android: { priority: 'high' },
     apns: {

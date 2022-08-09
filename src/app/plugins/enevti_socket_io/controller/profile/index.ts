@@ -88,7 +88,7 @@ export function onPendingUtilityDelivery(
       await asyncForEach(Object.keys(accountMap), async address => {
         if (firebaseAdmin) {
           try {
-            await sendDataOnlyTopicMessaging(address, 'deliverSecretNotif', address);
+            await sendDataOnlyTopicMessaging(address, 'deliverSecretNotif', { address });
           } catch (err) {
             io.to(address).emit('deliverSecretNotif', address);
           }
