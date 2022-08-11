@@ -146,7 +146,9 @@ export const isCollectionEligibleForRaffle = (
   collection: CollectionAsset,
   config: SocialRaffleGenesisConfig['socialRaffle'],
 ) =>
-  (config.maxPrice > -1 ? collection.minting.price.amount < config.maxPrice : true) &&
+  (BigInt(config.maxPrice) > BigInt(-1)
+    ? collection.minting.price.amount < BigInt(config.maxPrice)
+    : true) &&
   // eslint-disable-next-line no-nested-ternary
   (config.maxRaffledPerCollection > -1
     ? collection.raffled > -1

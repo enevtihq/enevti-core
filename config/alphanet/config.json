@@ -26,7 +26,7 @@
       }
     ],
     "socialRaffle": {
-      "maxPrice": -1,
+      "maxPrice": "-1",
       "maxRaffledPerCollection": -1,
       "maxRaffledPerProfile": -1,
       "rewardsCutPercentage": 10,

@@ -22,6 +22,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       onSale: [],
       collection: [],
       pending: account.redeemableNft.pending.length,
+      raffled: account.redeemableNft.raffled,
     };
 
     res.status(200).json({ data: profile, meta: req.params });
