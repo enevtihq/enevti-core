@@ -37,6 +37,8 @@ export function getDefaultAccount(
       treasuryAct: 0,
       serveRate: 0,
       raffled: 0,
+      likeSent: 0,
+      commentSent: 0,
       owned: [],
       onSale: [],
       collection: [],

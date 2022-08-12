@@ -19,29 +19,37 @@ export const redeemableNftAccountSchema: AccountSchema = {
       dataType: 'uint32',
       fieldNumber: 4,
     },
-    owned: {
+    likeSent: {
+      dataType: 'uint32',
       fieldNumber: 5,
-      type: 'array',
-      items: {
-        dataType: 'bytes',
-      },
     },
-    onSale: {
+    commentSent: {
+      dataType: 'uint32',
       fieldNumber: 6,
-      type: 'array',
-      items: {
-        dataType: 'bytes',
-      },
     },
-    collection: {
+    owned: {
       fieldNumber: 7,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
-    pending: {
+    onSale: {
       fieldNumber: 8,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
+    collection: {
+      fieldNumber: 9,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
+    pending: {
+      fieldNumber: 10,
       type: 'array',
       items: {
         dataType: 'bytes',
@@ -53,6 +61,8 @@ export const redeemableNftAccountSchema: AccountSchema = {
     treasuryAct: 0,
     serveRate: 0,
     raffled: 0,
+    likeSent: 0,
+    commentSent: 0,
     owned: [],
     onSale: [],
     collection: [],

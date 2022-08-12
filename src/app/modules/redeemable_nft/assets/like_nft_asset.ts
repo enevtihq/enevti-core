@@ -1,4 +1,5 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { LikeNFTProps } from '../../../../types/core/asset/redeemable_nft/like_nft_asset';
 import { ACTIVITY } from '../constants/activity';
 import { likeNftAssetSchema } from '../schemas/asset/like_nft_asset';
@@ -41,6 +42,12 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
       date: BigInt(timestamp),
       target: nft.id,
     });
+
+    const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(
+      transaction.senderAddress,
+    );
+    senderAccount.redeemableNft.likeSent += 1;
+    await stateStore.account.set(transaction.senderAddress, senderAccount);
 
     const accountStats = await getAccountStats(
       stateStore,

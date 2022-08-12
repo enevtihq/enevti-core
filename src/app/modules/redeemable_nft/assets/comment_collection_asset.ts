@@ -1,4 +1,5 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { CommentCollectionProps } from '../../../../types/core/asset/redeemable_nft/comment_collection_asset';
 import { CommentAsset } from '../../../../types/core/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
@@ -52,5 +53,11 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
       date: BigInt(timestamp),
       target: collection.id,
     });
+
+    const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(
+      transaction.senderAddress,
+    );
+    senderAccount.redeemableNft.commentSent += 1;
+    await stateStore.account.set(transaction.senderAddress, senderAccount);
   }
 }
