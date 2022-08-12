@@ -43,6 +43,7 @@ export const createOnekindNftAssetSchema = {
     'price',
     'quantity',
     'mintingExpire',
+    'raffled',
   ],
   properties: {
     name: {
@@ -195,6 +196,10 @@ export const createOnekindNftAssetSchema = {
     mintingExpire: {
       dataType: 'uint32',
       fieldNumber: 35,
+    },
+    raffled: {
+      dataType: 'sint32',
+      fieldNumber: 36,
     },
   },
 };

@@ -191,7 +191,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         twitter: '',
       },
       promoted: false,
-      raffled: 0, // TODO: change to asset.raffled
+      raffled: asset.raffled,
     };
 
     if (collection.raffled > -1) {

@@ -79,7 +79,7 @@ export const socialRaffleMonitor = async (
 
       if (
         isMintingAvailable(collection, timestamp) &&
-        collection.minting.available.length < collection.packSize &&
+        collection.minting.available.length > collection.packSize &&
         isCollectionEligibleForRaffle(collection, config.socialRaffle) &&
         isProfileEligibleForRaffle(creatorAccount, config.socialRaffle) &&
         collection.minting.price.amount < socialRafflePool
