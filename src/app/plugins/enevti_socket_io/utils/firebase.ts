@@ -1,11 +1,12 @@
 import * as admin from 'firebase-admin';
 
 export async function sendDataOnlyTopicMessaging(
+  firebaseAdmin: typeof admin,
   topic: string,
   type: string,
   payload: Record<string, unknown>,
 ) {
-  await admin.messaging().send({
+  await firebaseAdmin.messaging().send({
     topic,
     data: {
       type,

@@ -17,10 +17,13 @@ export function onNewRaffled(
         Buffer.from(payload.collection, 'hex'),
       );
       if (!collection) throw new Error('undefined Collection id while subscribing newRaffled');
-      const message = { collection, total: payload.total };
+      const message = {
+        collection: { id: collection.id, name: collection.name },
+        total: payload.total,
+      };
       if (firebaseAdmin) {
         try {
-          await sendDataOnlyTopicMessaging(payload.address, 'newRaffled', message);
+          await sendDataOnlyTopicMessaging(firebaseAdmin, payload.address, 'newRaffled', message);
         } catch (err) {
           io.to(payload.address).emit(`newRaffled`, message);
         }
@@ -44,10 +47,13 @@ export function onWonRaffle(
         Buffer.from(payload.collection, 'hex'),
       );
       if (!collection) throw new Error('undefined Collection id while subscribing wonRaffle');
-      const message = { collection, total: payload.items.length };
+      const message = {
+        collection: { id: collection.id, name: collection.name },
+        total: payload.items.length,
+      };
       if (firebaseAdmin) {
         try {
-          await sendDataOnlyTopicMessaging(payload.address, 'wonRaffle', message);
+          await sendDataOnlyTopicMessaging(firebaseAdmin, payload.address, 'wonRaffle', message);
         } catch (err) {
           io.to(payload.address).emit(`wonRaffle`, message);
         }
