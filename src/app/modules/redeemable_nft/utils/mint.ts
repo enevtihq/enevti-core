@@ -145,7 +145,9 @@ export async function mintNFT({
       });
     }
 
-    accountStats.nftSold.unshift(nft.id);
+    if (type === 'normal') {
+      accountStats.nftSold.unshift(nft.id);
+    }
     accountStats.serveRate.items.unshift({ id: nft.id, nonce: nft.redeem.count, status: 0 });
   });
 
@@ -157,8 +159,13 @@ export async function mintNFT({
   );
 
   collection.stat.minted += boughtItem.length;
-  creatorAccount.redeemableNft.nftSold += boughtItem.length;
   creatorAccount.redeemableNft.serveRate = serveRate;
+  if (type === 'normal') {
+    creatorAccount.redeemableNft.nftSold += boughtItem.length;
+  } else if (type === 'raffle') {
+    accountStats.raffled.unshift(collection.id);
+    creatorAccount.redeemableNft.raffled += 1;
+  }
 
   accountStats.serveRate.score = serveRate;
   await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);

@@ -79,7 +79,7 @@ export const socialRaffleMonitor = async (
 
       if (
         isMintingAvailable(collection, timestamp) &&
-        collection.minting.available.length > collection.packSize &&
+        collection.minting.available.length >= collection.packSize &&
         isCollectionEligibleForRaffle(collection, config.socialRaffle) &&
         isProfileEligibleForRaffle(creatorAccount, config.socialRaffle) &&
         collection.minting.price.amount < socialRafflePool
@@ -108,10 +108,6 @@ export const socialRaffleMonitor = async (
         );
         if (!newCollection) throw new Error('Collection not found while monintorng social raffle');
 
-        const newCreatorAccount = await input.stateStore.account.get<RedeemableNFTAccountProps>(
-          newCollection.creator,
-        );
-
         socialRafflePool -= newCollection.minting.price.amount;
         socialRaffleRecord.items.push({
           id: newCollection.id,
@@ -121,9 +117,6 @@ export const socialRaffleMonitor = async (
 
         newCollection.raffled += 1;
         await setCollectionById(input.stateStore, newCollection.id.toString('hex'), newCollection);
-
-        newCreatorAccount.redeemableNft.raffled += 1;
-        await input.stateStore.account.set(newCollection.creator, newCreatorAccount);
 
         addInObject(collectionWithNewRaffled, newCollection.id, raffledNft.length);
         channel.publish('redeemableNft:wonRaffle', {
