@@ -17,7 +17,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     }
 
     const liked = viewer ? (await invokeGetLiked(channel, id, viewer)) === 1 : false;
-    const response: Comment & { liked: boolean } = {
+    const response: Comment = {
       ...comment,
       id: comment.id.toString('hex'),
       date: chainDateToUI(comment.date),
