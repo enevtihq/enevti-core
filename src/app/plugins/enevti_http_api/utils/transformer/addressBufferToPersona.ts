@@ -8,6 +8,14 @@ export default async function addressBufferToPersona(
   channel: BaseChannel,
   address: Buffer,
 ): Promise<Persona> {
+  if (Buffer.compare(address, Buffer.alloc(0)) === 0) {
+    return {
+      address: '',
+      base32: '',
+      photo: '',
+      username: '',
+    };
+  }
   const ownerAccount = await invokeGetAccount(channel, address.toString('hex'));
   const persona: Persona = {
     address: ownerAccount.address.toString('hex'),
