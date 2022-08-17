@@ -455,7 +455,7 @@ export const addCommentReplyById = async (
     return;
   }
 
-  commentReply.reply.unshift(reply.id);
+  commentReply.reply.push(reply.id);
   await setCommentReplyById(stateStore, id, commentReply);
 
   const replyBuffer = await getReplyById(stateStore, reply.id.toString('hex'));
