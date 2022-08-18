@@ -14,7 +14,9 @@ const REGISTRAR_SERIAL = 'registeredSerialChain';
 const LIKE_CHAIN_PREFIX = 'likeChain';
 const LIKED_CHAIN_PREFIX = 'likedChain';
 const COMMENT_CHAIN_PREFIX = 'commentChain';
+const COMMENT_CLUBS_CHAIN_PREFIX = 'commentClubsChain';
 const REPLY_CHAIN_PREFIX = 'replyChain';
+const REPLY_CLUBS_CHAIN_PREFIX = 'replyClubsChain';
 const SOCIAL_RAFFLE_CHAIN_PREFIX = 'socialRaffleChain';
 
 export const CHAIN_STATE_ALL_NFT = `${REDEEMABLE_NFT_CHAIN_PREFIX}:all`;
@@ -36,5 +38,7 @@ export const CHAIN_STATE_REGISTRAR_SERIAL = `${REGISTRAR_SERIAL}`;
 export const CHAIN_STATE_LIKE = `${LIKE_CHAIN_PREFIX}`;
 export const CHAIN_STATE_LIKED = `${LIKED_CHAIN_PREFIX}`;
 export const CHAIN_STATE_COMMENT = `${COMMENT_CHAIN_PREFIX}`;
+export const CHAIN_STATE_COMMENT_CLUBS = `${COMMENT_CLUBS_CHAIN_PREFIX}`;
 export const CHAIN_STATE_REPLY = `${REPLY_CHAIN_PREFIX}`;
+export const CHAIN_STATE_REPLY_CLUBS = `${REPLY_CLUBS_CHAIN_PREFIX}`;
 export const CHAIN_STATE_SOCIAL_RAFFLE = `${SOCIAL_RAFFLE_CHAIN_PREFIX}`;

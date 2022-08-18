@@ -45,6 +45,7 @@ export const redeemableNFTSchema: SchemaWithDefault = {
     'price',
     'onSale',
     'royalty',
+    'clubs',
   ],
   properties: {
     id: {
@@ -275,6 +276,10 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           fieldNumber: 2,
         },
       },
+    },
+    clubs: {
+      dataType: 'uint32',
+      fieldNumber: 23,
     },
   },
 };

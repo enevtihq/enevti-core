@@ -54,11 +54,13 @@ export class LikeNftAsset extends BaseAsset<LikeNFTProps> {
       transaction.senderAddress.toString('hex'),
     );
     accountStats.likeSent.nft.unshift(nft.id);
-    accountStats.likeSent.total =
-      accountStats.likeSent.nft.length +
-      accountStats.likeSent.collection.length +
-      accountStats.likeSent.comment.length +
-      accountStats.likeSent.reply.length;
+    accountStats.likeSent.total = Object.keys(accountStats.likeSent).reduce(
+      (prev, current) =>
+        Array.isArray(accountStats.likeSent[current])
+          ? prev + (accountStats.likeSent[current] as unknown[]).length
+          : prev + 0,
+      0,
+    );
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
   }
 }

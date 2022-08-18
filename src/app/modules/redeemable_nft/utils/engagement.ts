@@ -7,15 +7,21 @@ import {
   LikedAsset,
   ReplyAsset,
   ReplyAtAsset,
+  CommentClubsAsset,
+  CommentClubsAtAsset,
 } from '../../../../types/core/chain/engagement';
 import {
   CHAIN_STATE_COMMENT,
+  CHAIN_STATE_COMMENT_CLUBS,
   CHAIN_STATE_LIKE,
   CHAIN_STATE_LIKED,
   CHAIN_STATE_REPLY,
+  CHAIN_STATE_REPLY_CLUBS,
 } from '../constants/codec';
 import {
   commentAtSchema,
+  commentClubsAtSchema,
+  commentClubsSchema,
   commentSchema,
   likeAtSchema,
   likedAtSchema,
@@ -463,5 +469,347 @@ export const addCommentReplyById = async (
     await setReplyById(stateStore, reply.id.toString('hex'), reply);
   } else {
     throw Error('Reply already exist');
+  }
+};
+
+export const accessCommentClubsById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<CommentClubsAsset | undefined> => {
+  const commentBuffer = await dataAccess.getChainState(`${CHAIN_STATE_COMMENT_CLUBS}:${id}`);
+  if (!commentBuffer) {
+    return undefined;
+  }
+  return codec.decode<CommentClubsAsset>(commentClubsSchema, commentBuffer);
+};
+
+export const getCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<CommentClubsAsset | undefined> => {
+  const commentBuffer = await stateStore.chain.get(`${CHAIN_STATE_COMMENT_CLUBS}:${id}`);
+  if (!commentBuffer) {
+    return undefined;
+  }
+  return codec.decode<CommentClubsAsset>(commentClubsSchema, commentBuffer);
+};
+
+export const setCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+  clubs: CommentClubsAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_COMMENT_CLUBS}:${id}`,
+    codec.encode(commentClubsSchema, clubs),
+  );
+};
+
+export const accessCollectionCommentClubsById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<CommentClubsAtAsset> => {
+  const commentCollectionBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_COMMENT_CLUBS}:collection:${id}`,
+  );
+  if (!commentCollectionBuffer) {
+    return { clubs: [] };
+  }
+  return codec.decode<CommentClubsAtAsset>(commentClubsAtSchema, commentCollectionBuffer);
+};
+
+export const getCollectionCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<CommentClubsAtAsset> => {
+  const commentCollectionBuffer = await stateStore.chain.get(
+    `${CHAIN_STATE_COMMENT_CLUBS}:collection:${id}`,
+  );
+  if (!commentCollectionBuffer) {
+    return { clubs: [] };
+  }
+  return codec.decode<CommentClubsAtAsset>(commentClubsAtSchema, commentCollectionBuffer);
+};
+
+export const setCollectionCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+  clubs: CommentClubsAtAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_COMMENT_CLUBS}:collection:${id}`,
+    codec.encode(commentClubsAtSchema, clubs),
+  );
+};
+
+export const addCollectionCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+  clubs: CommentClubsAsset,
+) => {
+  const commentCollection = await getCollectionCommentClubsById(stateStore, id);
+  if (!commentCollection) {
+    await setCollectionCommentClubsById(stateStore, id, { clubs: [clubs.id] });
+    return;
+  }
+
+  commentCollection.clubs.unshift(clubs.id);
+  await setCollectionCommentClubsById(stateStore, id, commentCollection);
+
+  const commentBuffer = await getCommentClubsById(stateStore, clubs.id.toString('hex'));
+  if (!commentBuffer) {
+    await setCommentClubsById(stateStore, clubs.id.toString('hex'), clubs);
+  } else {
+    throw Error('Comment already exist');
+  }
+};
+
+export const accessNftCommentClubsById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<CommentClubsAtAsset> => {
+  const commentNftBuffer = await dataAccess.getChainState(`${CHAIN_STATE_COMMENT_CLUBS}:nft:${id}`);
+  if (!commentNftBuffer) {
+    return { clubs: [] };
+  }
+  return codec.decode<CommentClubsAtAsset>(commentClubsAtSchema, commentNftBuffer);
+};
+
+export const getNftCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<CommentClubsAtAsset> => {
+  const commentNftBuffer = await stateStore.chain.get(`${CHAIN_STATE_COMMENT_CLUBS}:nft:${id}`);
+  if (!commentNftBuffer) {
+    return { clubs: [] };
+  }
+  return codec.decode<CommentClubsAtAsset>(commentClubsAtSchema, commentNftBuffer);
+};
+
+export const setNftCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+  clubs: CommentClubsAtAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_COMMENT_CLUBS}:nft:${id}`,
+    codec.encode(commentClubsAtSchema, clubs),
+  );
+};
+
+export const addNftCommentClubsById = async (
+  stateStore: StateStore,
+  id: string,
+  clubs: CommentClubsAsset,
+) => {
+  const commentNft = await getNftCommentClubsById(stateStore, id);
+  if (!commentNft) {
+    await setNftCommentClubsById(stateStore, id, { clubs: [clubs.id] });
+    return;
+  }
+
+  commentNft.clubs.unshift(clubs.id);
+  await setNftCommentClubsById(stateStore, id, commentNft);
+
+  const commentBuffer = await getCommentClubsById(stateStore, clubs.id.toString('hex'));
+  if (!commentBuffer) {
+    await setCommentClubsById(stateStore, clubs.id.toString('hex'), clubs);
+  } else {
+    throw Error('Comment already exist');
+  }
+};
+
+export const accessReplyClubsById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<ReplyAsset | undefined> => {
+  const replyBuffer = await dataAccess.getChainState(`${CHAIN_STATE_REPLY_CLUBS}:${id}`);
+  if (!replyBuffer) {
+    return undefined;
+  }
+  return codec.decode<ReplyAsset>(replySchema, replyBuffer);
+};
+
+export const getReplyClubsById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<ReplyAsset | undefined> => {
+  const replyBuffer = await stateStore.chain.get(`${CHAIN_STATE_REPLY_CLUBS}:${id}`);
+  if (!replyBuffer) {
+    return undefined;
+  }
+  return codec.decode<ReplyAsset>(replySchema, replyBuffer);
+};
+
+export const setReplyClubsById = async (stateStore: StateStore, id: string, reply: ReplyAsset) => {
+  await stateStore.chain.set(`${CHAIN_STATE_REPLY_CLUBS}:${id}`, codec.encode(replySchema, reply));
+};
+
+export const accessCommentClubsReplyById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<ReplyAtAsset> => {
+  const commentReplyBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_REPLY_CLUBS}:comment:${id}`,
+  );
+  if (!commentReplyBuffer) {
+    return { reply: [] };
+  }
+  return codec.decode<ReplyAtAsset>(replyAtSchema, commentReplyBuffer);
+};
+
+export const getCommentClubsReplyById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<ReplyAtAsset> => {
+  const commentReplyBuffer = await stateStore.chain.get(`${CHAIN_STATE_REPLY_CLUBS}:comment:${id}`);
+  if (!commentReplyBuffer) {
+    return { reply: [] };
+  }
+  return codec.decode<ReplyAtAsset>(replyAtSchema, commentReplyBuffer);
+};
+
+export const setCommentClubsReplyById = async (
+  stateStore: StateStore,
+  id: string,
+  reply: ReplyAtAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_REPLY_CLUBS}:comment:${id}`,
+    codec.encode(replyAtSchema, reply),
+  );
+};
+
+export const addCommentClubsReplyById = async (
+  stateStore: StateStore,
+  id: string,
+  reply: ReplyAsset,
+) => {
+  const commentReply = await getCommentReplyById(stateStore, id);
+  if (!commentReply) {
+    await setCommentReplyById(stateStore, id, { reply: [reply.id] });
+    return;
+  }
+
+  commentReply.reply.push(reply.id);
+  await setCommentReplyById(stateStore, id, commentReply);
+
+  const replyBuffer = await getReplyById(stateStore, reply.id.toString('hex'));
+  if (!replyBuffer) {
+    await setReplyById(stateStore, reply.id.toString('hex'), reply);
+  } else {
+    throw Error('Reply already exist');
+  }
+};
+
+export const accessCommentClubsLikeById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<LikeAtAsset> => {
+  const likeCommentBuffer = await dataAccess.getChainState(
+    `${CHAIN_STATE_LIKE}:commentClubs:${id}`,
+  );
+  if (!likeCommentBuffer) {
+    return { address: [] };
+  }
+  return codec.decode<LikeAtAsset>(likeAtSchema, likeCommentBuffer);
+};
+
+export const getCommentClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<LikeAtAsset> => {
+  const likeCommentBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:commentClubs:${id}`);
+  if (!likeCommentBuffer) {
+    return { address: [] };
+  }
+  return codec.decode<LikeAtAsset>(likeAtSchema, likeCommentBuffer);
+};
+
+export const setCommentClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+  like: LikeAtAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_LIKE}:commentClubs:${id}`,
+    codec.encode(likeAtSchema, like),
+  );
+};
+
+export const addCommentClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+  address: Buffer,
+) => {
+  const likeComment = await getCommentClubsLikeById(stateStore, id);
+  if (!likeComment) {
+    await setCommentClubsLikeById(stateStore, id, { address: [address] });
+    await setLiked(stateStore, id, address.toString('hex'), 1);
+    return;
+  }
+
+  const liked = await getLiked(stateStore, id, address.toString('hex'));
+  if (liked === 0) {
+    likeComment.address.unshift(address);
+    await setCommentClubsLikeById(stateStore, id, likeComment);
+    await setLiked(stateStore, id, address.toString('hex'), 1);
+  } else {
+    throw Error('Address already exist');
+  }
+};
+
+export const accessReplyClubsLikeById = async (
+  dataAccess: BaseModuleDataAccess,
+  id: string,
+): Promise<LikeAtAsset> => {
+  const likeReplyBuffer = await dataAccess.getChainState(`${CHAIN_STATE_LIKE}:replyClubs:${id}`);
+  if (!likeReplyBuffer) {
+    return { address: [] };
+  }
+  return codec.decode<LikeAtAsset>(likeAtSchema, likeReplyBuffer);
+};
+
+export const getReplyClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+): Promise<LikeAtAsset> => {
+  const likeReplyBuffer = await stateStore.chain.get(`${CHAIN_STATE_LIKE}:replyClubs:${id}`);
+  if (!likeReplyBuffer) {
+    return { address: [] };
+  }
+  return codec.decode<LikeAtAsset>(likeAtSchema, likeReplyBuffer);
+};
+
+export const setReplyClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+  like: LikeAtAsset,
+) => {
+  await stateStore.chain.set(
+    `${CHAIN_STATE_LIKE}:replyClubs:${id}`,
+    codec.encode(likeAtSchema, like),
+  );
+};
+
+export const addReplyClubsLikeById = async (
+  stateStore: StateStore,
+  id: string,
+  address: Buffer,
+) => {
+  const likeReply = await getReplyClubsLikeById(stateStore, id);
+  if (!likeReply) {
+    await setReplyClubsLikeById(stateStore, id, { address: [address] });
+    await setLiked(stateStore, id, address.toString('hex'), 1);
+    return;
+  }
+
+  const liked = await getLiked(stateStore, id, address.toString('hex'));
+  if (liked === 0) {
+    likeReply.address.unshift(address);
+    await setReplyClubsLikeById(stateStore, id, likeReply);
+    await setLiked(stateStore, id, address.toString('hex'), 1);
+  } else {
+    throw Error('Address already exist');
   }
 };

@@ -163,6 +163,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       createdOn: BigInt(timestamp),
       like: 0,
       comment: 0,
+      clubs: 0,
       packSize: 1,
       stat: {
         minted: 0,
@@ -219,6 +220,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         networkIdentifier,
         like: 0,
         comment: 0,
+        clubs: 0,
         owner: Buffer.alloc(0),
         creator: senderAddress,
         data: {

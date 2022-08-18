@@ -12,6 +12,8 @@ import {
   CommentAtAsset,
   ReplyAsset,
   ReplyAtAsset,
+  CommentClubsAsset,
+  CommentClubsAtAsset,
 } from '../../../../types/core/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../types/core/chain/id';
 import { NFTAsset } from '../../../../types/core/chain/nft';
@@ -44,6 +46,13 @@ import {
   accessCollectionCommentById,
   accessReplyById,
   accessCommentReplyById,
+  accessCommentClubsLikeById,
+  accessReplyClubsLikeById,
+  accessCommentClubsById,
+  accessCollectionCommentClubsById,
+  accessNftCommentClubsById,
+  accessReplyClubsById,
+  accessCommentClubsReplyById,
 } from '../utils/engagement';
 import {
   accessAllNFTTemplate,
@@ -65,29 +74,44 @@ export function redeemableNftActions(this: BaseModule) {
       const liked = await accessLiked(this._dataAccess, id, address);
       return liked;
     },
-    getNFTLike: async (params): Promise<LikeAtAsset | undefined> => {
+    getNFTLike: async (params): Promise<LikeAtAsset> => {
       const { id } = params as Record<string, string>;
       const likeNft = await accessNFTLikeById(this._dataAccess, id);
       return likeNft;
     },
-    getCollectionLike: async (params): Promise<LikeAtAsset | undefined> => {
+    getCollectionLike: async (params): Promise<LikeAtAsset> => {
       const { id } = params as Record<string, string>;
       const likeCollection = await accessCollectionLikeById(this._dataAccess, id);
       return likeCollection;
     },
-    getCommentLike: async (params): Promise<LikeAtAsset | undefined> => {
+    getCommentLike: async (params): Promise<LikeAtAsset> => {
       const { id } = params as Record<string, string>;
       const likeComment = await accessCommentLikeById(this._dataAccess, id);
       return likeComment;
     },
-    getReplyLike: async (params): Promise<LikeAtAsset | undefined> => {
+    getReplyLike: async (params): Promise<LikeAtAsset> => {
       const { id } = params as Record<string, string>;
       const likeReply = await accessReplyLikeById(this._dataAccess, id);
       return likeReply;
     },
+    getCommentClubsLike: async (params): Promise<LikeAtAsset> => {
+      const { id } = params as Record<string, string>;
+      const likeCommentClubs = await accessCommentClubsLikeById(this._dataAccess, id);
+      return likeCommentClubs;
+    },
+    getReplyClubsLike: async (params): Promise<LikeAtAsset> => {
+      const { id } = params as Record<string, string>;
+      const likeReplyClubs = await accessReplyClubsLikeById(this._dataAccess, id);
+      return likeReplyClubs;
+    },
     getComment: async (params): Promise<CommentAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const comment = await accessCommentById(this._dataAccess, id);
+      return comment ?? undefined;
+    },
+    getCommentClubs: async (params): Promise<CommentClubsAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const comment = await accessCommentClubsById(this._dataAccess, id);
       return comment ?? undefined;
     },
     getNFTComment: async (params): Promise<CommentAtAsset | undefined> => {
@@ -95,9 +119,19 @@ export function redeemableNftActions(this: BaseModule) {
       const commentNft = await accessNFTCommentById(this._dataAccess, id);
       return commentNft;
     },
+    getNFTCommentClubs: async (params): Promise<CommentClubsAtAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentNft = await accessNftCommentClubsById(this._dataAccess, id);
+      return commentNft;
+    },
     getCollectionComment: async (params): Promise<CommentAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const commentCollection = await accessCollectionCommentById(this._dataAccess, id);
+      return commentCollection;
+    },
+    getCollectionCommentClubs: async (params): Promise<CommentClubsAtAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentCollection = await accessCollectionCommentClubsById(this._dataAccess, id);
       return commentCollection;
     },
     getReply: async (params): Promise<ReplyAsset | undefined> => {
@@ -105,9 +139,19 @@ export function redeemableNftActions(this: BaseModule) {
       const reply = await accessReplyById(this._dataAccess, id);
       return reply ?? undefined;
     },
+    getReplyClubs: async (params): Promise<ReplyAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const reply = await accessReplyClubsById(this._dataAccess, id);
+      return reply ?? undefined;
+    },
     getCommentReply: async (params): Promise<ReplyAtAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const commentReply = await accessCommentReplyById(this._dataAccess, id);
+      return commentReply;
+    },
+    getCommentClubsReply: async (params): Promise<ReplyAtAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentReply = await accessCommentClubsReplyById(this._dataAccess, id);
       return commentReply;
     },
     getCollectionIdFromName: async (params): Promise<CollectionIdAsset | undefined> => {

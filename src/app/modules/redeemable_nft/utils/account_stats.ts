@@ -14,7 +14,17 @@ export const accessAccountStats = async (
       raffled: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
-      likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },
+      likeSent: {
+        total: 0,
+        nft: [],
+        collection: [],
+        comment: [],
+        reply: [],
+        commentClubs: [],
+        replyClubs: [],
+      },
+      commentSent: { total: 0, comment: [], reply: [] },
+      commentClubsSent: { total: 0, comment: [], reply: [] },
     };
   }
   return codec.decode<RedeemableNFTAccountStatsChain>(accountStatsSchema, accountStats);
@@ -31,7 +41,17 @@ export const getAccountStats = async (
       raffled: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
-      likeSent: { total: 0, nft: [], collection: [], comment: [], reply: [] },
+      likeSent: {
+        total: 0,
+        nft: [],
+        collection: [],
+        comment: [],
+        reply: [],
+        commentClubs: [],
+        replyClubs: [],
+      },
+      commentSent: { total: 0, comment: [], reply: [] },
+      commentClubsSent: { total: 0, comment: [], reply: [] },
     };
   }
   return codec.decode<RedeemableNFTAccountStatsChain>(accountStatsSchema, accountStats);

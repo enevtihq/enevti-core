@@ -1,23 +1,23 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { CommentCollectionProps } from '../../../../types/core/asset/redeemable_nft/comment_collection_asset';
-import { CommentAsset } from '../../../../types/core/chain/engagement';
+import { CommentCollectionClubsProps } from '../../../../types/core/asset/redeemable_nft/comment_collection_clubs_asset';
+import { CommentClubsAsset } from '../../../../types/core/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
-import { commentCollectionAssetSchema } from '../schemas/asset/comment_collection_asset';
+import { commentCollectionClubsAssetSchema } from '../schemas/asset/comment_collection_clubs_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
 import { getCollectionById, setCollectionById } from '../utils/collection';
-import { addCollectionCommentById } from '../utils/engagement';
+import { addCollectionCommentClubsById } from '../utils/engagement';
 import { getBlockTimestamp } from '../utils/transaction';
 
-export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
-  public name = 'commentCollection';
-  public id = 7;
+export class CommentCollectionClubsAsset extends BaseAsset {
+  public name = 'commentCollectionClubs';
+  public id = 11;
 
   // Define schema for asset
-  public schema = commentCollectionAssetSchema;
+  public schema = commentCollectionClubsAssetSchema;
 
-  public validate(_input: ValidateAssetContext<CommentCollectionProps>): void {
+  public validate(_input: ValidateAssetContext<CommentCollectionClubsProps>): void {
     // Validate your asset
   }
 
@@ -26,16 +26,24 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<CommentCollectionProps>): Promise<void> {
+  }: ApplyAssetContext<CommentCollectionClubsProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
     const collection = await getCollectionById(stateStore, asset.id);
     if (!collection) {
       throw new Error('Collection doesnt exists');
     }
 
-    collection.comment += 1;
+    if (
+      Buffer.compare(collection.creator, transaction.senderAddress) !== 0 ||
+      collection.stat.owner.findIndex(o => Buffer.compare(o, transaction.senderAddress) === 0) ===
+        -1
+    ) {
+      throw new Error('You are not authorized to give comment on this collection clubs');
+    }
 
-    const comment: CommentAsset = {
+    collection.clubs += 1;
+
+    const clubsComment: CommentClubsAsset = {
       id: transaction.id,
       type: 'collection',
       owner: transaction.senderAddress,
@@ -45,12 +53,12 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
       like: 0,
       reply: 0,
     };
-    await addCollectionCommentById(stateStore, asset.id, comment);
+    await addCollectionCommentClubsById(stateStore, asset.id, clubsComment);
     await setCollectionById(stateStore, asset.id, collection);
 
     await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
       transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.COMMENTCOLLECTION,
+      name: ACTIVITY.ENGAGEMENT.COMMENTCOLLECTIONCLUBS,
       date: BigInt(timestamp),
       target: collection.id,
     });
@@ -58,16 +66,16 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(
       transaction.senderAddress,
     );
-    senderAccount.redeemableNft.commentSent += 1;
+    senderAccount.redeemableNft.commentClubsSent += 1;
     await stateStore.account.set(transaction.senderAddress, senderAccount);
 
     const accountStats = await getAccountStats(
       stateStore,
       transaction.senderAddress.toString('hex'),
     );
-    accountStats.commentSent.comment.unshift(transaction.id);
-    accountStats.commentSent.total =
-      accountStats.commentSent.comment.length + accountStats.commentSent.reply.length;
+    accountStats.commentClubsSent.comment.unshift(transaction.id);
+    accountStats.commentClubsSent.total =
+      accountStats.commentClubsSent.comment.length + accountStats.commentClubsSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
   }
 }

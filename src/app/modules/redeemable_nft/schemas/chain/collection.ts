@@ -54,6 +54,7 @@ export const collectionSchema: SchemaWithDefault = {
     'social',
     'promoted',
     'raffled',
+    'clubs',
   ],
   properties: {
     id: {
@@ -188,6 +189,10 @@ export const collectionSchema: SchemaWithDefault = {
     raffled: {
       dataType: 'sint32',
       fieldNumber: 18,
+    },
+    clubs: {
+      dataType: 'uint32',
+      fieldNumber: 19,
     },
   },
 };

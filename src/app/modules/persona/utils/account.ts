@@ -39,6 +39,7 @@ export function getDefaultAccount(
       raffled: 0,
       likeSent: 0,
       commentSent: 0,
+      commentClubsSent: 0,
       owned: [],
       onSale: [],
       collection: [],

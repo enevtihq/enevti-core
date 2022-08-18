@@ -40,8 +40,13 @@ export const ACTIVITY: {
     LIKECOLLECTION: 'likeCollection',
     LIKECOMMENT: 'likeComment',
     LIKEREPLY: 'likeReply',
+    LIKECOMMENTCLUBS: 'likeCommentClubs',
+    LIKEREPLYCLUBS: 'likeReplyClubs',
     COMMENTNFT: 'commentNft',
     COMMENTCOLLECTION: 'commentCollection',
     REPLYCOMMENT: 'replyComment',
+    REPLYCOMMENTCLUBS: 'replyCommentClubs',
+    COMMENTCOLLECTIONCLUBS: 'commentCollectionClubs',
+    COMMENTNFTCLUBS: 'commentNftClubs',
   },
 };

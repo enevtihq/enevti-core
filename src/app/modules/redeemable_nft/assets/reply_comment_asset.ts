@@ -4,6 +4,7 @@ import { ReplyCommentProps } from '../../../../types/core/asset/redeemable_nft/r
 import { ReplyAsset } from '../../../../types/core/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
 import { replyCommentAssetSchema } from '../schemas/asset/reply_comment_asset';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
 import { addCommentReplyById, getCommentById, setCommentById } from '../utils/engagement';
 import { getBlockTimestamp } from '../utils/transaction';
@@ -56,5 +57,14 @@ export class ReplyCommentAsset extends BaseAsset {
     );
     senderAccount.redeemableNft.commentSent += 1;
     await stateStore.account.set(transaction.senderAddress, senderAccount);
+
+    const accountStats = await getAccountStats(
+      stateStore,
+      transaction.senderAddress.toString('hex'),
+    );
+    accountStats.commentSent.reply.unshift(transaction.id);
+    accountStats.commentSent.total =
+      accountStats.commentSent.comment.length + accountStats.commentSent.reply.length;
+    await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
   }
 }

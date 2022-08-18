@@ -1,23 +1,23 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { CommentNFTProps } from '../../../../types/core/asset/redeemable_nft/comment_nft_asset';
-import { CommentAsset } from '../../../../types/core/chain/engagement';
+import { CommentNFTClubsProps } from '../../../../types/core/asset/redeemable_nft/comment_nft_clubs_asset';
+import { CommentClubsAsset } from '../../../../types/core/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
-import { commentNftAssetSchema } from '../schemas/asset/comment_nft_asset';
+import { commentNftClubsAssetSchema } from '../schemas/asset/comment_nft_clubs_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
-import { addNFTCommentById } from '../utils/engagement';
+import { addNftCommentClubsById } from '../utils/engagement';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
 import { getBlockTimestamp } from '../utils/transaction';
 
-export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
-  public name = 'commentNft';
-  public id = 6;
+export class CommentNftClubsAsset extends BaseAsset {
+  public name = 'commentNftClubs';
+  public id = 12;
 
   // Define schema for asset
-  public schema = commentNftAssetSchema;
+  public schema = commentNftClubsAssetSchema;
 
-  public validate(_input: ValidateAssetContext<CommentNFTProps>): void {
+  public validate(_input: ValidateAssetContext<CommentNFTClubsProps>): void {
     // Validate your asset
   }
 
@@ -26,16 +26,23 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<CommentNFTProps>): Promise<void> {
+  }: ApplyAssetContext<CommentNFTClubsProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
       throw new Error('NFT doesnt exists');
     }
 
-    nft.comment += 1;
+    if (
+      Buffer.compare(nft.creator, transaction.senderAddress) !== 0 ||
+      Buffer.compare(nft.owner, transaction.senderAddress) !== 0
+    ) {
+      throw new Error('You are not authorized to give comment on this NFT clubs');
+    }
 
-    const comment: CommentAsset = {
+    nft.clubs += 1;
+
+    const clubs: CommentClubsAsset = {
       id: transaction.id,
       type: 'nft',
       owner: transaction.senderAddress,
@@ -45,12 +52,12 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
       like: 0,
       reply: 0,
     };
-    await addNFTCommentById(stateStore, asset.id, comment);
+    await addNftCommentClubsById(stateStore, asset.id, clubs);
     await setNFTById(stateStore, asset.id, nft);
 
     await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
       transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.COMMENTNFT,
+      name: ACTIVITY.ENGAGEMENT.COMMENTNFTCLUBS,
       date: BigInt(timestamp),
       target: nft.id,
     });
@@ -58,16 +65,16 @@ export class CommentNftAsset extends BaseAsset<CommentNFTProps> {
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(
       transaction.senderAddress,
     );
-    senderAccount.redeemableNft.commentSent += 1;
+    senderAccount.redeemableNft.commentClubsSent += 1;
     await stateStore.account.set(transaction.senderAddress, senderAccount);
 
     const accountStats = await getAccountStats(
       stateStore,
       transaction.senderAddress.toString('hex'),
     );
-    accountStats.commentSent.comment.unshift(transaction.id);
-    accountStats.commentSent.total =
-      accountStats.commentSent.comment.length + accountStats.commentSent.reply.length;
+    accountStats.commentClubsSent.comment.unshift(transaction.id);
+    accountStats.commentClubsSent.total =
+      accountStats.commentClubsSent.comment.length + accountStats.commentClubsSent.reply.length;
     await setAccountStats(stateStore, transaction.senderAddress.toString('hex'), accountStats);
   }
 }

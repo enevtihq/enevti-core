@@ -3,7 +3,15 @@ import { SchemaWithDefault } from 'lisk-framework';
 export const accountStatsSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/accountStats',
   type: 'object',
-  required: ['nftSold', 'raffled', 'treasuryAct', 'serveRate', 'likeSent'],
+  required: [
+    'nftSold',
+    'raffled',
+    'treasuryAct',
+    'serveRate',
+    'likeSent',
+    'commentSent',
+    'commentClubsSent',
+  ],
   properties: {
     nftSold: {
       fieldNumber: 1,
@@ -62,7 +70,7 @@ export const accountStatsSchema: SchemaWithDefault = {
     likeSent: {
       fieldNumber: 5,
       type: 'object',
-      required: ['total', 'nft', 'collection', 'comment', 'reply'],
+      required: ['total', 'nft', 'collection', 'comment', 'reply', 'commentClubs', 'replyClubs'],
       properties: {
         total: {
           dataType: 'uint32',
@@ -91,6 +99,70 @@ export const accountStatsSchema: SchemaWithDefault = {
         },
         reply: {
           fieldNumber: 5,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        commentClubs: {
+          fieldNumber: 6,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        replyClubs: {
+          fieldNumber: 7,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+      },
+    },
+    commentSent: {
+      fieldNumber: 6,
+      type: 'object',
+      required: ['total', 'comment', 'reply'],
+      properties: {
+        total: {
+          dataType: 'uint32',
+          fieldNumber: 1,
+        },
+        comment: {
+          fieldNumber: 2,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        reply: {
+          fieldNumber: 3,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+      },
+    },
+    commentClubsSent: {
+      fieldNumber: 7,
+      type: 'object',
+      required: ['total', 'comment', 'reply'],
+      properties: {
+        total: {
+          dataType: 'uint32',
+          fieldNumber: 1,
+        },
+        comment: {
+          fieldNumber: 2,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        reply: {
+          fieldNumber: 3,
           type: 'array',
           items: {
             dataType: 'bytes',
