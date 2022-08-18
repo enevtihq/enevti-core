@@ -10,6 +10,7 @@ import {
   CHAIN_STATE_COLLECTION,
 } from '../constants/codec';
 import { AllCollection, CollectionAsset } from '../../../../types/core/chain/collection';
+import { createPagination } from './transaction';
 
 export const accessAllCollection = async (
   dataAccess: BaseModuleDataAccess,
@@ -28,10 +29,8 @@ export const accessAllCollection = async (
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
-  const v = version === undefined || version === 0 ? allCollection.items.length : version;
-  const o = offset + (allCollection.items.length - v);
-  const l = limit ?? allCollection.items.length - o;
-  allCollection.items.slice(o, o + l);
+  const { v, o, c } = createPagination(allCollection.items.length, version, offset, limit);
+  allCollection.items.slice(o, c);
   return { allCollection, version: v };
 };
 
@@ -49,10 +48,8 @@ export const getAllCollection = async (
   }
 
   const allCollection = codec.decode<AllCollection>(allCollectionSchema, collectionBuffer);
-  const v = version === undefined || version === 0 ? allCollection.items.length : version;
-  const o = offset + (allCollection.items.length - v);
-  const l = limit ?? allCollection.items.length - o;
-  allCollection.items.slice(o, o + l);
+  const { o, c } = createPagination(allCollection.items.length, version, offset, limit);
+  allCollection.items.slice(o, c);
   return allCollection;
 };
 
@@ -83,11 +80,13 @@ export const accessAllUnavailableCollection = async (
     allUnavailableCollectionSchema,
     collectionBuffer,
   );
-  const v =
-    version === undefined || version === 0 ? allUnavailableCollection.items.length : version;
-  const o = offset + (allUnavailableCollection.items.length - v);
-  const l = limit ?? allUnavailableCollection.items.length - o;
-  allUnavailableCollection.items.slice(o, o + l);
+  const { v, o, c } = createPagination(
+    allUnavailableCollection.items.length,
+    version,
+    offset,
+    limit,
+  );
+  allUnavailableCollection.items.slice(o, c);
   return { allUnavailableCollection, version: v };
 };
 
@@ -108,10 +107,8 @@ export const getAllUnavailableCollection = async (
     allUnavailableCollectionSchema,
     collectionBuffer,
   );
-  const v = version === undefined || version === 0 ? allCollection.items.length : version;
-  const o = offset + (allCollection.items.length - v);
-  const l = limit ?? allCollection.items.length - o;
-  allCollection.items.slice(o, o + l);
+  const { o, c } = createPagination(allCollection.items.length, version, offset, limit);
+  allCollection.items.slice(o, c);
   return allCollection;
 };
 

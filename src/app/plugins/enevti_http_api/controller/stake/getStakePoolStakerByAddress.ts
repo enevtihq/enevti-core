@@ -4,6 +4,7 @@ import { StakerItem } from '../../../../../types/core/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetStakerByAddress } from '../../utils/hook/creator_finance_module.ts';
 import { validateAddress } from '../../utils/validation/address';
+import createPagination from '../../utils/misc/createPagination';
 
 type StakerResponse = { checkpoint: number; version: number; data: StakerItem[] };
 
@@ -19,12 +20,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       return;
     }
 
-    const v = version === undefined || version === '0' ? stakerChain.items.length : Number(version);
-    const o = Number(offset ?? 0) + (stakerChain.items.length - v);
-    const l = limit === undefined ? stakerChain.items.length - o : Number(limit);
+    const { v, o, c } = createPagination(stakerChain.items.length, version, offset, limit);
 
     const staker = await Promise.all(
-      stakerChain.items.slice(o, o + l).map(
+      stakerChain.items.slice(o, c).map(
         async (item): Promise<StakerItem> => {
           const persona = await addressBufferToPersona(channel, item.persona);
           return {
@@ -40,7 +39,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const response: StakerResponse = {
       data: staker,
       version: v,
-      checkpoint: o + l,
+      checkpoint: c,
     };
 
     res.status(200).json({ data: response, meta: { ...req.params, ...req.query } });

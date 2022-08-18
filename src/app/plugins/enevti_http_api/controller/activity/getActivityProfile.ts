@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { ProfileActivity } from '../../../../../types/core/account/profile';
+import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityProfile from '../../utils/transformer/idBufferToActivityProfile';
 
 type ProfileActivityResponse = {
@@ -16,15 +17,13 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const profileActivity = await idBufferToActivityProfile(channel, Buffer.from(address, 'hex'));
 
-    const v = version === undefined || version === '0' ? profileActivity.length : Number(version);
-    const o = Number(offset ?? 0) + (profileActivity.length - v);
-    const l = limit === undefined ? profileActivity.length - o : Number(limit);
+    const { v, o, c } = createPagination(profileActivity.length, version, offset, limit);
 
-    const ret: ProfileActivity[] = profileActivity.slice(o, o + l);
+    const ret: ProfileActivity[] = profileActivity.slice(o, c);
 
     const response: ProfileActivityResponse = {
       data: ret,
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
     };
 

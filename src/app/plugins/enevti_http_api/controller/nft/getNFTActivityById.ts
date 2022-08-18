@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFTActivity } from '../../../../../types/core/chain/nft/NFTActivity';
+import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
 
 type ProfileOwnedResponse = { checkpoint: number; version: number; data: NFTActivity[] };
@@ -12,16 +13,13 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const collectionActivity = await idBufferToActivityNFT(channel, Buffer.from(id, 'hex'));
 
-    const v =
-      version === undefined || version === '0' ? collectionActivity.length : Number(version);
-    const o = Number(offset ?? 0) + (collectionActivity.length - v);
-    const l = limit === undefined ? collectionActivity.length - o : Number(limit);
+    const { v, o, c } = createPagination(collectionActivity.length, version, offset, limit);
 
-    const ret: NFTActivity[] = collectionActivity.slice(o, o + l);
+    const ret: NFTActivity[] = collectionActivity.slice(o, c);
 
     const response: ProfileOwnedResponse = {
       data: ret,
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
     };
 

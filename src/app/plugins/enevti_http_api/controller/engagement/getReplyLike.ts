@@ -3,6 +3,7 @@ import { BaseChannel } from 'lisk-framework';
 import { LikeAt } from '../../../../../types/core/chain/engagement';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
 import { invokeGetReplyLike } from '../../utils/hook/redeemable_nft_module';
+import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -11,15 +12,13 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const replyLike = await invokeGetReplyLike(channel, id);
 
-    const v = version === undefined || version === '0' ? replyLike.address.length : Number(version);
-    const o = Number(offset ?? 0) + (replyLike.address.length - v);
-    const l = limit === undefined ? replyLike.address.length - o : Number(limit);
+    const { v, o, c } = createPagination(replyLike.address.length, version, offset, limit);
 
     const response: ResponseVersioned<LikeAt> = {
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
       data: {
-        address: replyLike.address.slice(o, o + l).map(t => t.toString('hex')),
+        address: replyLike.address.slice(o, c).map(t => t.toString('hex')),
       },
     };
 

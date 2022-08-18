@@ -6,6 +6,7 @@ import { validateAddress } from '../../utils/validation/address';
 import { CollectionBase } from '../../../../../types/core/chain/collection';
 import idBufferToCollection from '../../utils/transformer/idBufferToCollection';
 import { minimizeCollection } from '../../utils/transformer/minimizeToBase';
+import createPagination from '../../utils/misc/createPagination';
 
 type ProfileCollectionResponse = { checkpoint: number; version: number; data: CollectionBase[] };
 
@@ -17,15 +18,15 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
-    const v =
-      version === undefined || version === '0'
-        ? account.redeemableNft.collection.length
-        : Number(version);
-    const o = Number(offset ?? 0) + (account.redeemableNft.collection.length - v);
-    const l = limit === undefined ? account.redeemableNft.collection.length - o : Number(limit);
+    const { v, o, c } = createPagination(
+      account.redeemableNft.collection.length,
+      version,
+      offset,
+      limit,
+    );
 
     const collectionAsset = await Promise.all(
-      account.redeemableNft.collection.slice(o, o + l).map(
+      account.redeemableNft.collection.slice(o, c).map(
         async (item): Promise<CollectionBase> => {
           const collection = await idBufferToCollection(channel, item);
           if (!collection)
@@ -39,7 +40,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const response: ProfileCollectionResponse = {
       data: collectionAsset,
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
     };
 

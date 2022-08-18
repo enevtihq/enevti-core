@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { invokeGetActivityNFT } from '../../utils/hook/redeemable_nft_module';
+import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -9,14 +10,12 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const activityNFT = await invokeGetActivityNFT(channel, id);
 
-    const v = version === undefined || version === '0' ? activityNFT.items.length : Number(version);
-    const o = Number(offset ?? 0) + (activityNFT.items.length - v);
-    const l = limit === undefined ? activityNFT.items.length - o : Number(limit);
+    const { v, o, c } = createPagination(activityNFT.items.length, version, offset, limit);
 
     const response = {
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
-      data: activityNFT.items.slice(o, o + l).map(item => ({
+      data: activityNFT.items.slice(o, c).map(item => ({
         date: item.date,
         name: item.name,
         to: item.to.toString('hex'),

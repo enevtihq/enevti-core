@@ -2,6 +2,7 @@ import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import { allRedeemableNFTSchema, redeemableNFTSchema } from '../schemas/chain/redeemable_nft';
 import { CHAIN_STATE_ALL_NFT, CHAIN_STATE_NFT } from '../constants/codec';
 import { AllNFT, NFTAsset } from '../../../../types/core/chain/nft';
+import { createPagination } from './transaction';
 
 export const accessAllNFT = async (
   dataAccess: BaseModuleDataAccess,
@@ -13,7 +14,7 @@ export const accessAllNFT = async (
     return { items: [] };
   }
   const allNFT = codec.decode<AllNFT>(allRedeemableNFTSchema, allNFTBuffer);
-  const l = limit ?? allNFT.items.length - offset;
+  const { l } = createPagination(allNFT.items.length, undefined, offset, limit);
   allNFT.items.slice(offset, offset + l);
   return allNFT;
 };
@@ -28,7 +29,7 @@ export const getAllNFT = async (
     return { items: [] };
   }
   const allNFT = codec.decode<AllNFT>(allRedeemableNFTSchema, allNFTBuffer);
-  const l = limit ?? allNFT.items.length - offset;
+  const { l } = createPagination(allNFT.items.length, undefined, offset, limit);
   allNFT.items.slice(offset, offset + l);
   return allNFT;
 };

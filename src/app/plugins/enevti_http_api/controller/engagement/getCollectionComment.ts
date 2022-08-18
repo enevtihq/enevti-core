@@ -9,6 +9,7 @@ import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
+import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -17,17 +18,14 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const collectionComment = await invokeGetCollectionComment(channel, id);
 
-    const v =
-      version === undefined || version === '0' ? collectionComment.comment.length : Number(version);
-    const o = Number(offset ?? 0) + (collectionComment.comment.length - v);
-    const l = limit === undefined ? collectionComment.comment.length - o : Number(limit);
+    const { v, o, c } = createPagination(collectionComment.comment.length, version, offset, limit);
 
     const response: ResponseVersioned<CommentAt> = {
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
       data: {
         comment: await Promise.all(
-          collectionComment.comment.slice(o, o + l).map(
+          collectionComment.comment.slice(o, c).map(
             async (item): Promise<Comment & { liked: boolean }> => {
               const liked = viewer
                 ? (await invokeGetLiked(channel, item.toString('hex'), viewer)) === 1

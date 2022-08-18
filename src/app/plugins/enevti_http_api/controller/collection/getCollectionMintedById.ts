@@ -4,6 +4,7 @@ import { Collection } from '../../../../../types/core/chain/collection';
 import { invokeGetCollection } from '../../utils/hook/redeemable_nft_module';
 import { NFT } from '../../../../../types/core/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
+import createPagination from '../../utils/misc/createPagination';
 
 type CollectionMintedResponse = { checkpoint: number; version: number; data: Collection['minted'] };
 
@@ -18,12 +19,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       return;
     }
 
-    const v = version === undefined || version === '0' ? collection.minted.length : Number(version);
-    const o = Number(offset ?? 0) + (collection.minted.length - v);
-    const l = limit === undefined ? collection.minted.length - o : Number(limit);
+    const { v, o, c } = createPagination(collection.minted.length, version, offset, limit);
 
     const minted = await Promise.all(
-      collection.minted.slice(o, o + l).map(
+      collection.minted.slice(o, c).map(
         async (item): Promise<NFT> => {
           const nft = await idBufferToNFT(channel, item);
           if (!nft) throw new Error('NFT not found while iterating collection.minted');
@@ -34,7 +33,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const response: CollectionMintedResponse = {
       data: minted,
-      checkpoint: o + l,
+      checkpoint: c,
       version: v,
     };
 

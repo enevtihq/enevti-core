@@ -9,6 +9,7 @@ import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
+import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -17,17 +18,14 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const nftComment = await invokeGetNFTComment(channel, id);
 
-    const v =
-      version === undefined || version === '0' ? nftComment.comment.length : Number(version);
-    const o = Number(offset ?? 0) + (nftComment.comment.length - v);
-    const l = limit === undefined ? nftComment.comment.length - o : Number(limit);
+    const { v, o, c } = createPagination(nftComment.comment.length, version, offset, limit);
 
     const response: ResponseVersioned<CommentAt> = {
       version: v,
-      checkpoint: o + l,
+      checkpoint: c,
       data: {
         comment: await Promise.all(
-          nftComment.comment.slice(o, o + l).map(
+          nftComment.comment.slice(o, c).map(
             async (item): Promise<Comment & { liked: boolean }> => {
               const liked = viewer
                 ? (await invokeGetLiked(channel, item.toString('hex'), viewer)) === 1

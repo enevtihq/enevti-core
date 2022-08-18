@@ -6,6 +6,7 @@ import {
 } from '../constants/codec';
 import { allNFTTemplateSchema, nftTemplateSchema } from '../schemas/chain/nft_template';
 import { AllNFTTemplate, NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
+import { createPagination } from './transaction';
 
 export const accessAllNFTTemplateGenesis = async (
   dataAccess: BaseModuleDataAccess,
@@ -20,7 +21,7 @@ export const accessAllNFTTemplateGenesis = async (
     allNFTTemplateSchema,
     registeredTemplateBuffer,
   );
-  const l = limit ?? allNftTemplate.items.length - offset;
+  const { l } = createPagination(allNftTemplate.items.length, undefined, offset, limit);
   allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
@@ -38,7 +39,7 @@ export const getAllNFTTemplateGenesis = async (
     allNFTTemplateSchema,
     registeredTemplateBuffer,
   );
-  const l = limit ?? allNftTemplate.items.length - offset;
+  const { l } = createPagination(allNftTemplate.items.length, undefined, offset, limit);
   allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
@@ -66,7 +67,7 @@ export const accessAllNFTTemplate = async (
     allNFTTemplateSchema,
     registeredTemplateBuffer,
   );
-  const l = limit ?? allNftTemplate.items.length - offset;
+  const { l } = createPagination(allNftTemplate.items.length, undefined, offset, limit);
   allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
@@ -84,7 +85,7 @@ export const getAllNFTTemplate = async (
     allNFTTemplateSchema,
     registeredTemplateBuffer,
   );
-  const l = limit ?? allNftTemplate.items.length - offset;
+  const { l } = createPagination(allNftTemplate.items.length, undefined, offset, limit);
   allNftTemplate.items.slice(offset, offset + l);
   return allNftTemplate;
 };
