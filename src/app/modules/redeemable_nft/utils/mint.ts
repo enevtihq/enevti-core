@@ -158,7 +158,6 @@ export async function mintNFT({
     ).toFixed(0),
   );
 
-  collection.stat.minted += boughtItem.length;
   creatorAccount.redeemableNft.serveRate = serveRate;
   if (type === 'normal') {
     creatorAccount.redeemableNft.nftSold += boughtItem.length;
@@ -169,6 +168,11 @@ export async function mintNFT({
 
   accountStats.serveRate.score = serveRate;
   await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);
+
+  collection.stat.minted += boughtItem.length;
+  if (collection.stat.owner.findIndex(o => Buffer.compare(o, senderAddress) === 0) === -1) {
+    collection.stat.owner.push(senderAddress);
+  }
 
   const collectionActivity: CollectionActivityChainItems = {
     transaction: transactionId,
