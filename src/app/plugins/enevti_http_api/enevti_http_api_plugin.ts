@@ -155,6 +155,11 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/raffle', controller.getSocialRaffleState(this._channel));
     this._app.get('/raffle/:height', controller.getSocialRaffleRecord(this._channel));
     this._app.get('/config/raffle', controller.getSocialRaffleConfig(this._channel));
+    this._app.get(
+      '/authorized/collection/:id',
+      controller.isAddressCollectionOwnerOrCreator(this._channel),
+    );
+    this._app.get('/authorized/nft/:id', controller.isAddressNFTOwnerOrCreator(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }

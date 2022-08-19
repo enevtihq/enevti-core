@@ -5,7 +5,7 @@ import {
   invokeGetComment,
   invokeGetLiked,
 } from '../../utils/hook/redeemable_nft_module';
-import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
+import { Comment, CommentClubsAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
@@ -20,11 +20,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const { v, o, c } = createPagination(collectionComment.clubs.length, version, offset, limit);
 
-    const response: ResponseVersioned<CommentAt> = {
+    const response: ResponseVersioned<CommentClubsAt> = {
       checkpoint: c,
       version: v,
       data: {
-        comment: await Promise.all(
+        clubs: await Promise.all(
           collectionComment.clubs.slice(o, c).map(
             async (item): Promise<Comment & { liked: boolean }> => {
               const liked = viewer

@@ -34,7 +34,7 @@ export class CommentCollectionClubsAsset extends BaseAsset {
     }
 
     if (
-      Buffer.compare(collection.creator, transaction.senderAddress) !== 0 ||
+      Buffer.compare(collection.creator, transaction.senderAddress) !== 0 &&
       collection.stat.owner.findIndex(o => Buffer.compare(o, transaction.senderAddress) === 0) ===
         -1
     ) {

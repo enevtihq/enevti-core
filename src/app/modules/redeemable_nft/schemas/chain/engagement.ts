@@ -137,9 +137,9 @@ export const commentClubsSchema: SchemaWithDefault = {
 export const commentClubsAtSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/commentClubsAt',
   type: 'object',
-  required: ['comment'],
+  required: ['clubs'],
   properties: {
-    comment: {
+    clubs: {
       fieldNumber: 1,
       type: 'array',
       items: {

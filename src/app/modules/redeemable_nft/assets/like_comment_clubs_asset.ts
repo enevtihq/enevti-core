@@ -43,7 +43,7 @@ export class LikeCommentClubsAsset extends BaseAsset {
         throw new Error('NFT not found while checking authorization');
       }
       if (
-        Buffer.compare(nft.creator, transaction.senderAddress) !== 0 ||
+        Buffer.compare(nft.creator, transaction.senderAddress) !== 0 &&
         Buffer.compare(nft.owner, transaction.senderAddress) !== 0
       ) {
         throw new Error('You are not authorized to give reply on this NFT clubs');
@@ -54,7 +54,7 @@ export class LikeCommentClubsAsset extends BaseAsset {
         throw new Error('Collection not found while checking authorization');
       }
       if (
-        Buffer.compare(collection.creator, transaction.senderAddress) !== 0 ||
+        Buffer.compare(collection.creator, transaction.senderAddress) !== 0 &&
         collection.stat.owner.findIndex(o => Buffer.compare(o, transaction.senderAddress) === 0) ===
           -1
       ) {

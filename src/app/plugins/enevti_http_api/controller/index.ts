@@ -67,6 +67,8 @@ import getCommentClubsReply from './engagement/getCommentClubsReply';
 import getNFTCommentClubs from './engagement/getNFTCommentClubs';
 import getReplyClubs from './engagement/getReplyClubs';
 import getReplyClubsLike from './engagement/getReplyClubsLike';
+import isAddressCollectionOwnerOrCreator from './collection/isAddressCollectionOwnerOrCreator';
+import isAddressNFTOwnerOrCreator from './nft/isAddressNFTOwnerOrCreator';
 
 export default {
   getActivityCollection,
@@ -138,4 +140,6 @@ export default {
   getNFTCommentClubs,
   getReplyClubs,
   getReplyClubsLike,
+  isAddressCollectionOwnerOrCreator,
+  isAddressNFTOwnerOrCreator,
 };
