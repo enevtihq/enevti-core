@@ -130,15 +130,25 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
     this._app.get('/wallet/:address', controller.getWallet(this._channel));
     this._app.get('/comment/:id', controller.getComment(this._channel));
+    this._app.get('/comment/clubs/:id', controller.getCommentClubs(this._channel));
     this._app.get('/comment/nft/:id', controller.getNFTComment(this._channel));
+    this._app.get('/comment/nft/clubs/:id', controller.getNFTCommentClubs(this._channel));
     this._app.get('/comment/collection/:id', controller.getCollectionComment(this._channel));
+    this._app.get(
+      '/comment/collection/clubs/:id',
+      controller.getCollectionCommentClubs(this._channel),
+    );
     this._app.get('/like/nft/:id', controller.getNFTLike(this._channel));
     this._app.get('/like/collection/:id', controller.getCollectionLike(this._channel));
     this._app.get('/like/comment/:id', controller.getCommentLike(this._channel));
+    this._app.get('/like/comment/clubs/:id', controller.getCommentClubsLike(this._channel));
     this._app.get('/like/reply/:id', controller.getReplyLike(this._channel));
+    this._app.get('/like/reply/clubs/:id', controller.getReplyClubsLike(this._channel));
     this._app.get('/liked/:id/:address', controller.getLiked(this._channel));
     this._app.get('/reply/:id', controller.getReply(this._channel));
+    this._app.get('/reply/clubs/:id', controller.getReplyClubs(this._channel));
     this._app.get('/reply/comment/:id', controller.getCommentReply(this._channel));
+    this._app.get('/reply/comment/clubs/:id', controller.getCommentClubsReply(this._channel));
     this._app.get('/tag/collection', controller.getCollectionTag(this._channel));
     this._app.get('/tag/username', controller.getUsernameTag(this._channel));
     this._app.get('/tag/nft', controller.getNFTTag(this._channel));

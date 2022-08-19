@@ -12,6 +12,7 @@ import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/confi
 import {
   CommentAsset,
   CommentAtAsset,
+  CommentClubsAsset,
   CommentClubsAtAsset,
   LikeAtAsset,
   ReplyAsset,
@@ -107,7 +108,7 @@ export const invokeGetReplyClubsLike = async (
 export const invokeGetCommentClubs = async (
   channel: BaseChannel,
   id: string,
-): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getCommentClubs', { id });
+): Promise<CommentClubsAsset> => channel.invoke('redeemableNft:getCommentClubs', { id });
 
 export const invokeGetComment = async (
   channel: BaseChannel,

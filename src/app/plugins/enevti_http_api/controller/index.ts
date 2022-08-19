@@ -60,6 +60,13 @@ import getUsernameTag from './tag/getUsernameTag';
 import getSocialRaffleRecord from './raffle/getSocialRaffleRecord';
 import getSocialRaffleState from './raffle/getSocialRaffleState';
 import getSocialRaffleConfig from './raffle/getSocialRaffleConfig';
+import getCollectionCommentClubs from './engagement/getCollectionCommentClubs';
+import getCommentClubs from './engagement/getCommentClubs';
+import getCommentClubsLike from './engagement/getCommentClubsLike';
+import getCommentClubsReply from './engagement/getCommentClubsReply';
+import getNFTCommentClubs from './engagement/getNFTCommentClubs';
+import getReplyClubs from './engagement/getReplyClubs';
+import getReplyClubsLike from './engagement/getReplyClubsLike';
 
 export default {
   getActivityCollection,
@@ -124,4 +131,11 @@ export default {
   getSocialRaffleConfig,
   getSocialRaffleRecord,
   getSocialRaffleState,
+  getCollectionCommentClubs,
+  getCommentClubs,
+  getCommentClubsLike,
+  getCommentClubsReply,
+  getNFTCommentClubs,
+  getReplyClubs,
+  getReplyClubsLike,
 };
