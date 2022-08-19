@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import {
-  invokeGetComment,
+  invokeGetCommentClubs,
   invokeGetLiked,
   invokeGetNFTCommentClubs,
 } from '../../utils/hook/redeemable_nft_module';
@@ -30,7 +30,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
               const liked = viewer
                 ? (await invokeGetLiked(channel, item.toString('hex'), viewer)) === 1
                 : false;
-              const commentAsset = await invokeGetComment(channel, item.toString('hex'));
+              const commentAsset = await invokeGetCommentClubs(channel, item.toString('hex'));
               if (!commentAsset)
                 throw new Error('Comment clubs not found while iterating nftComment.clubs');
               return {

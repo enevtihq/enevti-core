@@ -685,18 +685,18 @@ export const addCommentClubsReplyById = async (
   id: string,
   reply: ReplyAsset,
 ) => {
-  const commentReply = await getCommentReplyById(stateStore, id);
+  const commentReply = await getCommentClubsReplyById(stateStore, id);
   if (!commentReply) {
-    await setCommentReplyById(stateStore, id, { reply: [reply.id] });
+    await setCommentClubsReplyById(stateStore, id, { reply: [reply.id] });
     return;
   }
 
   commentReply.reply.push(reply.id);
-  await setCommentReplyById(stateStore, id, commentReply);
+  await setCommentClubsReplyById(stateStore, id, commentReply);
 
-  const replyBuffer = await getReplyById(stateStore, reply.id.toString('hex'));
+  const replyBuffer = await getReplyClubsById(stateStore, reply.id.toString('hex'));
   if (!replyBuffer) {
-    await setReplyById(stateStore, reply.id.toString('hex'), reply);
+    await setReplyClubsById(stateStore, reply.id.toString('hex'), reply);
   } else {
     throw Error('Reply already exist');
   }

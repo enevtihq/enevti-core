@@ -3,7 +3,7 @@ import { BaseChannel } from 'lisk-framework';
 import {
   invokeGetCommentClubsReply,
   invokeGetLiked,
-  invokeGetReply,
+  invokeGetReplyClubs,
 } from '../../utils/hook/redeemable_nft_module';
 import { Reply, ReplyAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
@@ -30,7 +30,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
               const liked = viewer
                 ? (await invokeGetLiked(channel, item.toString('hex'), viewer)) === 1
                 : false;
-              const replyAsset = await invokeGetReply(channel, item.toString('hex'));
+              const replyAsset = await invokeGetReplyClubs(channel, item.toString('hex'));
               if (!replyAsset)
                 throw new Error('Reply not found while iterating commentReply.reply');
               return {

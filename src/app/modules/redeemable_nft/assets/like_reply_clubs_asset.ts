@@ -38,7 +38,7 @@ export class LikeReplyClubsAsset extends BaseAsset {
       throw new Error('Reply doesnt exists');
     }
 
-    const commentClubs = await getCommentClubsById(stateStore, reply.id.toString('hex'));
+    const commentClubs = await getCommentClubsById(stateStore, reply.target.toString('hex'));
     if (!commentClubs) {
       throw new Error('Comment target not found while authorizing');
     }
