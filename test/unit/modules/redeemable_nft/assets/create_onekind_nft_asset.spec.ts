@@ -1,4 +1,4 @@
-import { CreateOnekindNftAsset } from '../../../../../src/app/modules/redeemableNft/assets/create_onekind_nft_asset';
+import { CreateOnekindNftAsset } from '../../../../../src/app/modules/redeemable_nft/assets/create_onekind_nft_asset';
 
 describe('CreateOnekindNftAsset', () => {
   let transactionAsset: CreateOnekindNftAsset;

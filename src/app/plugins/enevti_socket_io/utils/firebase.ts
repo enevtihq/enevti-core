@@ -1,13 +1,15 @@
-import * as admin from 'firebase-admin';
+import { BaseChannel } from 'lisk-framework';
+import { invokeFCMIsAddressRegistered, invokeFCMSendToAddress } from './invoker/fcm';
 
 export async function sendDataOnlyTopicMessaging(
-  firebaseAdmin: typeof admin,
-  topic: string,
+  channel: BaseChannel,
+  address: string,
   type: string,
   payload: Record<string, unknown>,
 ) {
-  await firebaseAdmin.messaging().send({
-    topic,
+  const isAddressRegistered = await invokeFCMIsAddressRegistered(channel, address);
+  if (!isAddressRegistered) throw new Error('address is not registered on FCM plugin');
+  const message = {
     data: {
       type,
       payload: JSON.stringify(payload),
@@ -25,5 +27,6 @@ export async function sendDataOnlyTopicMessaging(
         'apns-topic': 'com.enevti.app',
       },
     },
-  });
+  };
+  await invokeFCMSendToAddress(channel, address, message);
 }

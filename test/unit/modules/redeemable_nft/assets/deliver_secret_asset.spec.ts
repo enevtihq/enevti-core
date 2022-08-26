@@ -1,4 +1,4 @@
-import { DeliverSecretAsset } from '../../../../../src/app/modules/redeemableNft/assets/deliver_secret_asset';
+import { DeliverSecretAsset } from '../../../../../src/app/modules/redeemable_nft/assets/deliver_secret_asset';
 
 describe('DeliverSecretAsset', () => {
   let transactionAsset: DeliverSecretAsset;

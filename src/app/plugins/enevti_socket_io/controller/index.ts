@@ -1,7 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
-import * as admin from 'firebase-admin';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
 import { onNewCollectionLike, onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
@@ -20,11 +19,11 @@ import { onStakerUpdates } from './stake';
 import { onNewNFTLike } from './nft';
 import { onDeletedBlock, onNewBlock } from './app';
 import { onNewRaffled, onWonRaffle } from './raffle';
+import { getAddressBySocketId, mapAddress, removeMapBySocket } from '../utils/mapper';
 
 export function createEnevtiSocket(
   channel: BaseChannel,
   io: Server | Socket,
-  firebaseAdmin: typeof admin | undefined,
   client: apiClient.APIClient,
 ) {
   // App Socket
@@ -37,7 +36,7 @@ export function createEnevtiSocket(
   onTotalStakeChanged(channel, io);
   onNewCollectionByAddress(channel, io);
   onNewPendingByAddress(channel, io);
-  onPendingUtilityDelivery(channel, io, firebaseAdmin);
+  onPendingUtilityDelivery(channel, io);
   onTotalNFTSoldChanged(channel, io);
   onTotalServeRateChanged(channel, io);
   onSecretDelivered(channel, io);
@@ -61,14 +60,23 @@ export function createEnevtiSocket(
   onNewActivityProfile(channel, io);
 
   // Social Raffle
-  onNewRaffled(channel, io, firebaseAdmin);
-  onWonRaffle(channel, io, firebaseAdmin);
+  onNewRaffled(channel, io);
+  onWonRaffle(channel, io);
 }
 
 export function registerAccountSocket(io: Server) {
   io.on('connection', socket => {
-    socket.on('register', async (address: string) => {
-      await socket.join(address);
+    socket.on('register-room', async (room: string) => {
+      await socket.leave(socket.id);
+      await socket.join(room);
+    });
+    socket.on('register-address', (address: string) => {
+      mapAddress(address, socket.id);
+    });
+    socket.on('disconnect', () => {
+      if (getAddressBySocketId(socket.id)) {
+        removeMapBySocket(socket.id);
+      }
     });
   });
 }

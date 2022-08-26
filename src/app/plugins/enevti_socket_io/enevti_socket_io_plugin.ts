@@ -3,9 +3,6 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefaul
 import * as http from 'http';
 import * as express from 'express';
 import { Server } from 'socket.io';
-import * as fs from 'fs';
-import * as admin from 'firebase-admin';
-import * as path from 'path';
 import { createEnevtiSocket, registerAccountSocket } from './controller';
 
 /* eslint-disable class-methods-use-this */
@@ -15,7 +12,6 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
   private _app: express.Express | undefined = undefined;
   private _io: Server | undefined = undefined;
   private _channel: BaseChannel | undefined = undefined;
-  private _admin: typeof admin | undefined = undefined;
   private _client: apiClient.APIClient | undefined = undefined;
 
   public async getClient() {
@@ -64,21 +60,6 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(channel: BaseChannel): Promise<void> {
-    const firebaseConfigPath = path.join(__dirname, './service/firebase.json');
-    const firebaseConfigured = fs.existsSync(firebaseConfigPath);
-    if (firebaseConfigured) {
-      // eslint-disable-next-line
-      const serviceAccount = require(firebaseConfigPath);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-      this._admin = admin;
-      this._logger.info('firebase is successfully initialized');
-    } else {
-      this._logger.warn('firebase is not configured, some features may not work');
-      this._logger.warn('please put firebase.json on this plugin service directory');
-    }
-
     const client = await this.getClient();
 
     this._app = express();
@@ -87,7 +68,7 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
     this._io = new Server(this._server);
 
     registerAccountSocket(this._io);
-    createEnevtiSocket(this._channel, this._io, this._admin, client);
+    createEnevtiSocket(this._channel, this._io, client);
 
     this._server.listen(8082);
   }

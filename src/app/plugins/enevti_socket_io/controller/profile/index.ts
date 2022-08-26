@@ -1,12 +1,13 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
-import * as admin from 'firebase-admin';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
 import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
+import { invokeFCMIsReady } from '../../utils/invoker/fcm';
+import { getSocketIdByAddress } from '../../utils/mapper';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
@@ -50,13 +51,10 @@ export function onNewCollectionByAddress(channel: BaseChannel, io: Server | Sock
   });
 }
 
-export function onPendingUtilityDelivery(
-  channel: BaseChannel,
-  io: Server | Socket,
-  firebaseAdmin: typeof admin | undefined,
-) {
+export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:pendingUtilityDelivery', async data => {
     if (data) {
+      const isFCMReady = await invokeFCMIsReady(channel);
       const payload = data as { nfts: Buffer[] };
       const accountMap: {
         [address: string]: { id: string; secret: NFT['redeem']['secret'] }[];
@@ -86,16 +84,16 @@ export function onPendingUtilityDelivery(
       });
 
       await asyncForEach(Object.keys(accountMap), async address => {
-        if (firebaseAdmin) {
+        if (isFCMReady) {
           try {
-            await sendDataOnlyTopicMessaging(firebaseAdmin, address, 'deliverSecretNotif', {
+            await sendDataOnlyTopicMessaging(channel, address, 'deliverSecretNotif', {
               address,
             });
           } catch (err) {
-            io.to(address).emit('deliverSecretNotif', address);
+            io.to(getSocketIdByAddress(address)).emit('deliverSecretNotif', address);
           }
         } else {
-          io.to(address).emit('deliverSecretNotif', address);
+          io.to(getSocketIdByAddress(address)).emit('deliverSecretNotif', address);
         }
       });
     }

@@ -1,4 +1,4 @@
-import { MintNftAsset } from '../../../../../src/app/modules/redeemableNft/assets/mint_nft_asset';
+import { MintNftAsset } from '../../../../../src/app/modules/redeemable_nft/assets/mint_nft_asset';
 
 describe('MintNftAsset', () => {
   let transactionAsset: MintNftAsset;

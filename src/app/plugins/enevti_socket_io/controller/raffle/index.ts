@@ -1,16 +1,14 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
-import * as admin from 'firebase-admin';
 import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
 import idBufferToCollection from '../../../enevti_http_api/utils/transformer/idBufferToCollection';
+import { invokeFCMIsReady } from '../../utils/invoker/fcm';
+import { getSocketIdByAddress } from '../../utils/mapper';
 
-export function onNewRaffled(
-  channel: BaseChannel,
-  io: Server | Socket,
-  firebaseAdmin: typeof admin | undefined,
-) {
+export function onNewRaffled(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newRaffled', async data => {
     if (data) {
+      const isFCMReady = await invokeFCMIsReady(channel);
       const payload = data as { address: string; collection: string; total: number };
       const collection = await idBufferToCollection(
         channel,
@@ -21,26 +19,23 @@ export function onNewRaffled(
         collection: { id: collection.id, name: collection.name },
         total: payload.total,
       };
-      if (firebaseAdmin) {
+      if (isFCMReady) {
         try {
-          await sendDataOnlyTopicMessaging(firebaseAdmin, payload.address, 'newRaffled', message);
+          await sendDataOnlyTopicMessaging(channel, payload.address, 'newRaffled', message);
         } catch (err) {
-          io.to(payload.address).emit(`newRaffled`, message);
+          io.to(getSocketIdByAddress(payload.address)).emit(`newRaffled`, message);
         }
       } else {
-        io.to(payload.address).emit(`newRaffled`, message);
+        io.to(getSocketIdByAddress(payload.address)).emit(`newRaffled`, message);
       }
     }
   });
 }
 
-export function onWonRaffle(
-  channel: BaseChannel,
-  io: Server | Socket,
-  firebaseAdmin: typeof admin | undefined,
-) {
+export function onWonRaffle(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:wonRaffle', async data => {
     if (data) {
+      const isFCMReady = await invokeFCMIsReady(channel);
       const payload = data as { address: string; collection: string; items: string[] };
       const collection = await idBufferToCollection(
         channel,
@@ -51,14 +46,14 @@ export function onWonRaffle(
         collection: { id: collection.id, name: collection.name },
         total: payload.items.length,
       };
-      if (firebaseAdmin) {
+      if (isFCMReady) {
         try {
-          await sendDataOnlyTopicMessaging(firebaseAdmin, payload.address, 'wonRaffle', message);
+          await sendDataOnlyTopicMessaging(channel, payload.address, 'wonRaffle', message);
         } catch (err) {
-          io.to(payload.address).emit(`wonRaffle`, message);
+          io.to(getSocketIdByAddress(payload.address)).emit(`wonRaffle`, message);
         }
       } else {
-        io.to(payload.address).emit(`wonRaffle`, message);
+        io.to(getSocketIdByAddress(payload.address)).emit(`wonRaffle`, message);
       }
     }
   });
