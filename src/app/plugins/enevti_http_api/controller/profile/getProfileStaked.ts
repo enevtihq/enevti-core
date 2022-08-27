@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { WalletStaked } from '../../../../../types/core/service/wallet';
 
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { validateAddress } from '../../utils/validation/address';
 

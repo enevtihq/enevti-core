@@ -2,7 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
 import { Persona } from '../../../../../types/core/account/persona';
 import { BASE32_PREFIX } from '../../constant/base32prefix';
-import { invokeGetAccount } from '../hook/persona_module';
+import { invokeGetAccount } from '../invoker/persona_module';
 
 export default async function addressBufferToPersona(
   channel: BaseChannel,

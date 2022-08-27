@@ -2,12 +2,12 @@ import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
 import { NFT } from '../../../../../types/core/chain/nft';
-import { invokeGetAccount } from '../../../enevti_http_api/utils/hook/persona_module';
-import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
+import { invokeGetAccount } from '../../../enevti_http_api/utils/invoker/persona_module';
+import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
 import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
-import { invokeFCMIsReady } from '../../utils/invoker/fcm';
 import { getSocketIdByAddress } from '../../utils/mapper';
+import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {

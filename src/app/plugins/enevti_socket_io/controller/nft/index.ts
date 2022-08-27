@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
-import { invokeGetNFT } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
+import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 
 export function onNewNFTLike(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTLike', async data => {

@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetSchema } from '../hook/app';
+import { invokeGetSchema } from '../invoker/app';
 
 export async function getAssetSchema(channel: BaseChannel, moduleID: number, assetID: number) {
   const appSchema = await invokeGetSchema(channel);

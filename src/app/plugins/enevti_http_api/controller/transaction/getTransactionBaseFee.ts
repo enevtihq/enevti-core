@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetNodeIndo } from '../../utils/hook/app';
+import { invokeGetNodeIndo } from '../../utils/invoker/app';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

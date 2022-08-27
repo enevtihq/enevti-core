@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeIsUsernameExists } from '../../utils/hook/persona_module';
+import { invokeIsUsernameExists } from '../../utils/invoker/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

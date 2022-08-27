@@ -2,8 +2,8 @@ import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
 import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
 import idBufferToCollection from '../../../enevti_http_api/utils/transformer/idBufferToCollection';
-import { invokeFCMIsReady } from '../../utils/invoker/fcm';
 import { getSocketIdByAddress } from '../../utils/mapper';
+import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 
 export function onNewRaffled(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newRaffled', async data => {

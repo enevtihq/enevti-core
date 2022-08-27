@@ -4,7 +4,7 @@ import {
   invokeGetComment,
   invokeGetLiked,
   invokeGetNFTComment,
-} from '../../utils/hook/redeemable_nft_module';
+} from '../../utils/invoker/redeemable_nft_module';
 import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';

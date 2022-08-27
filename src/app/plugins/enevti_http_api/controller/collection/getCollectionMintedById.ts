@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection } from '../../../../../types/core/chain/collection';
-import { invokeGetCollection } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetCollection } from '../../utils/invoker/redeemable_nft_module';
 import { NFT } from '../../../../../types/core/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import createPagination from '../../utils/misc/createPagination';

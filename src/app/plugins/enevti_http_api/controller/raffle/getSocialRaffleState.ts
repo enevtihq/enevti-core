@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
 import { SocialRaffleChain } from '../../../../../types/core/chain/socialRaffle';
-import { invokeGetSocialRaffleState } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetSocialRaffleState } from '../../utils/invoker/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

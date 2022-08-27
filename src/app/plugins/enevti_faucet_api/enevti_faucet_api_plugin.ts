@@ -4,7 +4,7 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefaul
 import { Server } from 'http';
 import * as express from 'express';
 import * as cors from 'cors';
-import { invokeGetAccount } from '../enevti_http_api/utils/hook/persona_module';
+import { invokeGetAccount } from '../enevti_http_api/utils/invoker/persona_module';
 // import controller from './controller';
 
 /* eslint-disable class-methods-use-this */

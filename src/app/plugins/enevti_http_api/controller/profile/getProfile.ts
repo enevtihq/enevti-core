@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
 import { Profile } from '../../../../../types/core/account/profile';
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import { validateAddress } from '../../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

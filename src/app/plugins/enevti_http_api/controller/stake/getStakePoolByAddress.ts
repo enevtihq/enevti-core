@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { StakePoolData } from '../../../../../types/core/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
-import { invokeGetStakerByAddress } from '../../utils/hook/creator_finance_module.ts';
+import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module.ts';
 import { validateAddress } from '../../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

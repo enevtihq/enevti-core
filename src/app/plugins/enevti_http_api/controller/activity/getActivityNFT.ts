@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetActivityNFT } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetActivityNFT } from '../../utils/invoker/redeemable_nft_module';
 import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

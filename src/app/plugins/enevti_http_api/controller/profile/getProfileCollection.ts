@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import { validateAddress } from '../../utils/validation/address';
 import { CollectionBase } from '../../../../../types/core/chain/collection';
 import idBufferToCollection from '../../utils/transformer/idBufferToCollection';

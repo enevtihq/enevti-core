@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetAddressByUsername } from '../../utils/hook/persona_module';
+import { invokeGetAddressByUsername } from '../../utils/invoker/persona_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

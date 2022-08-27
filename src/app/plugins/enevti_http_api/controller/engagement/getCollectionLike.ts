@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { LikeAt } from '../../../../../types/core/chain/engagement';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
-import { invokeGetCollectionLike } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetCollectionLike } from '../../utils/invoker/redeemable_nft_module';
 import createPagination from '../../utils/misc/createPagination';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

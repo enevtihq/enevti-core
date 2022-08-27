@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetActivityEngagement } from '../hook/redeemable_nft_module';
+import { invokeGetActivityEngagement } from '../invoker/redeemable_nft_module';
 import chainDateToUI from './chainDateToUI';
 import { EngagementActivity } from '../../../../../types/core/account/profile';
 import idBufferToNFT from './idBufferToNFT';

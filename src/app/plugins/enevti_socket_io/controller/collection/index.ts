@@ -1,7 +1,7 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
 import { NFT, NFTBase } from '../../../../../types/core/chain/nft';
-import { invokeGetCollection } from '../../../enevti_http_api/utils/hook/redeemable_nft_module';
+import { invokeGetCollection } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../../enevti_http_api/utils/transformer/idBufferToNFT';
 import { minimizeNFT } from '../../../enevti_http_api/utils/transformer/minimizeToBase';
 

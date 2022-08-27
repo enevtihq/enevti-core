@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
-import { invokeGetNFT } from '../hook/redeemable_nft_module';
+import { invokeGetNFT } from '../invoker/redeemable_nft_module';
 import idBufferToActivityNFT from './idBufferToActivityNFT';
 import nftChainToUI from './nftChainToUI';
 

@@ -6,7 +6,7 @@ import {
   invokeGetCollection,
   invokeGetCollectionIdFromName,
   invokeGetLiked,
-} from '../../utils/hook/redeemable_nft_module';
+} from '../../utils/invoker/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

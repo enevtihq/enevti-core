@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel, PluginCodec, TransactionJSON } from 'lisk-framework';
 import { cryptography, transactions } from 'lisk-sdk';
-import { invokeGetNodeIndo, invokePostTransaction } from '../../utils/hook/app';
+import { invokeGetNodeIndo, invokePostTransaction } from '../../utils/invoker/app';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
 import transformAsset from './transformer';
 

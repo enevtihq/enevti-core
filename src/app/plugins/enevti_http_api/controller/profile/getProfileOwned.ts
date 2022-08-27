@@ -3,7 +3,7 @@ import { BaseChannel } from 'lisk-framework';
 
 import { NFTBase } from '../../../../../types/core/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import { validateAddress } from '../../utils/validation/address';
 import { minimizeNFT } from '../../utils/transformer/minimizeToBase';
 import createPagination from '../../utils/misc/createPagination';

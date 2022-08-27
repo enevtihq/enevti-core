@@ -5,7 +5,7 @@ import {
   invokeGetLiked,
   invokeGetNFT,
   invokeGetNFTIdFromSerial,
-} from '../../utils/hook/redeemable_nft_module';
+} from '../../utils/invoker/redeemable_nft_module';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

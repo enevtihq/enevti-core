@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFTSecret } from '../../../../../types/core/chain/nft/NFTSecret';
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { validateAddress } from '../../utils/validation/address';
 

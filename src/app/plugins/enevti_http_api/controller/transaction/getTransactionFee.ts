@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { cryptography, transactions } from 'lisk-sdk';
-import { invokeGetNodeIndo } from '../../utils/hook/app';
-import { invokeGetBaseFee } from '../../utils/hook/dynamic_base_fee_module';
+import { invokeGetNodeIndo } from '../../utils/invoker/app';
+import { invokeGetBaseFee } from '../../utils/invoker/dynamic_base_fee_module';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
 import transformAsset from './transformer';
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
-import { invokeGetAllNFT, invokeGetLiked } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetAllNFT, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

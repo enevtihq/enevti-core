@@ -3,11 +3,11 @@ import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
-import { invokeGetAccount } from '../../utils/hook/persona_module';
+import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import {
   invokeGetLiked,
   invokeGetUnavailableCollection,
-} from '../../utils/hook/redeemable_nft_module';
+} from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 

@@ -1,5 +1,8 @@
 import { BaseChannel } from 'lisk-framework';
-import { invokeFCMIsAddressRegistered, invokeFCMSendToAddress } from './invoker/fcm';
+import {
+  invokeFCMIsAddressRegistered,
+  invokeFCMSendToAddress,
+} from '../../firebase_cloud_messaging/utils/invoker';
 
 export async function sendDataOnlyTopicMessaging(
   channel: BaseChannel,

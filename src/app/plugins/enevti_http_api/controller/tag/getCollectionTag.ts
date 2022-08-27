@@ -4,7 +4,7 @@ import { Collection } from '../../../../../types/core/chain/collection';
 import {
   invokeGetCollection,
   invokeGetCollectionIdFromName,
-} from '../../utils/hook/redeemable_nft_module';
+} from '../../utils/invoker/redeemable_nft_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

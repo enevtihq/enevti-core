@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import addressBufferToPersona from './addressBufferToPersona';
-import { invokeGetActivityProfile } from '../hook/redeemable_nft_module';
+import { invokeGetActivityProfile } from '../invoker/redeemable_nft_module';
 import chainDateToUI from './chainDateToUI';
 import { ProfileActivity } from '../../../../../types/core/account/profile';
 import idBufferToNFT from './idBufferToNFT';

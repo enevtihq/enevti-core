@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeFCMRemoveAddress } from '../../utils/hook/fcm';
+import { invokeFCMRemoveAddress } from '../../../firebase_cloud_messaging/utils/invoker';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {

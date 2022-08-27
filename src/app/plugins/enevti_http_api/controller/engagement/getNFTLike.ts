@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeGetNFTLike } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetNFTLike } from '../../utils/invoker/redeemable_nft_module';
 import { LikeAt } from '../../../../../types/core/chain/engagement';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
 import createPagination from '../../utils/misc/createPagination';

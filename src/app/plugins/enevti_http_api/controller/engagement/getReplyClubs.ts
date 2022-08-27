@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Reply } from '../../../../../types/core/chain/engagement';
-import { invokeGetLiked, invokeGetReplyClubs } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetLiked, invokeGetReplyClubs } from '../../utils/invoker/redeemable_nft_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 

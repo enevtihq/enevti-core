@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
-import { invokeGetTransactionsFromPool, invokeGetTransactionById } from '../../utils/hook/app';
+import { invokeGetTransactionsFromPool, invokeGetTransactionById } from '../../utils/invoker/app';
 
 export default (channel: BaseChannel, client: apiClient.APIClient) => async (
   req: Request,

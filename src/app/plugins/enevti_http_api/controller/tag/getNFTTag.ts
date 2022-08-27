@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Persona } from '../../../../../types/core/account/persona';
 import { NFTBase } from '../../../../../types/core/chain/nft';
-import { invokeGetNFTIdFromSerial } from '../../utils/hook/redeemable_nft_module';
+import { invokeGetNFTIdFromSerial } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { minimizeNFT } from '../../utils/transformer/minimizeToBase';
 

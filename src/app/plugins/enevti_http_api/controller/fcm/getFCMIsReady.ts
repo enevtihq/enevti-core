@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeFCMIsReady } from '../../utils/hook/fcm';
+import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
