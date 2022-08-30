@@ -49,3 +49,6 @@ config/*/accounts.json
 
 # Firebase Admin Key for HTTP API
 **/firebase.json
+
+# Environment Variable
+.env

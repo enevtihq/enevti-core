@@ -6,7 +6,13 @@ import idBufferToNFT from '../../enevti_http_api/utils/transformer/idBufferToNFT
 import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebase';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
 
-export function callHandler(channel: BaseChannel, io: Server) {
+export type TwilioConfig = {
+  twilioAccountSid: string;
+  twilioApiKeySid: string;
+  twilioApiKeySecret: string;
+};
+
+export function callHandler(channel: BaseChannel, io: Server, twilioConfig: TwilioConfig) {
   io.on('connection', socket => {
     socket.on(
       'startVideoCall',

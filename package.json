@@ -105,9 +105,11 @@
     "@oclif/plugin-autocomplete": "1.2.0",
     "@oclif/plugin-help": "5.1.12",
     "@types/seedrandom": "^3.0.2",
+    "@types/uuid": "^8.3.4",
     "axios": "0.21.1",
     "bignumber.js": "^9.0.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.17.3",
     "firebase-admin": "^11.0.0",
     "fs-extra": "9.1.0",
@@ -118,7 +120,9 @@
     "seedrandom": "^3.0.5",
     "socket.io": "^4.5.0",
     "tar": "6.0.2",
-    "tslib": "1.13.0"
+    "tslib": "1.13.0",
+    "twilio": "^3.81.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@oclif/config": "1.18.3",
