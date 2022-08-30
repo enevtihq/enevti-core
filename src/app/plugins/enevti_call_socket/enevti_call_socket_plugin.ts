@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import { BasePlugin, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
 import * as http from 'http';
@@ -5,6 +6,10 @@ import * as express from 'express';
 import { Server } from 'socket.io';
 import { callHandler, TwilioConfig } from './controller';
 import { enevtiCallSocketSchema } from './schema/config';
+
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+dotenv.config();
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
