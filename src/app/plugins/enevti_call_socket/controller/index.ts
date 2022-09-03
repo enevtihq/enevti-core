@@ -6,6 +6,13 @@ import idBufferToNFT from '../../enevti_http_api/utils/transformer/idBufferToNFT
 import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebase';
 import { generateCallId } from '../utils/call';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
+import {
+  initCallRegistry,
+  removeCallRegistry,
+  setAllCallRegistryStatus,
+  setCallRegistry,
+  setCallRegistryStatus,
+} from '../utils/registry';
 
 export type TwilioConfig = {
   twilioAccountSid: string;
@@ -68,6 +75,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           callTo = nft.owner.toString('hex');
           caller = 'creator';
         }
+        initCallRegistry(socketId, address.toString('hex'));
         await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
           socketId,
           caller,
@@ -75,14 +83,62 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
         });
       },
     );
-    // TODO: noAnswer
-    // TODO: rejected
-    // TODO: answered
-    // TODO: ended
-    // TODO: videoTurnedOff
-    // TODO: videoTurnedOn
-    // TODO: audioTurnedOff
-    // TODO: audioTurnedOn
+
+    socket.on('noAnswer', (params: { callId: string; emitter: string }) => {
+      setCallRegistryStatus(params.callId, params.emitter, 'disconnected');
+      socket.disconnect();
+    });
+
+    socket.on('ringing', async (params: { callId: string; emitter: string }) => {
+      await socket.leave(socket.id);
+      socket.to(params.callId).emit('callRinging');
+      await socket.join(params.callId);
+      initCallRegistry(params.callId, params.emitter);
+      setAllCallRegistryStatus(params.callId, 'connected');
+    });
+
+    socket.on('rejected', (params: { callId: string; emitter: string }) => {
+      setAllCallRegistryStatus(params.callId, 'disconnected');
+      socket.to(params.callId).emit('callRejected', { emitter: params.emitter });
+    });
+
+    socket.on('answered', (params: { callId: string; emitter: string }) => {
+      setAllCallRegistryStatus(params.callId, 'incall');
+      socket.to(params.callId).emit('callAnswered', { emitter: params.emitter }); // TODO: add twilio account here
+    });
+
+    socket.on('ended', (params: { callId: string; emitter: string }) => {
+      setAllCallRegistryStatus(params.callId, 'disconnected');
+      socket.to(params.callId).emit('callEnded', { emitter: params.emitter });
+    });
+
+    socket.on('videoTurnedOff', (params: { callId: string; emitter: string }) => {
+      setCallRegistry(params.callId, { address: params.emitter, video: false });
+      socket.to(params.callId).emit('videoTurnedOff', { emitter: params.emitter });
+    });
+
+    socket.on('videoTurnedOn', (params: { callId: string; emitter: string }) => {
+      setCallRegistry(params.callId, { address: params.emitter, video: true });
+      socket.to(params.callId).emit('videoTurnedOn', { emitter: params.emitter });
+    });
+
+    socket.on('audioTurnedOff', (params: { callId: string; emitter: string }) => {
+      setCallRegistry(params.callId, { address: params.emitter, audio: false });
+      socket.to(params.callId).emit('audioTurnedOff', { emitter: params.emitter });
+    });
+
+    socket.on('audioTurnedOn', (params: { callId: string; emitter: string }) => {
+      setCallRegistry(params.callId, { address: params.emitter, audio: true });
+      socket.to(params.callId).emit('audioTurnedOn', { emitter: params.emitter });
+    });
+
+    socket.on('disconnect', () => {
+      if (socket.rooms.size === 0) return;
+      const callId = socket.rooms[0] as string;
+      socket.to(callId).emit('callDisconnected');
+      removeCallRegistry(callId);
+    });
+
     // TODO: newChatMessage
   });
 }
