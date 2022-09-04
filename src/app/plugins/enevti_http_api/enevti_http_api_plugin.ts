@@ -68,6 +68,9 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT'] }));
     this._app.use(express.json());
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this._app.get('/avatar/:wallet', controller.renderAvatar());
+    this._app.get('/avatar/url/:address', controller.getAvatarUrl(this._channel));
     this._app.get('/activity/collection/:id', controller.getActivityCollection(this._channel));
     this._app.get('/activity/nft/:id', controller.getActivityNFT(this._channel));
     this._app.get('/activity/profile/:address', controller.getActivityProfile(this._channel));

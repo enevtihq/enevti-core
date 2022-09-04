@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "forceConsistentCasingInFileNames": true,
     "target": "es2019",
     "module": "commonjs",
@@ -21,5 +22,5 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.json"]
+  "include": ["./src/**/*.ts", "./src/**/*.json", "./src/**/*.tsx"]
 }
