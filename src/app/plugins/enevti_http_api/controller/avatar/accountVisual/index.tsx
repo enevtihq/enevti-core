@@ -125,11 +125,12 @@ const getShape = (chunk, size, gradient, sizeScale = 1) => {
 };
 
 const getBackgroundCircle = (size, gradient) => ({
-  component: Circle,
+  component: Rect,
   props: {
-    cx: size / 2,
-    cy: size / 2,
-    r: size / 2,
+    x: 0,
+    y: 0,
+    height: size,
+    width: size,
     fill: gradient.url,
   },
 });
