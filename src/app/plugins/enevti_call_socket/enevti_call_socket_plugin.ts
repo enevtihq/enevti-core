@@ -4,8 +4,9 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefaul
 import * as http from 'http';
 import * as express from 'express';
 import { Server } from 'socket.io';
-import { callHandler, TwilioConfig } from './controller';
+import { callHandler } from './controller';
 import { enevtiCallSocketSchema } from './schema/config';
+import { TwilioConfig } from './utils/twilio';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */

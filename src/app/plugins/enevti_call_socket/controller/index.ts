@@ -7,18 +7,15 @@ import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebas
 import { generateCallId } from '../utils/call';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
 import {
+  getCallRegistry,
   initCallRegistry,
   removeCallRegistry,
   setAllCallRegistryStatus,
   setCallRegistry,
   setCallRegistryStatus,
+  setCallRegistryToken,
 } from '../utils/registry';
-
-export type TwilioConfig = {
-  twilioAccountSid: string;
-  twilioApiKeySid: string;
-  twilioApiKeySecret: string;
-};
+import { generateTwilioToken, TwilioConfig } from '../utils/twilio';
 
 export function callHandler(channel: BaseChannel, io: Server, twilioConfig: TwilioConfig) {
   io.on('connection', socket => {
@@ -27,7 +24,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       async (params: { nftId: string; signature: string; publicKey: string }) => {
         const nft = await invokeGetNFT(channel, params.nftId);
         if (!nft) {
-          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft not found' });
+          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
           return;
         }
 
@@ -53,7 +50,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
 
         const nftTransformed = await idBufferToNFT(channel, nft.id);
         if (!nftTransformed) {
-          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft not found' });
+          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
           return;
         }
         if (!isRedeemTimeUTC(nftTransformed)) {
@@ -76,6 +73,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           caller = 'creator';
         }
         initCallRegistry(socketId, address.toString('hex'));
+        setCallRegistryToken(socketId, { nftId: nftTransformed.id });
         await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
           socketId,
           caller,
@@ -102,9 +100,27 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       socket.to(params.callId).emit('callRejected', { emitter: params.emitter });
     });
 
-    socket.on('answered', (params: { callId: string; emitter: string }) => {
-      setAllCallRegistryStatus(params.callId, 'incall');
-      socket.to(params.callId).emit('callAnswered', { emitter: params.emitter }); // TODO: add twilio account here
+    socket.on('answered', async (params: { callId: string; emitter: string }) => {
+      const call = getCallRegistry(params.callId);
+      if (!call.token || !call.token.nftId) {
+        socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
+        return;
+      }
+
+      const nft = await invokeGetNFT(channel, call.token.nftId);
+      if (!nft) {
+        socket.to(params.callId).emit('callError', { code: 404, reason: 'nft-not-found' });
+        return;
+      }
+      const twilioToken = await generateTwilioToken(params.emitter, nft, twilioConfig);
+      if (!twilioToken) {
+        socket.to(params.callId).emit('callError', { code: 500, reason: 'twilio-error' });
+        return;
+      }
+
+      setAllCallRegistryStatus(params.callId, 'in-progress');
+      setCallRegistryToken(params.callId, { twilioToken });
+      socket.to(params.callId).emit('callAnswered', { emitter: params.emitter, twilioToken });
     });
 
     socket.on('ended', (params: { callId: string; emitter: string }) => {
