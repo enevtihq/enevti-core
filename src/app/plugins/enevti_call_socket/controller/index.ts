@@ -22,63 +22,69 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
     socket.on(
       'startVideoCall',
       async (params: { nftId: string; signature: string; publicKey: string }) => {
-        const nft = await invokeGetNFT(channel, params.nftId);
-        if (!nft) {
-          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
-          return;
-        }
-
-        if (
-          !cryptography.verifyData(
-            cryptography.stringToBuffer(params.nftId),
-            Buffer.from(params.signature, 'hex'),
-            Buffer.from(params.publicKey, 'hex'),
-          )
-        ) {
-          socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
-          return;
-        }
-
-        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.publicKey, 'hex'));
-        if (
-          Buffer.compare(nft.creator, address) !== 0 &&
-          Buffer.compare(nft.owner, address) !== 0
-        ) {
-          socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
-          return;
-        }
-
-        const nftTransformed = await idBufferToNFT(channel, nft.id);
-        if (!nftTransformed) {
-          socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
-          return;
-        }
-        if (!isRedeemTimeUTC(nftTransformed)) {
-          socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
-          return;
-        }
-
         const socketId = await generateCallId();
-        await socket.leave(socket.id);
-        await socket.join(socketId);
+        try {
+          const nft = await invokeGetNFT(channel, params.nftId);
+          if (!nft) {
+            socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
 
-        let callTo = '';
-        let caller = '';
-        if (Buffer.compare(address, nft.owner) === 0) {
-          callTo = nft.creator.toString('hex');
-          caller = 'owner';
+          if (
+            !cryptography.verifyData(
+              cryptography.stringToBuffer(params.nftId),
+              Buffer.from(params.signature, 'hex'),
+              Buffer.from(params.publicKey, 'hex'),
+            )
+          ) {
+            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          const address = cryptography.getAddressFromPublicKey(
+            Buffer.from(params.publicKey, 'hex'),
+          );
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          const nftTransformed = await idBufferToNFT(channel, nft.id);
+          if (!nftTransformed) {
+            socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
+          if (!isRedeemTimeUTC(nftTransformed)) {
+            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          await socket.leave(socket.id);
+          await socket.join(socketId);
+
+          let callTo = '';
+          let caller = '';
+          if (Buffer.compare(address, nft.owner) === 0) {
+            callTo = nft.creator.toString('hex');
+            caller = 'owner';
+          }
+          if (Buffer.compare(address, nft.creator) === 0) {
+            callTo = nft.owner.toString('hex');
+            caller = 'creator';
+          }
+          initCallRegistry(socketId, address.toString('hex'));
+          setCallRegistryToken(socketId, { nftId: nftTransformed.id });
+          await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
+            socketId,
+            caller,
+            nftId: nftTransformed.id,
+          });
+        } catch (err) {
+          socket.to(socketId).emit('callError', { code: 500, reason: 'internal-error' });
         }
-        if (Buffer.compare(address, nft.creator) === 0) {
-          callTo = nft.owner.toString('hex');
-          caller = 'creator';
-        }
-        initCallRegistry(socketId, address.toString('hex'));
-        setCallRegistryToken(socketId, { nftId: nftTransformed.id });
-        await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
-          socketId,
-          caller,
-          nftId: nftTransformed.id,
-        });
       },
     );
 
@@ -156,5 +162,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
     });
 
     // TODO: newChatMessage
+    // TODO: implement all error handling
   });
 }
