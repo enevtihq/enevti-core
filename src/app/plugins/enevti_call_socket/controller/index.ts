@@ -17,7 +17,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
         try {
           const nft = await invokeGetNFT(channel, params.nftId);
           if (!nft) {
-            socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
+            socket.emit('callError', { code: 404, reason: 'nft-not-found' });
             return;
           }
 
@@ -28,7 +28,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
               Buffer.from(params.publicKey, 'hex'),
             )
           ) {
-            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
 
@@ -39,17 +39,17 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             Buffer.compare(nft.creator, address) !== 0 &&
             Buffer.compare(nft.owner, address) !== 0
           ) {
-            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
 
           const nftTransformed = await idBufferToNFT(channel, nft.id);
           if (!nftTransformed) {
-            socket.to(socket.id).emit('callError', { code: 404, reason: 'nft-not-found' });
+            socket.emit('callError', { code: 404, reason: 'nft-not-found' });
             return;
           }
           if (!isRedeemTimeUTC(nftTransformed)) {
-            socket.to(socket.id).emit('callError', { code: 401, reason: 'unauthorized' });
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
 
@@ -81,10 +81,8 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       },
     );
 
-    socket.on('ringing', async (params: { callId: string; emitter: string }) => {
-      await socket.leave(socket.id);
+    socket.on('ringing', (params: { callId: string; emitter: string }) => {
       socket.to(params.callId).emit('callRinging');
-      await socket.join(params.callId);
     });
 
     socket.on('rejected', (params: { callId: string; emitter: string }) => {
@@ -92,6 +90,12 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
     });
 
     socket.on('answered', async (params: { nftId: string; callId: string; emitter: string }) => {
+      const callRoom = io.sockets.adapter.rooms.get(params.callId);
+      if (callRoom === undefined) {
+        socket.emit('callError', { code: 404, reason: 'room-not-found' });
+        return;
+      }
+
       await socket.leave(socket.id);
       await socket.join(params.callId);
 
