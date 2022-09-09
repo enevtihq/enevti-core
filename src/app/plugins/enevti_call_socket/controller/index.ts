@@ -117,6 +117,12 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       socket.to(params.callId).emit('callEnded', { emitter: params.emitter });
     });
 
+    socket.on('disconnecting', () => {
+      for (const room of socket.rooms) {
+        socket.to(room).emit('callDisconnected');
+      }
+    });
+
     // TODO: newChatMessage
     // TODO: implement all error handling
     // TODO: implement better registry
