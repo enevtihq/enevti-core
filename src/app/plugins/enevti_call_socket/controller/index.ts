@@ -10,6 +10,7 @@ import {
   removeCallIdMapByAddress,
 } from '../utils/addressToCallId';
 import { generateCallId } from '../utils/call';
+import { getRoomByCallId, mapCallIdToRoom, removeRoomMapByCallId } from '../utils/callIdToRoom';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
 import { getCallIdByRoom, mapRoomToCallId, removeCallIdMapByRoom } from '../utils/roomToCallId';
 import {
@@ -32,9 +33,17 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
+          const address = cryptography.getAddressFromPublicKey(
+            Buffer.from(params.publicKey, 'hex'),
+          );
+
           const existingCallId = getCallIdByRoom(`${nft.symbol}#${nft.serial}`);
           if (existingCallId !== undefined) {
-            socket.emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
+            mapAddressToCallId(address.toString('hex'), existingCallId);
+            mapSocketToAddress(socket.id, address.toString('hex'));
+            socket
+              .to(existingCallId)
+              .emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
             return;
           }
 
@@ -48,10 +57,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
-
-          const address = cryptography.getAddressFromPublicKey(
-            Buffer.from(params.publicKey, 'hex'),
-          );
 
           const callIdAtAddress = getCallIdByAddress(address.toString('hex'));
           if (callIdAtAddress !== undefined) {
@@ -103,7 +108,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             .to(socketId)
             .emit('callStarted', { callId: socketId, emitter: params.publicKey, twilioToken });
 
-          mapRoomToCallId(`${nft.symbol}#${nft.serial}`, socketId);
           mapAddressToCallId(address.toString('hex'), socketId);
           mapSocketToAddress(socket.id, address.toString('hex'));
         } catch (err) {
@@ -144,6 +148,19 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           socket.to(params.callId).emit('callError', { code: 404, reason: 'nft-not-found' });
           return;
         }
+
+        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+
+        const existingCallId = getCallIdByRoom(`${nft.symbol}#${nft.serial}`);
+        if (existingCallId !== undefined) {
+          mapSocketToAddress(socket.id, address.toString('hex'));
+          mapAddressToCallId(address.toString('hex'), existingCallId);
+          socket
+            .to(existingCallId)
+            .emit('callReconnect', { callId: existingCallId, emitter: params.emitter });
+          return;
+        }
+
         const twilioToken = await generateTwilioToken(params.emitter, nft, twilioConfig);
         if (!twilioToken) {
           socket.to(params.callId).emit('callError', { code: 500, reason: 'twilio-error' });
@@ -152,7 +169,8 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
 
         socket.to(params.callId).emit('callAnswered', { emitter: params.emitter, twilioToken });
 
-        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+        mapRoomToCallId(`${nft.symbol}#${nft.serial}`, params.callId);
+        mapCallIdToRoom(params.callId, `${nft.symbol}#${nft.serial}`);
         mapAddressToCallId(address.toString('hex'), params.callId);
         mapSocketToAddress(socket.id, address.toString('hex'));
       } catch (err) {
@@ -171,6 +189,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
         socket.to(params.callId).emit('callEnded', { emitter: params.emitter });
         if (getCallIdByRoom(`${nft.symbol}#${nft.serial}`)) {
           removeCallIdMapByRoom(`${nft.symbol}#${nft.serial}`);
+          removeRoomMapByCallId(params.callId);
         }
       } catch (err) {
         socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
@@ -180,10 +199,14 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
     socket.on('disconnecting', () => {
       try {
         const address = getAddressBySocket(socket.id);
+        const callId = getCallIdByAddress(address);
         removeAddressMapBySocket(socket.id);
         removeCallIdMapByAddress(address);
-        for (const room of socket.rooms) {
-          socket.to(room).emit('callDisconnected');
+        const room = getRoomByCallId(callId);
+        if (room !== undefined) {
+          for (const rooms of socket.rooms) {
+            socket.to(rooms).emit('callDisconnected');
+          }
         }
       } catch (err) {
         for (const room of socket.rooms) {
@@ -193,5 +216,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
     });
 
     // TODO: newChatMessage
+    // TODO: tip
   });
 }

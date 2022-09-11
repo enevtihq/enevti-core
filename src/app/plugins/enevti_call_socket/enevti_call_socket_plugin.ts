@@ -78,7 +78,7 @@ export class EnevtiCallSocketPlugin extends BasePlugin {
     this._app = express();
     this._channel = channel;
     this._server = http.createServer(this._app);
-    this._io = new Server(this._server);
+    this._io = new Server(this._server, { pingInterval: 2500, pingTimeout: 2000 });
 
     callHandler(this._channel, this._io, this._twilioConfig);
 
