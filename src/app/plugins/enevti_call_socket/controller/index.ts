@@ -58,14 +58,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
-          const callIdAtAddress = getCallIdByAddress(address.toString('hex'));
-          if (callIdAtAddress !== undefined) {
-            socket.emit('callBusy');
-            socket
-              .to(callIdAtAddress)
-              .emit('someoneIsCalling', { nftId: params.nftId, emitter: params.publicKey });
-            return;
-          }
           if (
             Buffer.compare(nft.creator, address) !== 0 &&
             Buffer.compare(nft.owner, address) !== 0
@@ -93,6 +85,15 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           if (Buffer.compare(address, nft.creator) === 0) {
             callTo = nft.owner.toString('hex');
             caller = 'creator';
+          }
+
+          const callIdAtAddress = getCallIdByAddress(callTo);
+          if (callIdAtAddress !== undefined) {
+            socket.emit('callBusy');
+            socket
+              .to(callIdAtAddress)
+              .emit('someoneIsCalling', { nftId: params.nftId, emitter: params.publicKey });
+            return;
           }
 
           await socket.leave(socket.id);
