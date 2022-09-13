@@ -9,6 +9,16 @@ import {
   mapAddressToCallId,
   removeCallIdMapByAddress,
 } from '../utils/addressToCallId';
+import {
+  getPublicKeyByAddress,
+  mapAddressToPublicKey,
+  removePublicKeyMapByAddress,
+} from '../utils/addressToPublicKey';
+import {
+  getRejectableCallIdByAddress,
+  mapAddressToRejectableCallId,
+  removeRejectableCallIdMapByAddress,
+} from '../utils/addressToRejectableCall';
 import { generateCallId } from '../utils/call';
 import { getRoomByCallId, mapCallIdToRoom, removeRoomMapByCallId } from '../utils/callIdToRoom';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
@@ -41,6 +51,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           if (existingCallId !== undefined) {
             mapAddressToCallId(address.toString('hex'), existingCallId);
             mapSocketToAddress(socket.id, address.toString('hex'));
+            mapAddressToPublicKey(address.toString('hex'), params.publicKey);
             socket
               .to(existingCallId)
               .emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
@@ -111,6 +122,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
 
           mapAddressToCallId(address.toString('hex'), socketId);
           mapSocketToAddress(socket.id, address.toString('hex'));
+          mapAddressToPublicKey(address.toString('hex'), params.publicKey);
         } catch (err) {
           socket.to(socketId).emit('callError', { code: 500, reason: 'internal-error' });
         }
@@ -119,18 +131,19 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
 
     socket.on('ringing', (params: { callId: string; emitter: string }) => {
       try {
+        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+        mapAddressToRejectableCallId(address.toString('hex'), params.callId);
+        mapSocketToAddress(socket.id, address.toString('hex'));
+        mapAddressToPublicKey(address.toString('hex'), params.emitter);
         socket.to(params.callId).emit('callRinging');
       } catch (err) {
         socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
       }
     });
 
-    socket.on('rejected', (params: { callId: string; emitter: string }) => {
-      try {
-        socket.to(params.callId).emit('callRejected', { emitter: params.emitter });
-      } catch (err) {
-        socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
-      }
+    socket.on('accepted', (params: { emitter: string }) => {
+      const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+      removeRejectableCallIdMapByAddress(address.toString('hex'));
     });
 
     socket.on('answered', async (params: { nftId: string; callId: string; emitter: string }) => {
@@ -156,6 +169,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
         if (existingCallId !== undefined) {
           mapSocketToAddress(socket.id, address.toString('hex'));
           mapAddressToCallId(address.toString('hex'), existingCallId);
+          mapAddressToPublicKey(address.toString('hex'), params.emitter);
           socket
             .to(existingCallId)
             .emit('callReconnect', { callId: existingCallId, emitter: params.emitter });
@@ -174,6 +188,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
         mapCallIdToRoom(params.callId, `${nft.symbol}#${nft.serial}`);
         mapAddressToCallId(address.toString('hex'), params.callId);
         mapSocketToAddress(socket.id, address.toString('hex'));
+        mapAddressToPublicKey(address.toString('hex'), params.emitter);
       } catch (err) {
         socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
       }
@@ -201,8 +216,19 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       try {
         const address = getAddressBySocket(socket.id);
         const callId = getCallIdByAddress(address);
+
+        const rejectableCallId = getRejectableCallIdByAddress(address);
+        if (rejectableCallId !== undefined) {
+          removeRejectableCallIdMapByAddress(address);
+          socket
+            .to(rejectableCallId)
+            .emit('callRejected', { emitter: getPublicKeyByAddress(address) });
+        }
+
         removeAddressMapBySocket(socket.id);
+        removePublicKeyMapByAddress(address);
         removeCallIdMapByAddress(address);
+
         const room = getRoomByCallId(callId);
         if (room !== undefined) {
           for (const rooms of socket.rooms) {
