@@ -1,7 +1,8 @@
-import { BlockHeader } from '@liskhq/lisk-chain';
-import { AfterBlockApplyContext, Transaction } from 'lisk-framework';
+import { AfterBlockApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
-import { apiClient, cryptography } from 'lisk-sdk';
+import { codec, cryptography } from 'lisk-sdk';
+import { VoteTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
+import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
 import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
 import { DeliverSecretProps } from '../../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { LikeCollectionProps } from '../../../../../types/core/asset/redeemable_nft/like_collection_asset';
@@ -22,27 +23,21 @@ import { asyncForEach, addInObject } from '../../utils/transaction';
 import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import { CommentNFTProps } from '../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
 import { CommentCollectionProps } from '../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
+import { mintNftAssetSchema } from '../../schemas/asset/mint_nft_asset';
+import { deliverSecretAssetSchema } from '../../schemas/asset/deliver_secret_asset';
+import { mintNftTypeQrAssetSchema } from '../../schemas/asset/mint_nft_type_qr_asset';
+import { likeNftAssetSchema } from '../../schemas/asset/like_nft_asset';
+import { likeCollectionAssetSchema } from '../../schemas/asset/like_collection_asset';
+import { commentNftAssetSchema } from '../../schemas/asset/comment_nft_asset';
+import { commentCollectionAssetSchema } from '../../schemas/asset/comment_collection_asset';
 
 export default async function redeemableNftAfterBlockApply(
   input: AfterBlockApplyContext,
   channel: BaseModuleChannel,
   config: Record<string, unknown>,
-  client: apiClient.APIClient,
 ) {
   await collectionMintingAvailabilityMonitor(input);
-
-  const prevBlock = (await client.block.get(input.block.header.previousBlockID)) as {
-    header: BlockHeader;
-    payload: Transaction[];
-  };
-  const timestampBlock = (await client.block.get(
-    prevBlock.header.previousBlockID.length > 0
-      ? prevBlock.header.previousBlockID
-      : input.block.header.previousBlockID,
-  )) as {
-    header: BlockHeader;
-    payload: Transaction[];
-  };
+  const timestampBlock = input.stateStore.chain.lastBlockHeaders[0];
 
   const accountWithNewCollection: Set<Buffer> = new Set<Buffer>();
   const accountWithNewPending: Set<Buffer> = new Set<Buffer>();
@@ -68,20 +63,20 @@ export default async function redeemableNftAfterBlockApply(
     accountWithNewPending,
   );
 
-  for (const payload of prevBlock.payload) {
+  for (const payload of input.block.payload) {
     const senderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
 
     // transferAsset
     if (payload.moduleID === 2 && payload.assetID === 0) {
-      const transferAsset = (payload.asset as unknown) as {
+      const transferAsset = codec.decode<{
         amount: bigint;
         recipientAddress: Buffer;
-      };
+      }>(new TransferAsset(BigInt(0)).schema, payload.asset);
 
       await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
         transaction: payload.id,
         name: ACTIVITY.PROFILE.TOKENSENT,
-        date: BigInt(timestampBlock.header.timestamp),
+        date: BigInt(timestampBlock.timestamp),
         from: senderAddress,
         to: transferAsset.recipientAddress,
         payload: Buffer.alloc(0),
@@ -95,7 +90,7 @@ export default async function redeemableNftAfterBlockApply(
       await addActivityProfile(input.stateStore, transferAsset.recipientAddress.toString('hex'), {
         transaction: payload.id,
         name: ACTIVITY.PROFILE.TOKENRECEIVED,
-        date: BigInt(timestampBlock.header.timestamp),
+        date: BigInt(timestampBlock.timestamp),
         from: senderAddress,
         to: transferAsset.recipientAddress,
         payload: Buffer.alloc(0),
@@ -115,7 +110,7 @@ export default async function redeemableNftAfterBlockApply(
       await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
         transaction: payload.id,
         name: ACTIVITY.PROFILE.REGISTERUSERNAME,
-        date: BigInt(timestampBlock.header.timestamp),
+        date: BigInt(timestampBlock.timestamp),
         from: senderAddress,
         to: Buffer.alloc(0),
         payload: Buffer.alloc(0),
@@ -129,9 +124,10 @@ export default async function redeemableNftAfterBlockApply(
 
     // voteTransactionAsset
     if (payload.moduleID === 5 && payload.assetID === 1) {
-      const voteAsset = (payload.asset as unknown) as {
+      const voteAsset = codec.decode<{
         votes: { delegateAddress: Buffer; amount: bigint }[];
-      };
+      }>(new VoteTransactionAsset().schema, payload.asset);
+
       await asyncForEach(voteAsset.votes, async item => {
         await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
           transaction: payload.id,
@@ -139,7 +135,7 @@ export default async function redeemableNftAfterBlockApply(
             Buffer.compare(senderAddress, item.delegateAddress) === 0
               ? ACTIVITY.PROFILE.SELFSTAKE
               : ACTIVITY.PROFILE.ADDSTAKE,
-          date: BigInt(timestampBlock.header.timestamp),
+          date: BigInt(timestampBlock.timestamp),
           from: senderAddress,
           to: item.delegateAddress,
           payload: Buffer.alloc(0),
@@ -161,7 +157,7 @@ export default async function redeemableNftAfterBlockApply(
 
     // mintNftAsset
     if (payload.moduleID === 1000 && payload.assetID === 1) {
-      const mintNFTAsset = (payload.asset as unknown) as MintNFTProps;
+      const mintNFTAsset = codec.decode<MintNFTProps>(mintNftAssetSchema, payload.asset);
       const collection = await getCollectionById(input.stateStore, mintNFTAsset.id);
       if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
@@ -172,7 +168,10 @@ export default async function redeemableNftAfterBlockApply(
 
     // deliverSecretAsset
     if (payload.moduleID === 1000 && payload.assetID === 2) {
-      const deliverSecretAsset = (payload.asset as unknown) as DeliverSecretProps;
+      const deliverSecretAsset = codec.decode<DeliverSecretProps>(
+        deliverSecretAssetSchema,
+        payload.asset,
+      );
       const nft = await getNFTById(input.stateStore, deliverSecretAsset.id);
       if (!nft) throw new Error('nft id not found in afterBlockApply hook');
 
@@ -188,7 +187,7 @@ export default async function redeemableNftAfterBlockApply(
 
     // mintNftTypeQrAsset
     if (payload.moduleID === 1000 && payload.assetID === 3) {
-      const mintNFTAsset = (payload.asset as unknown) as MintNFTByQRProps;
+      const mintNFTAsset = codec.decode<MintNFTByQRProps>(mintNftTypeQrAssetSchema, payload.asset);
       const plainPayload = Buffer.from(mintNFTAsset.body, 'base64').toString();
       const { id, quantity } = JSON.parse(plainPayload) as MintNFTByQR;
 
@@ -202,25 +201,31 @@ export default async function redeemableNftAfterBlockApply(
 
     // likeNFtAsset
     if (payload.moduleID === 1000 && payload.assetID === 4) {
-      const likeNftAsset = (payload.asset as unknown) as LikeNFTProps;
+      const likeNftAsset = codec.decode<LikeNFTProps>(likeNftAssetSchema, payload.asset);
       nftWithNewLike.add(Buffer.from(likeNftAsset.id, 'hex'));
     }
 
     // likeCollectionAsset
     if (payload.moduleID === 1000 && payload.assetID === 5) {
-      const likeCollectionAsset = (payload.asset as unknown) as LikeCollectionProps;
+      const likeCollectionAsset = codec.decode<LikeCollectionProps>(
+        likeCollectionAssetSchema,
+        payload.asset,
+      );
       collectionWithNewLike.add(Buffer.from(likeCollectionAsset.id, 'hex'));
     }
 
     // commentNftAsset
     if (payload.moduleID === 1000 && payload.assetID === 6) {
-      const commentNFTAsset = (payload.asset as unknown) as CommentNFTProps;
+      const commentNFTAsset = codec.decode<CommentNFTProps>(commentNftAssetSchema, payload.asset);
       nftWithNewComment.add(Buffer.from(commentNFTAsset.id, 'hex'));
     }
 
     // commentCollectionAsset
     if (payload.moduleID === 1000 && payload.assetID === 7) {
-      const commentCollectionAsset = (payload.asset as unknown) as CommentCollectionProps;
+      const commentCollectionAsset = codec.decode<CommentCollectionProps>(
+        commentCollectionAssetSchema,
+        payload.asset,
+      );
       collectionWithNewComment.add(Buffer.from(commentCollectionAsset.id, 'hex'));
     }
   }
@@ -285,7 +290,7 @@ export default async function redeemableNftAfterBlockApply(
     collectionWithNewActivity.forEach(collection =>
       channel.publish('redeemableNft:newActivityCollection', {
         collection: collection.toString('hex'),
-        timestamp: timestampBlock.header.timestamp,
+        timestamp: timestampBlock.timestamp,
       }),
     );
   }
@@ -294,7 +299,7 @@ export default async function redeemableNftAfterBlockApply(
     nftWithNewActivity.forEach(nft =>
       channel.publish('redeemableNft:newActivityNFT', {
         nft: nft.toString('hex'),
-        timestamp: timestampBlock.header.timestamp,
+        timestamp: timestampBlock.timestamp,
       }),
     );
   }
@@ -303,7 +308,7 @@ export default async function redeemableNftAfterBlockApply(
     accountWithNewActivity.forEach(address =>
       channel.publish('redeemableNft:newActivityProfile', {
         address: address.toString('hex'),
-        timestamp: timestampBlock.header.timestamp,
+        timestamp: timestampBlock.timestamp,
       }),
     );
   }

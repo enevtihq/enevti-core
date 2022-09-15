@@ -1,7 +1,6 @@
 import {
   AfterBlockApplyContext,
   AfterGenesisBlockApplyContext,
-  apiClient,
   BaseModule,
   BeforeBlockApplyContext,
   GenesisConfig,
@@ -73,18 +72,10 @@ export class RedeemableNftModule extends BaseModule {
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;
-  public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);
   // }
-
-  public async getClient() {
-    if (!this._client) {
-      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
-    }
-    return this._client;
-  }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -94,8 +85,7 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    const client = await this.getClient();
-    await redeemableNftAfterBlockApply(_input, this._channel, this.config, client);
+    await redeemableNftAfterBlockApply(_input, this._channel, this.config);
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {

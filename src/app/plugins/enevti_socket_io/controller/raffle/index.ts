@@ -4,10 +4,12 @@ import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
 import idBufferToCollection from '../../../enevti_http_api/utils/transformer/idBufferToCollection';
 import { getSocketIdByAddress } from '../../utils/mapper';
 import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
+import { delayEmit } from '../../utils/delayEmit';
 
 export function onNewRaffled(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newRaffled', async data => {
     if (data) {
+      await delayEmit();
       const isFCMReady = await invokeFCMIsReady(channel);
       const payload = data as { address: string; collection: string; total: number };
       const collection = await idBufferToCollection(
@@ -35,6 +37,7 @@ export function onNewRaffled(channel: BaseChannel, io: Server | Socket) {
 export function onWonRaffle(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:wonRaffle', async data => {
     if (data) {
+      await delayEmit();
       const isFCMReady = await invokeFCMIsReady(channel);
       const payload = data as { address: string; collection: string; items: string[] };
       const collection = await idBufferToCollection(

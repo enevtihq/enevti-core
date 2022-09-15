@@ -4,10 +4,12 @@ import { NFT, NFTBase } from '../../../../../types/core/chain/nft';
 import { invokeGetCollection } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../../enevti_http_api/utils/transformer/idBufferToNFT';
 import { minimizeNFT } from '../../../enevti_http_api/utils/transformer/minimizeToBase';
+import { delayEmit } from '../../utils/delayEmit';
 
 export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTMinted', async data => {
     if (data) {
+      await delayEmit();
       const payload = data as { collection: string; quantity: number };
       const collection = await invokeGetCollection(channel, payload.collection);
       if (!collection) throw new Error('undefined Collection id while subscribing newNFTMinted');
@@ -34,6 +36,7 @@ export function onNewNFTMinted(channel: BaseChannel, io: Server | Socket) {
 export function onNewCollectionLike(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newCollectionLike', async data => {
     if (data) {
+      await delayEmit();
       const payload = data as { id: string };
       const collection = await invokeGetCollection(channel, payload.id);
       if (!collection)
@@ -47,6 +50,7 @@ export function onNewCollectionLike(channel: BaseChannel, io: Server | Socket) {
 export function onNewCollectionComment(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newCollectionComment', async data => {
     if (data) {
+      await delayEmit();
       const payload = data as { id: string };
       const collection = await invokeGetCollection(channel, payload.id);
       if (!collection)

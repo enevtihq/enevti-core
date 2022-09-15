@@ -3,19 +3,18 @@
 import {
   AfterBlockApplyContext,
   AfterGenesisBlockApplyContext,
-  apiClient,
   BaseModule,
   BeforeBlockApplyContext,
   codec,
   TransactionApplyContext,
   cryptography,
-  Transaction,
 } from 'lisk-sdk';
+import { RegisterTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
+import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
 import { getDefaultAccount } from './utils/account';
-import { getAssetSchema } from './utils/schema';
 import { accessRegisteredUsername, setRegisteredUsername } from './utils/username';
 import { PersonaAccountProps } from '../../../types/core/account/persona';
 import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
@@ -49,18 +48,10 @@ export class PersonaModule extends BaseModule {
   public events = ['usernameChanged', 'balanceChanged'];
   public id = 1001;
   public accountSchema = personaAccountSchema;
-  public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);
   // }
-
-  public async getClient() {
-    if (!this._client) {
-      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
-    }
-    return this._client;
-  }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -71,11 +62,7 @@ export class PersonaModule extends BaseModule {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    const client = await this.getClient();
-    const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
-      payload: Transaction[];
-    };
-    for (const payload of prevBlock.payload) {
+    for (const payload of _input.block.payload) {
       const prevBlockSenderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
       this._channel.publish('persona:balanceChanged', {
         address: prevBlockSenderAddress.toString('hex'),
@@ -86,9 +73,12 @@ export class PersonaModule extends BaseModule {
         });
       }
       if (payload.moduleID === 2 && payload.assetID === 0) {
-        const transferAsset = (payload.asset as unknown) as Record<string, unknown>;
+        const transferAsset = codec.decode<{
+          amount: bigint;
+          recipientAddress: Buffer;
+        }>(new TransferAsset(BigInt(0)).schema, payload.asset);
         this._channel.publish('persona:balanceChanged', {
-          address: (transferAsset.recipientAddress as Buffer).toString('hex'),
+          address: transferAsset.recipientAddress.toString('hex'),
         });
       }
     }
@@ -101,14 +91,8 @@ export class PersonaModule extends BaseModule {
 
   public async afterTransactionApply(_input: TransactionApplyContext) {
     if (_input.transaction.moduleID === 5 && _input.transaction.assetID === 0) {
-      const client = await this.getClient();
-      const registerSchema = await getAssetSchema(
-        client,
-        _input.transaction.moduleID,
-        _input.transaction.assetID,
-      );
       const registerAsset = codec.decode<Record<string, unknown>>(
-        registerSchema,
+        new RegisterTransactionAsset().schema,
         _input.transaction.asset,
       );
       const senderAccount = await _input.stateStore.account.getOrDefault<PersonaAccountProps>(

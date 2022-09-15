@@ -1,10 +1,12 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
+import { delayEmit } from '../../utils/delayEmit';
 
 export function onNewNFTLike(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTLike', async data => {
     if (data) {
+      await delayEmit();
       const payload = data as { id: string };
       const nft = await invokeGetNFT(channel, payload.id);
       if (!nft) throw new Error('undefined NFT id while subscribing newNFTLike');
@@ -17,6 +19,7 @@ export function onNewNFTLike(channel: BaseChannel, io: Server | Socket) {
 export function onNewNFTComment(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('redeemableNft:newNFTComment', async data => {
     if (data) {
+      await delayEmit();
       const payload = data as { id: string };
       const nft = await invokeGetNFT(channel, payload.id);
       if (!nft) throw new Error('undefined NFT id while subscribing newNFTLike');

@@ -11,8 +11,6 @@ import {
   BeforeBlockApplyContext,
   AfterGenesisBlockApplyContext,
   codec,
-  apiClient,
-  Transaction,
   StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
@@ -50,18 +48,10 @@ export class CreatorFinanceModule extends BaseModule {
   public events = ['totalStakeChanged', 'stakerUpdates'];
   public id = 1002;
   public accountSchema = creafiAccountSchema;
-  public _client: apiClient.APIClient | undefined = undefined;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);
   // }
-
-  public async getClient() {
-    if (!this._client) {
-      this._client = await apiClient.createIPCClient('~/.lisk/enevti-core');
-    }
-    return this._client;
-  }
 
   // Lifecycle hooks
   public async beforeBlockApply(_input: BeforeBlockApplyContext) {
@@ -70,20 +60,20 @@ export class CreatorFinanceModule extends BaseModule {
     // const generator = await _input.stateStore.account.get<TokenAccount>(generatorAddress);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    const client = await this.getClient();
-    const prevBlock = (await client.block.get(_input.block.header.previousBlockID)) as {
-      payload: Transaction[];
-    };
-    for (const payload of prevBlock.payload) {
+    for (const payload of _input.block.payload) {
       if (payload.moduleID === 5 && payload.assetID === 1) {
-        const voteAsset = (payload.asset as unknown) as Record<string, unknown>;
-        (voteAsset.votes as Record<string, unknown>[]).forEach(item => {
+        const voteAsset = codec.decode<VoteTransactionAssetContext>(
+          new VoteTransactionAsset().schema,
+          payload.asset,
+        );
+        voteAsset.votes.forEach(item => {
           this._channel.publish('creatorFinance:stakerUpdates', {
-            address: (item.delegateAddress as Buffer).toString('hex'),
+            address: item.delegateAddress.toString('hex'),
           });
           this._channel.publish('creatorFinance:totalStakeChanged', {
-            address: (item.delegateAddress as Buffer).toString('hex'),
+            address: item.delegateAddress.toString('hex'),
           });
         });
       }
