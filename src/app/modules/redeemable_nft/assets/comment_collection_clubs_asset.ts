@@ -47,7 +47,7 @@ export class CommentCollectionClubsAsset extends BaseAsset {
       id: transaction.id,
       type: 'collection',
       owner: transaction.senderAddress,
-      text: asset.text,
+      data: asset.cid,
       date: BigInt(timestamp),
       target: collection.id,
       like: 0,

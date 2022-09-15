@@ -45,7 +45,7 @@ export const commentAtSchema: SchemaWithDefault = {
 export const commentSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/comment',
   type: 'object',
-  required: ['id', 'type', 'date', 'owner', 'text', 'target', 'reply', 'like'],
+  required: ['id', 'type', 'date', 'owner', 'data', 'target', 'reply', 'like'],
   properties: {
     id: {
       dataType: 'bytes',
@@ -63,7 +63,7 @@ export const commentSchema: SchemaWithDefault = {
       dataType: 'bytes',
       fieldNumber: 4,
     },
-    text: {
+    data: {
       dataType: 'string',
       fieldNumber: 5,
     },
@@ -100,7 +100,7 @@ export const replyAtSchema: SchemaWithDefault = {
 export const replySchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/reply',
   type: 'object',
-  required: ['id', 'date', 'owner', 'text', 'target', 'like'],
+  required: ['id', 'date', 'owner', 'data', 'target', 'like'],
   properties: {
     id: {
       dataType: 'bytes',
@@ -114,7 +114,7 @@ export const replySchema: SchemaWithDefault = {
       dataType: 'bytes',
       fieldNumber: 3,
     },
-    text: {
+    data: {
       dataType: 'string',
       fieldNumber: 4,
     },

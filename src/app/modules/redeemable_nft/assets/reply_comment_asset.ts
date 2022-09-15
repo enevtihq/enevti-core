@@ -37,7 +37,7 @@ export class ReplyCommentAsset extends BaseAsset {
     const reply: ReplyAsset = {
       id: transaction.id,
       owner: transaction.senderAddress,
-      text: asset.text,
+      data: asset.cid,
       date: BigInt(timestamp),
       like: 0,
       target: comment.id,

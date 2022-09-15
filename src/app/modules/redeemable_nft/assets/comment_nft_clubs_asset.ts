@@ -46,7 +46,7 @@ export class CommentNftClubsAsset extends BaseAsset {
       id: transaction.id,
       type: 'nft',
       owner: transaction.senderAddress,
-      text: asset.text,
+      data: asset.cid,
       date: BigInt(timestamp),
       target: nft.id,
       like: 0,
