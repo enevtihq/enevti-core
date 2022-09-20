@@ -52,6 +52,8 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             mapAddressToCallId(address.toString('hex'), existingCallId);
             mapSocketToAddress(socket.id, address.toString('hex'));
             mapAddressToPublicKey(address.toString('hex'), params.publicKey);
+            await socket.leave(socket.id);
+            await socket.join(existingCallId);
             socket
               .to(existingCallId)
               .emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
@@ -189,9 +191,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
-          await socket.leave(socket.id);
-          await socket.join(params.callId);
-
           const nft = await invokeGetNFT(channel, params.nftId);
           if (!nft) {
             socket.to(params.callId).emit('callError', { code: 404, reason: 'nft-not-found' });
@@ -205,11 +204,16 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             mapSocketToAddress(socket.id, address.toString('hex'));
             mapAddressToCallId(address.toString('hex'), existingCallId);
             mapAddressToPublicKey(address.toString('hex'), params.emitter);
+            await socket.leave(socket.id);
+            await socket.join(existingCallId);
             socket
               .to(existingCallId)
               .emit('callReconnect', { callId: existingCallId, emitter: params.emitter });
             return;
           }
+
+          await socket.leave(socket.id);
+          await socket.join(params.callId);
 
           const twilioToken = await generateTwilioToken(params.emitter, nft, twilioConfig);
           if (!twilioToken) {
