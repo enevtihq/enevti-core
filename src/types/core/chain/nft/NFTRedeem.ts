@@ -6,8 +6,9 @@ export type NFTRecurring = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'once' | 
 export type NFTRedeem = {
   status: 'ready' | 'pending-secret' | 'limit-exceeded' | '';
   count: number;
+  velocity: number;
+  nonce: number;
   limit: number;
-  touched: number;
   secret: NFTSecret;
   content: NFTContentSecure;
   schedule: {
@@ -26,7 +27,6 @@ export type NFTRedeem = {
   };
 };
 
-export type NFTRedeemAsset = Omit<NFTRedeem, 'secret' | 'touched'> & {
+export type NFTRedeemAsset = Omit<NFTRedeem, 'secret'> & {
   secret: NFTSecretAsset;
-  touched: bigint;
 };

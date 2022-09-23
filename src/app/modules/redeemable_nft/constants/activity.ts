@@ -16,12 +16,16 @@ export const ACTIVITY: {
     RAFFLED: 'raffled',
     REDEEM: 'redeem',
     SECRETDELIVERED: 'secretDelivered',
+    VIDEOCALLANSWERED: 'videoCallAnswered',
+    VIDEOCALLREJECTED: 'videoCallRejected',
   },
   COLLECTION: {
     RAFFLED: 'raffled',
     CREATED: 'created',
     MINTED: 'minted',
     SECRETDELIVERED: 'secretDelivered',
+    VIDEOCALLANSWERED: 'videoCallAnswered',
+    VIDEOCALLREJECTED: 'videoCallRejected',
   },
   PROFILE: {
     WINRAFFLE: 'winRaffle',
@@ -48,5 +52,7 @@ export const ACTIVITY: {
     REPLYCOMMENTCLUBS: 'replyCommentClubs',
     COMMENTCOLLECTIONCLUBS: 'commentCollectionClubs',
     COMMENTNFTCLUBS: 'commentNftClubs',
+    SETVIDEOCALLANSWERED: 'setVideoCallAnswered',
+    SETVIDEOCALLREJECTED: 'setVideoCallRejected',
   },
 };

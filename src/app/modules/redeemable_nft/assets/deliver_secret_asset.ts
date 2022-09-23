@@ -58,7 +58,11 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
 
     const accountStats = await getAccountStats(stateStore, senderAccount.address.toString('hex'));
     const nftInServeRateIndex = accountStats.serveRate.items.findIndex(
-      t => Buffer.compare(t.id, nft.id) === 0 && t.nonce === nft.redeem.count && t.status === 0,
+      t =>
+        Buffer.compare(t.id, nft.id) === 0 &&
+        t.nonce === nft.redeem.velocity &&
+        Buffer.compare(t.owner, nft.owner) === 0 &&
+        t.status === 0,
     );
 
     if (nftInServeRateIndex === -1) {
@@ -83,7 +87,7 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     nft.redeem.secret.signature.plain = asset.signature.plain;
     nft.redeem.secret.sender = transaction.senderPublicKey;
     nft.redeem.status = 'ready';
-    nft.redeem.count += 1;
+    nft.redeem.nonce += 1;
 
     if (nft.price.amount > BigInt(0)) {
       await reducerHandler.invoke('token:credit', {
@@ -112,6 +116,7 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     );
     if (index === -1) throw new Error('NFT id not found in account pending list');
     senderAccount.redeemableNft.pending.splice(index, 1);
+    senderAccount.redeemableNft.momentSlot += 1;
     await stateStore.account.set(senderAddress, senderAccount);
 
     const nftActivity: NFTActivityChainItems = {

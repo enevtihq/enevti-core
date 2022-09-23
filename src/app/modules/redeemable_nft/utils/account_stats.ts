@@ -12,6 +12,7 @@ export const accessAccountStats = async (
     return {
       nftSold: [],
       raffled: [],
+      momentCreated: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
       likeSent: {
@@ -39,6 +40,7 @@ export const getAccountStats = async (
     return {
       nftSold: [],
       raffled: [],
+      momentCreated: [],
       treasuryAct: [],
       serveRate: { score: 0, items: [] },
       likeSent: {

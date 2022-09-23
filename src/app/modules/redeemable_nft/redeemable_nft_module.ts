@@ -24,6 +24,8 @@ import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
 import { ReplyCommentAsset } from './assets/reply_comment_asset';
 import { ReplyCommentClubsAsset } from './assets/reply_comment_clubs_asset';
+import { SetVideoCallAnsweredAsset } from './assets/set_video_call_answered_asset';
+import { SetVideoCallRejectedAsset } from './assets/set_video_call_rejected_asset';
 import redeemableNftAfterBlockApply from './hook/afterBlockApply';
 import redeemableNftAfterGenesisBlockApply from './hook/afterGenesisBlockApply';
 import { redeemableNftReducers } from './reducers';
@@ -50,6 +52,8 @@ export class RedeemableNftModule extends BaseModule {
     new ReplyCommentClubsAsset(),
     new LikeReplyClubsAsset(),
     new LikeCommentClubsAsset(),
+    new SetVideoCallRejectedAsset(),
+    new SetVideoCallAnsweredAsset(),
   ];
   public events = [
     'newCollection',

@@ -84,6 +84,8 @@ export async function mintNFT({
       throw new Error('unknown NFT in collection');
     }
     nft.owner = senderAddress;
+    nft.redeem.velocity += 1;
+    nft.redeem.count = 0;
     if (nft.redeem.status === 'pending-secret') nft.redeem.secret.recipient = senderPublicKey;
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
@@ -148,7 +150,22 @@ export async function mintNFT({
     if (type === 'normal') {
       accountStats.nftSold.unshift(nft.id);
     }
-    accountStats.serveRate.items.unshift({ id: nft.id, nonce: nft.redeem.count, status: 0 });
+
+    if (nft.utility === 'videocall') {
+      accountStats.serveRate.items.unshift({
+        id: nft.id,
+        owner: senderAddress,
+        nonce: nft.redeem.velocity,
+        status: 1,
+      });
+    } else {
+      accountStats.serveRate.items.unshift({
+        id: nft.id,
+        owner: senderAddress,
+        nonce: nft.redeem.velocity,
+        status: 0,
+      });
+    }
   });
 
   const serveRate = Number(

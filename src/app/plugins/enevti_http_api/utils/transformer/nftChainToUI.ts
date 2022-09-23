@@ -7,7 +7,6 @@ import chainDateToUI from './chainDateToUI';
 export default async function nftChainToUI(channel: BaseChannel, nft: NFTAsset) {
   const redeem: NFT['redeem'] = {
     ...nft.redeem,
-    touched: chainDateToUI(nft.redeem.touched),
     secret: {
       ...nft.redeem.secret,
       sender: nft.redeem.secret.sender.toString('hex'),

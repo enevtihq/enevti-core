@@ -244,8 +244,9 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         redeem: {
           status: redeemStatus,
           count: 0,
+          nonce: 0,
+          velocity: 0,
           limit: asset.redeemLimit,
-          touched: BigInt(timestamp),
           secret: {
             cipher: asset.cipher,
             signature: {

@@ -79,6 +79,12 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
+          console.log('genti ini jadi nonce');
+          if (nft.redeem.limit > 0 && nft.redeem.count >= nft.redeem.limit) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
           const nftTransformed = await idBufferToNFT(channel, nft.id);
           if (!nftTransformed) {
             socket.emit('callError', { code: 404, reason: 'nft-not-found' });

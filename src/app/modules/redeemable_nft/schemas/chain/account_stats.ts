@@ -6,6 +6,7 @@ export const accountStatsSchema: SchemaWithDefault = {
   required: [
     'nftSold',
     'raffled',
+    'momentCreated',
     'treasuryAct',
     'serveRate',
     'likeSent',
@@ -27,15 +28,22 @@ export const accountStatsSchema: SchemaWithDefault = {
         dataType: 'bytes',
       },
     },
-    treasuryAct: {
+    momentCreated: {
       fieldNumber: 3,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
-    serveRate: {
+    treasuryAct: {
       fieldNumber: 4,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
+    serveRate: {
+      fieldNumber: 5,
       type: 'object',
       required: ['score', 'items'],
       properties: {
@@ -68,7 +76,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     likeSent: {
-      fieldNumber: 5,
+      fieldNumber: 6,
       type: 'object',
       required: ['total', 'nft', 'collection', 'comment', 'reply', 'commentClubs', 'replyClubs'],
       properties: {
@@ -121,7 +129,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     commentSent: {
-      fieldNumber: 6,
+      fieldNumber: 7,
       type: 'object',
       required: ['total', 'comment', 'reply'],
       properties: {
@@ -146,7 +154,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     commentClubsSent: {
-      fieldNumber: 7,
+      fieldNumber: 8,
       type: 'object',
       required: ['total', 'comment', 'reply'],
       properties: {

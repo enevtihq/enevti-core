@@ -11,7 +11,13 @@ export type AllCollection = {
   items: CollectionIdAsset[];
 };
 
-export type CollectionActivityName = 'created' | 'minted' | 'raffled' | 'secretDelivered';
+export type CollectionActivityName =
+  | 'created'
+  | 'minted'
+  | 'raffled'
+  | 'secretDelivered'
+  | 'videoCallAnswered'
+  | 'videoCallRejected';
 
 export type CollectionActivity = Omit<ActivityBase, 'name'> & {
   name: CollectionActivityName;
