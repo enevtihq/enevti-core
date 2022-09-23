@@ -53,6 +53,10 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
 
     nft.redeem.count += 1;
     nft.redeem.nonce += 1;
+    if (nft.redeem.nonceLimit > 0 && nft.redeem.nonce >= nft.redeem.nonceLimit)
+      nft.redeem.status = 'limit-exceeded';
+    if (nft.redeem.countLimit > 0 && nft.redeem.count >= nft.redeem.countLimit)
+      nft.redeem.status = 'limit-exceeded';
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
     await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {

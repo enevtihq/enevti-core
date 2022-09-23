@@ -47,19 +47,6 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             Buffer.from(params.publicKey, 'hex'),
           );
 
-          const existingCallId = getCallIdByRoom(`${nft.symbol}#${nft.serial}`);
-          if (existingCallId !== undefined) {
-            mapAddressToCallId(address.toString('hex'), existingCallId);
-            mapSocketToAddress(socket.id, address.toString('hex'));
-            mapAddressToPublicKey(address.toString('hex'), params.publicKey);
-            await socket.leave(socket.id);
-            await socket.join(existingCallId);
-            socket
-              .to(existingCallId)
-              .emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
-            return;
-          }
-
           if (
             !cryptography.verifyData(
               cryptography.stringToBuffer(params.nftId),
@@ -79,8 +66,20 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
-          console.log('genti ini jadi nonce');
-          if (nft.redeem.limit > 0 && nft.redeem.count >= nft.redeem.limit) {
+          const existingCallId = getCallIdByRoom(`${nft.symbol}#${nft.serial}`);
+          if (existingCallId !== undefined) {
+            mapAddressToCallId(address.toString('hex'), existingCallId);
+            mapSocketToAddress(socket.id, address.toString('hex'));
+            mapAddressToPublicKey(address.toString('hex'), params.publicKey);
+            await socket.leave(socket.id);
+            await socket.join(existingCallId);
+            socket
+              .to(existingCallId)
+              .emit('callReconnect', { callId: existingCallId, emitter: params.publicKey });
+            return;
+          }
+
+          if (nft.redeem.nonceLimit > 0 && nft.redeem.nonce >= nft.redeem.nonceLimit) {
             socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
@@ -137,11 +136,128 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       },
     );
 
-    socket.on('ringing', (params: { callId: string; emitter: string; signature: string }) => {
-      try {
+    socket.on(
+      'requestToken',
+      async (params: { nftId: string; callId: string; emitter: string; signature: string }) => {
+        try {
+          const callRoom = io.sockets.adapter.rooms.get(params.callId);
+          if (callRoom === undefined) {
+            socket.emit('callError', { code: 404, reason: 'room-not-found' });
+            return;
+          }
+
+          if (
+            !cryptography.verifyData(
+              cryptography.stringToBuffer(params.nftId),
+              Buffer.from(params.signature, 'hex'),
+              Buffer.from(params.emitter, 'hex'),
+            )
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          const nft = await invokeGetNFT(channel, params.nftId);
+          if (!nft) {
+            socket.to(params.callId).emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
+
+          const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          const twilioToken = await generateTwilioToken(params.emitter, nft, twilioConfig);
+          if (!twilioToken) {
+            socket.to(params.callId).emit('callError', { code: 500, reason: 'twilio-error' });
+            return;
+          }
+
+          socket.emit('tokenReceived', { emitter: params.emitter, twilioToken });
+          socket.to(params.callId).emit('callRefreshed', { emitter: params.emitter });
+        } catch (err) {
+          socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
+        }
+      },
+    );
+
+    socket.on(
+      'ringing',
+      async (params: { nftId: string; callId: string; emitter: string; signature: string }) => {
+        try {
+          const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+          const nft = await invokeGetNFT(channel, params.nftId);
+          if (!nft) {
+            socket.emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
+
+          if (nft.redeem.nonceLimit > 0 && nft.redeem.nonce >= nft.redeem.nonceLimit) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          if (
+            !cryptography.verifyData(
+              cryptography.stringToBuffer(params.nftId),
+              Buffer.from(params.signature, 'hex'),
+              Buffer.from(params.emitter, 'hex'),
+            )
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          mapAddressToRejectableCallId(address.toString('hex'), params.callId);
+          mapSocketToAddress(socket.id, address.toString('hex'));
+          mapAddressToPublicKey(address.toString('hex'), params.emitter);
+          socket.to(params.callId).emit('callRinging');
+        } catch (err) {
+          socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
+        }
+      },
+    );
+
+    socket.on(
+      'accepted',
+      async (params: { nftId: string; callId: string; emitter: string; signature }) => {
+        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+        const nft = await invokeGetNFT(channel, params.nftId);
+        if (!nft) {
+          socket.emit('callError', { code: 404, reason: 'nft-not-found' });
+          return;
+        }
+
+        if (nft.redeem.nonceLimit > 0 && nft.redeem.nonce >= nft.redeem.nonceLimit) {
+          socket.emit('callError', { code: 401, reason: 'unauthorized' });
+          return;
+        }
+
+        if (
+          Buffer.compare(nft.creator, address) !== 0 &&
+          Buffer.compare(nft.owner, address) !== 0
+        ) {
+          socket.emit('callError', { code: 401, reason: 'unauthorized' });
+          return;
+        }
+
         if (
           !cryptography.verifyData(
-            cryptography.stringToBuffer(params.callId),
+            cryptography.stringToBuffer(params.nftId),
             Buffer.from(params.signature, 'hex'),
             Buffer.from(params.emitter, 'hex'),
           )
@@ -150,31 +266,9 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           return;
         }
 
-        const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
-        mapAddressToRejectableCallId(address.toString('hex'), params.callId);
-        mapSocketToAddress(socket.id, address.toString('hex'));
-        mapAddressToPublicKey(address.toString('hex'), params.emitter);
-        socket.to(params.callId).emit('callRinging');
-      } catch (err) {
-        socket.to(params.callId).emit('callError', { code: 500, reason: 'internal-error' });
-      }
-    });
-
-    socket.on('accepted', (params: { callId: string; emitter: string; signature }) => {
-      if (
-        !cryptography.verifyData(
-          cryptography.stringToBuffer(params.callId),
-          Buffer.from(params.signature, 'hex'),
-          Buffer.from(params.emitter, 'hex'),
-        )
-      ) {
-        socket.emit('callError', { code: 401, reason: 'unauthorized' });
-        return;
-      }
-
-      const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
-      removeRejectableCallIdMapByAddress(address.toString('hex'));
-    });
+        removeRejectableCallIdMapByAddress(address.toString('hex'));
+      },
+    );
 
     socket.on(
       'answered',
@@ -203,7 +297,20 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
+          if (nft.redeem.nonceLimit > 0 && nft.redeem.nonce >= nft.redeem.nonceLimit) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
           const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
 
           const existingCallId = getCallIdByRoom(`${nft.symbol}#${nft.serial}`);
           if (existingCallId !== undefined) {
@@ -244,9 +351,18 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       'ended',
       async (params: { nftId: string; callId: string; emitter: string; signature: string }) => {
         try {
+          const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
           const nft = await invokeGetNFT(channel, params.nftId);
           if (!nft) {
             socket.emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
+
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
             return;
           }
 

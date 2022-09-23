@@ -173,7 +173,17 @@ export const redeemableNFTSchema: SchemaWithDefault = {
     redeem: {
       fieldNumber: 19,
       type: 'object',
-      required: ['status', 'count', 'velocity', 'nonce', 'limit', 'secret', 'content', 'schedule'],
+      required: [
+        'status',
+        'count',
+        'velocity',
+        'nonce',
+        'nonceLimit',
+        'countLimit',
+        'secret',
+        'content',
+        'schedule',
+      ],
       properties: {
         status: {
           dataType: 'string',
@@ -191,12 +201,16 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           dataType: 'uint32',
           fieldNumber: 4,
         },
-        limit: {
+        nonceLimit: {
           dataType: 'uint32',
           fieldNumber: 5,
         },
-        secret: {
+        countLimit: {
+          dataType: 'uint32',
           fieldNumber: 6,
+        },
+        secret: {
+          fieldNumber: 7,
           type: 'object',
           required: ['cipher', 'signature', 'sender', 'recipient'],
           properties: {
@@ -230,11 +244,11 @@ export const redeemableNFTSchema: SchemaWithDefault = {
           },
         },
         content: {
-          fieldNumber: 7,
+          fieldNumber: 8,
           ...nftContentSecureSchema,
         },
         schedule: {
-          fieldNumber: 8,
+          fieldNumber: 9,
           type: 'object',
           required: ['recurring', 'time', 'from', 'until'],
           properties: {

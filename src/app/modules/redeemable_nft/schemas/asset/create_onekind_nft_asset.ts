@@ -38,7 +38,8 @@ export const createOnekindNftAssetSchema = {
     'time',
     'from',
     'until',
-    'redeemLimit',
+    'redeemNonceLimit',
+    'redeemCountLimit',
     'royalty',
     'price',
     'quantity',
@@ -177,29 +178,33 @@ export const createOnekindNftAssetSchema = {
       dataType: 'uint32',
       fieldNumber: 30,
     },
-    redeemLimit: {
+    redeemNonceLimit: {
       dataType: 'uint32',
       fieldNumber: 31,
     },
-    royalty: {
+    redeemCountLimit: {
+      dataType: 'uint32',
       fieldNumber: 32,
+    },
+    royalty: {
+      fieldNumber: 33,
       ...royaltySchema,
     },
     price: {
-      fieldNumber: 33,
+      fieldNumber: 34,
       ...priceSchema,
     },
     quantity: {
       dataType: 'uint32',
-      fieldNumber: 34,
+      fieldNumber: 35,
     },
     mintingExpire: {
       dataType: 'uint32',
-      fieldNumber: 35,
+      fieldNumber: 36,
     },
     raffled: {
       dataType: 'sint32',
-      fieldNumber: 36,
+      fieldNumber: 37,
     },
   },
 };

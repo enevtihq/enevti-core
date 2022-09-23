@@ -8,7 +8,8 @@ export type NFTRedeem = {
   count: number;
   velocity: number;
   nonce: number;
-  limit: number;
+  countLimit: number;
+  nonceLimit: number;
   secret: NFTSecret;
   content: NFTContentSecure;
   schedule: {

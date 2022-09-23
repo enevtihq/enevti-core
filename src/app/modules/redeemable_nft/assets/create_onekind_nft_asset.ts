@@ -70,8 +70,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
         `asset.time.date, asset.time.month, and asset.time.year are required on recurring once`,
       );
     }
-    if (asset.recurring !== RECURRING.ANYTIME && asset.redeemLimit < 0) {
-      throw new Error(`asset.redeemLimit can't be negative for non-anytime recurring`);
+    if (asset.recurring !== RECURRING.ANYTIME && asset.redeemNonceLimit < 0) {
+      throw new Error(`asset.redeemNonceLimit can't be negative for non-anytime recurring`);
     }
     if (BigInt(asset.price.amount) < BigInt(0)) {
       throw new Error(`asset.price.amount can't be negative`);
@@ -246,7 +246,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
           count: 0,
           nonce: 0,
           velocity: 0,
-          limit: asset.redeemLimit,
+          nonceLimit: asset.redeemNonceLimit,
+          countLimit: asset.redeemCountLimit,
           secret: {
             cipher: asset.cipher,
             signature: {
