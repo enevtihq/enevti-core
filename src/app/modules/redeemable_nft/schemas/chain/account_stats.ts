@@ -6,6 +6,7 @@ export const accountStatsSchema: SchemaWithDefault = {
   required: [
     'nftSold',
     'raffled',
+    'momentSlot',
     'momentCreated',
     'treasuryAct',
     'serveRate',
@@ -28,22 +29,29 @@ export const accountStatsSchema: SchemaWithDefault = {
         dataType: 'bytes',
       },
     },
-    momentCreated: {
+    momentSlot: {
       fieldNumber: 3,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
-    treasuryAct: {
+    momentCreated: {
       fieldNumber: 4,
       type: 'array',
       items: {
         dataType: 'bytes',
       },
     },
-    serveRate: {
+    treasuryAct: {
       fieldNumber: 5,
+      type: 'array',
+      items: {
+        dataType: 'bytes',
+      },
+    },
+    serveRate: {
+      fieldNumber: 6,
       type: 'object',
       required: ['score', 'items'],
       properties: {
@@ -56,7 +64,7 @@ export const accountStatsSchema: SchemaWithDefault = {
           type: 'array',
           items: {
             type: 'object',
-            required: ['id', 'nonce', 'status'],
+            required: ['id', 'nonce', 'owner', 'status'],
             properties: {
               id: {
                 dataType: 'bytes',
@@ -66,9 +74,13 @@ export const accountStatsSchema: SchemaWithDefault = {
                 dataType: 'uint32',
                 fieldNumber: 2,
               },
+              owner: {
+                dataType: 'bytes',
+                fieldNumber: 3,
+              },
               status: {
                 dataType: 'uint32',
-                fieldNumber: 3,
+                fieldNumber: 4,
               },
             },
           },
@@ -76,7 +88,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     likeSent: {
-      fieldNumber: 6,
+      fieldNumber: 7,
       type: 'object',
       required: ['total', 'nft', 'collection', 'comment', 'reply', 'commentClubs', 'replyClubs'],
       properties: {
@@ -129,7 +141,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     commentSent: {
-      fieldNumber: 7,
+      fieldNumber: 8,
       type: 'object',
       required: ['total', 'comment', 'reply'],
       properties: {
@@ -154,7 +166,7 @@ export const accountStatsSchema: SchemaWithDefault = {
       },
     },
     commentClubsSent: {
-      fieldNumber: 8,
+      fieldNumber: 9,
       type: 'object',
       required: ['total', 'comment', 'reply'],
       properties: {

@@ -6,6 +6,7 @@ import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActiv
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
 import { setVideoCallAnsweredAssetSchema } from '../schemas/asset/set_video_call_answered_asset';
+import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityCollection, addActivityEngagement, addActivityNFT } from '../utils/activity';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
 import { getBlockTimestamp } from '../utils/transaction';
@@ -50,6 +51,10 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
 
     senderAccount.redeemableNft.momentSlot += 1;
     await stateStore.account.set(senderAddress, senderAccount);
+
+    const senderAccountStats = await getAccountStats(stateStore, senderAddress.toString('hex'));
+    senderAccountStats.momentSlot.push(nft.id);
+    await setAccountStats(stateStore, senderAddress.toString('hex'), senderAccountStats);
 
     nft.redeem.count += 1;
     nft.redeem.nonce += 1;

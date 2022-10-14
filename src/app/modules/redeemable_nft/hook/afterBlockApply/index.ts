@@ -30,6 +30,10 @@ import { likeNftAssetSchema } from '../../schemas/asset/like_nft_asset';
 import { likeCollectionAssetSchema } from '../../schemas/asset/like_collection_asset';
 import { commentNftAssetSchema } from '../../schemas/asset/comment_nft_asset';
 import { commentCollectionAssetSchema } from '../../schemas/asset/comment_collection_asset';
+import { SetVideoCallRejectedProps } from '../../../../../types/core/asset/redeemable_nft/set_video_call_rejected_asset';
+import { setVideoCallRejectedAssetSchema } from '../../schemas/asset/set_video_call_rejected_asset';
+import { SetVideoCallAnsweredProps } from '../../../../../types/core/asset/redeemable_nft/set_video_call_answered_asset';
+import { setVideoCallAnsweredAssetSchema } from '../../schemas/asset/set_video_call_answered_asset';
 
 export default async function redeemableNftAfterBlockApply(
   input: AfterBlockApplyContext,
@@ -164,6 +168,10 @@ export default async function redeemableNftAfterBlockApply(
       collectionWithNewActivity.add(collection.id);
       accountWithNewActivity.add(senderAddress);
       addInObject(totalNftMintedInCollection, collection.id, mintNFTAsset.quantity);
+
+      channel.publish('redeemableNft:totalServeRateChanged', {
+        address: collection.creator.toString('hex'),
+      });
     }
 
     // deliverSecretAsset
@@ -197,6 +205,10 @@ export default async function redeemableNftAfterBlockApply(
       collectionWithNewActivity.add(collection.id);
       accountWithNewActivity.add(senderAddress);
       addInObject(totalNftMintedInCollection, collection.id, quantity);
+
+      channel.publish('redeemableNft:totalServeRateChanged', {
+        address: collection.creator.toString('hex'),
+      });
     }
 
     // likeNFtAsset
@@ -227,6 +239,44 @@ export default async function redeemableNftAfterBlockApply(
         payload.asset,
       );
       collectionWithNewComment.add(Buffer.from(commentCollectionAsset.id, 'hex'));
+    }
+
+    // setVideoCallRejectedAsset
+    if (payload.moduleID === 1000 && payload.assetID === 16) {
+      const setVideoCallRejectedAsset = codec.decode<SetVideoCallRejectedProps>(
+        setVideoCallRejectedAssetSchema,
+        payload.asset,
+      );
+      const nft = await getNFTById(input.stateStore, setVideoCallRejectedAsset.id);
+      if (!nft) throw new Error('nft id not found in afterBlockApply hook');
+      nftWithNewActivity.add(nft.id);
+
+      channel.publish('redeemableNft:videoCallStatusChanged', {
+        id: setVideoCallRejectedAsset.id,
+        status: ACTIVITY.NFT.VIDEOCALLREJECTED,
+      });
+      channel.publish('redeemableNft:totalServeRateChanged', {
+        address: nft.creator.toString('hex'),
+      });
+    }
+
+    // setVideoCallAnsweredAsset
+    if (payload.moduleID === 1000 && payload.assetID === 17) {
+      const setVideoCallAnsweredAsset = codec.decode<SetVideoCallAnsweredProps>(
+        setVideoCallAnsweredAssetSchema,
+        payload.asset,
+      );
+      const nft = await getNFTById(input.stateStore, setVideoCallAnsweredAsset.id);
+      if (!nft) throw new Error('nft id not found in afterBlockApply hook');
+      nftWithNewActivity.add(nft.id);
+
+      channel.publish('redeemableNft:videoCallStatusChanged', {
+        id: setVideoCallAnsweredAsset.id,
+        status: ACTIVITY.NFT.VIDEOCALLANSWERED,
+      });
+      channel.publish('redeemableNft:totalServeRateChanged', {
+        address: nft.creator.toString('hex'),
+      });
     }
   }
 

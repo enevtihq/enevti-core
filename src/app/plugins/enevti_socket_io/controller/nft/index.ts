@@ -28,3 +28,16 @@ export function onNewNFTComment(channel: BaseChannel, io: Server | Socket) {
     }
   });
 }
+
+export function onVideoCallStatusChanged(channel: BaseChannel, io: Server | Socket) {
+  channel.subscribe('redeemableNft:videoCallStatusChanged', async data => {
+    if (data) {
+      await delayEmit();
+      const payload = data as { id: string; status: string };
+      const nft = await invokeGetNFT(channel, payload.id);
+      if (!nft) throw new Error('undefined NFT id while subscribing videoCallStatusChanged');
+
+      io.to(nft.id.toString('hex')).emit(`videoCallStatusChanged`, payload.status);
+    }
+  });
+}

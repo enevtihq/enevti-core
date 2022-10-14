@@ -2,7 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
-import { onNewCollectionLike, onNewNFTMinted } from './collection';
+import { onNewCollectionComment, onNewCollectionLike, onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
 import {
   onBalanceChanged,
@@ -16,7 +16,7 @@ import {
   onUsernameUpdated,
 } from './profile';
 import { onStakerUpdates } from './stake';
-import { onNewNFTLike } from './nft';
+import { onNewNFTComment, onNewNFTLike, onVideoCallStatusChanged } from './nft';
 import { onDeletedBlock, onNewBlock } from './app';
 import { onNewRaffled, onWonRaffle } from './raffle';
 import { getAddressBySocketId, mapAddress, removeMapBySocket } from '../utils/mapper';
@@ -50,9 +50,12 @@ export function createEnevtiSocket(
   // Collection Socket
   onNewNFTMinted(channel, io);
   onNewCollectionLike(channel, io);
+  onNewCollectionComment(channel, io);
 
   // NFT Socket
   onNewNFTLike(channel, io);
+  onNewNFTComment(channel, io);
+  onVideoCallStatusChanged(channel, io);
 
   // Activity Socket
   onNewActivityCollection(channel, io);

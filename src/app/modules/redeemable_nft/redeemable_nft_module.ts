@@ -73,6 +73,7 @@ export class RedeemableNftModule extends BaseModule {
     'newCollectionComment',
     'newRaffled',
     'wonRaffle',
+    'videoCallStatusChanged',
   ];
   public id = 1000;
   public accountSchema = redeemableNftAccountSchema;

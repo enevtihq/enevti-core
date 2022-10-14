@@ -29,6 +29,7 @@ export type RedeemableNFTAccountStatsChain = {
   nftSold: Buffer[];
   treasuryAct: Buffer[];
   raffled: Buffer[];
+  momentSlot: Buffer[];
   momentCreated: Buffer[];
   serveRate: {
     score: number;

@@ -1,6 +1,6 @@
-import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { SetVideoCallAnsweredProps } from '../../../../types/core/asset/redeemable_nft/set_video_call_answered_asset';
+import { SetVideoCallRejectedProps } from '../../../../types/core/asset/redeemable_nft/set_video_call_rejected_asset';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
@@ -18,7 +18,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
   // Define schema for asset
   public schema = setVideoCallRejectedAssetSchema;
 
-  public validate(_input: ValidateAssetContext<SetVideoCallAnsweredProps>): void {
+  public validate(_input: ValidateAssetContext<SetVideoCallRejectedProps>): void {
     // Validate your asset
   }
 
@@ -27,7 +27,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<SetVideoCallAnsweredProps>): Promise<void> {
+  }: ApplyAssetContext<SetVideoCallRejectedProps>): Promise<void> {
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     const timestamp = getBlockTimestamp(stateStore);
@@ -40,7 +40,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
     const creatorAccount = await stateStore.account.get<RedeemableNFTAccountProps>(nft.creator);
 
     if (Buffer.compare(nft.owner, senderAddress) !== 0) {
-      throw new Error('Sender not authorized to set video call as answered');
+      throw new Error('Sender not authorized to set video call as rejected');
     }
 
     if (nft.redeem.count > 0) {
@@ -51,8 +51,25 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
       throw new Error('NFT utility is not videocall');
     }
 
+    const rejectData = `${nft.id.toString('hex')}:${nft.redeem.count}:${nft.redeem.velocity}:${
+      nft.redeem.nonce
+    }`;
+    if (
+      !cryptography.verifyData(
+        cryptography.stringToBuffer(rejectData),
+        Buffer.from(asset.signature, 'hex'),
+        Buffer.from(asset.publicKey, 'hex'),
+      )
+    ) {
+      throw new Error('invalid reject payload');
+    }
+
     senderAccount.redeemableNft.momentSlot += 1;
     await stateStore.account.set(senderAddress, senderAccount);
+
+    const senderAccountStats = await getAccountStats(stateStore, senderAddress.toString('hex'));
+    senderAccountStats.momentSlot.push(nft.id);
+    await setAccountStats(stateStore, senderAddress.toString('hex'), senderAccountStats);
 
     nft.redeem.count += 1;
     nft.redeem.nonce += 1;
@@ -64,7 +81,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
 
     await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
       transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.SETVIDEOCALLANSWERED,
+      name: ACTIVITY.ENGAGEMENT.SETVIDEOCALLREJECTED,
       date: BigInt(timestamp),
       target: nft.id,
     });
@@ -72,7 +89,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
     const nftActivity: NFTActivityChainItems = {
       transaction: transaction.id,
       date: BigInt(timestamp),
-      name: ACTIVITY.NFT.VIDEOCALLANSWERED,
+      name: ACTIVITY.NFT.VIDEOCALLREJECTED,
       to: nft.creator,
       value: {
         amount: BigInt(0),
@@ -84,7 +101,7 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
     const collectionActivity: CollectionActivityChainItems = {
       transaction: transaction.id,
       date: BigInt(timestamp),
-      name: ACTIVITY.COLLECTION.VIDEOCALLANSWERED,
+      name: ACTIVITY.COLLECTION.VIDEOCALLREJECTED,
       to: nft.creator,
       value: {
         amount: BigInt(0),
