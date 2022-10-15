@@ -555,7 +555,59 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       }
     });
 
-    // TODO: newChatMessage
+    socket.on(
+      'newChatMessage',
+      async (params: {
+        nftId: string;
+        callId: string;
+        emitter: string;
+        signature: string;
+        message: string;
+      }) => {
+        try {
+          const callRoom = io.sockets.adapter.rooms.get(params.callId);
+          if (callRoom === undefined) {
+            socket.emit('callError', { code: 404, reason: 'room-not-found' });
+            return;
+          }
+
+          const address = cryptography.getAddressFromPublicKey(Buffer.from(params.emitter, 'hex'));
+          const nft = await invokeGetNFT(channel, params.nftId);
+          if (!nft) {
+            socket.emit('callError', { code: 404, reason: 'nft-not-found' });
+            return;
+          }
+
+          if (
+            Buffer.compare(nft.creator, address) !== 0 &&
+            Buffer.compare(nft.owner, address) !== 0
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          if (
+            !cryptography.verifyData(
+              cryptography.stringToBuffer(params.nftId),
+              Buffer.from(params.signature, 'hex'),
+              Buffer.from(params.emitter, 'hex'),
+            )
+          ) {
+            socket.emit('callError', { code: 401, reason: 'unauthorized' });
+            return;
+          }
+
+          socket.to(params.callId).emit('newChat', {
+            sender: params.emitter,
+            timestamp: Date.now(),
+            message: params.message,
+          });
+        } catch (err) {
+          socket.emit('callError', { code: 500, reason: 'internal-error' });
+        }
+      },
+    );
+
     // TODO: tip
   });
 }

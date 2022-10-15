@@ -79,6 +79,8 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     );
 
     accountStats.serveRate.score = serveRate;
+    accountStats.momentSlot.push(nft.id);
+
     senderAccount.redeemableNft.serveRate = serveRate;
     await setAccountStats(stateStore, senderAccount.address.toString('hex'), accountStats);
 
