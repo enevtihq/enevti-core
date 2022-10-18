@@ -14,6 +14,12 @@ export const invokeFCMIsAddressRegistered = async (
   address: string,
 ): Promise<boolean> => channel.invoke('firebaseCloudMessaging:isAddressRegistered', { address });
 
+export const invokeFCMIsTokenUpdated = async (
+  channel: BaseChannel,
+  address: string,
+  token: string,
+): Promise<boolean> => channel.invoke('firebaseCloudMessaging:isTokenUpdated', { address, token });
+
 export const invokeFCMRegisterAddress = async (
   channel: BaseChannel,
   publicKey: string,

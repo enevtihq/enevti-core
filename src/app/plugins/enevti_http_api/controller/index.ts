@@ -72,6 +72,7 @@ import isAddressNFTOwnerOrCreator from './nft/isAddressNFTOwnerOrCreator';
 import getFCMIsReady from './fcm/getFCMIsReady';
 import getFCMIsAddressRegistered from './fcm/getFCMIsAddressRegistered';
 import postFCMRegisterAddress from './fcm/postFCMRegisterAddress';
+import postFCMIsTokenUpdated from './fcm/postFCMIsTokenUpdated';
 import deleteFCMAddress from './fcm/deleteFCMAddress';
 import renderAvatar from './avatar/renderAvatar';
 import getAvatarUrl from './avatar/getAvatarUrl';
@@ -154,5 +155,6 @@ export default {
   getFCMIsReady,
   getFCMIsAddressRegistered,
   postFCMRegisterAddress,
+  postFCMIsTokenUpdated,
   deleteFCMAddress,
 };

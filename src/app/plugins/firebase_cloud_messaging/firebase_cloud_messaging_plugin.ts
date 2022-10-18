@@ -64,6 +64,14 @@ export class FirebaseCloudMessagingPlugin extends BasePlugin {
       },
       // eslint-disable-next-line @typescript-eslint/require-await
       isReady: async () => this._admin !== undefined,
+      isTokenUpdated: async params => {
+        if (this._admin === undefined || this._db === undefined) {
+          throw new Error('firebase is not configured!');
+        }
+        const { token, address } = params as { token: string; address: string };
+        const tokenInDb = await getTokenByAddress(this._db, address);
+        return token === tokenInDb;
+      },
       isAddressRegistered: async params => {
         if (this._admin === undefined || this._db === undefined) {
           throw new Error('firebase is not configured!');
