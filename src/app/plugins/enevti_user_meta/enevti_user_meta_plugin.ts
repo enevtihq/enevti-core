@@ -3,6 +3,7 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefaul
 import { EnevtiUserMeta } from './schema/enevtiUserMetaSchema';
 import { getEnevtiUserMeta, setEnevtiUserMeta } from './utils/actions';
 import { getDBInstance } from './utils/db';
+import { shallowCompare } from './utils/object';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -68,7 +69,7 @@ export class EnevtiUserMetaPlugin extends BasePlugin {
 
         const userMeta = await getEnevtiUserMeta(this._db, address);
         const parsedMeta = JSON.parse(meta) as EnevtiUserMeta;
-        if (shallowCompare(userMeta, parsedMeta)) return;
+        if (userMeta && shallowCompare(userMeta, parsedMeta)) return;
 
         if (
           !cryptography.verifyData(

@@ -11,6 +11,7 @@ import { getSocketIdByAddress } from '../../utils/mapper';
 import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 import { delayEmit } from '../../utils/delayEmit';
 import { invokeGetEnevtiUserMeta } from '../../../enevti_user_meta/utils/invoker';
+import { DEFAULT_LOCALE } from '../../translations/i18n.config';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
@@ -95,7 +96,7 @@ export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Sock
         if (isFCMReady) {
           try {
             const userMeta = await invokeGetEnevtiUserMeta(channel, address);
-            const addressLocale = userMeta ? userMeta.locale : undefined;
+            const addressLocale = userMeta ? userMeta.locale : DEFAULT_LOCALE;
             await sendDataNotificationToAddress(
               channel,
               address,
