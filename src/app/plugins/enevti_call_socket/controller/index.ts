@@ -1,6 +1,8 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server } from 'socket.io';
+import { StartVideoCallHandlerPayload } from '../../../../types/core/service/call';
+import { addressToAvatarUrl } from '../../enevti_http_api/controller/avatar/getAvatarUrl';
 import { invokeGetNFT } from '../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../enevti_http_api/utils/transformer/idBufferToNFT';
 import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebase';
@@ -114,10 +116,20 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           await socket.join(socketId);
 
           const twilioToken = await generateTwilioToken(params.publicKey, nft, twilioConfig);
+
+          const callerPersona = caller === 'owner' ? nftTransformed.owner : nftTransformed.creator;
+          const avatarUrl = await addressToAvatarUrl(channel, callerPersona.address);
+          const payload: StartVideoCallHandlerPayload = {
+            id: nftTransformed.id,
+            serial: `${nftTransformed.symbol}#${nftTransformed.serial}`,
+            rejectData: `${nftTransformed.id}:${nftTransformed.redeem.count}:${nftTransformed.redeem.velocity}:${nftTransformed.redeem.nonce}`,
+            callerPersona,
+            avatarUrl,
+          };
           await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
             socketId,
             caller,
-            nftId: nftTransformed.id,
+            payload,
           });
           socket
             .to(socketId)
