@@ -168,6 +168,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.post('/fcm/register', controller.postFCMRegisterAddress(this._channel));
     this._app.post('/fcm/isupdated', controller.postFCMIsTokenUpdated(this._channel));
     this._app.delete('/fcm/remove', controller.deleteFCMAddress(this._channel));
+    this._app.post('/usermeta/set', controller.postUserMeta(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }

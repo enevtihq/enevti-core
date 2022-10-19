@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as express from 'express';
 import { Server } from 'socket.io';
 import { createEnevtiSocket, registerAccountSocket } from './controller';
+import i18n from './translations/i18n.config';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -68,7 +69,7 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
     this._io = new Server(this._server);
 
     registerAccountSocket(this._io);
-    createEnevtiSocket(this._channel, this._io, client);
+    createEnevtiSocket(this._channel, this._io, client, i18n);
 
     this._server.listen(8082);
   }

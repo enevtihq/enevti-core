@@ -1,14 +1,16 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
+import { I18n } from 'i18n';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/invoker/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
-import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
+import { sendDataNotificationToAddress } from '../../utils/firebase';
 import { getSocketIdByAddress } from '../../utils/mapper';
 import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 import { delayEmit } from '../../utils/delayEmit';
+import { invokeGetEnevtiUserMeta } from '../../../enevti_user_meta/utils/invoker';
 
 export function onUsernameUpdated(channel: BaseChannel, io: Server | Socket) {
   channel.subscribe('persona:usernameChanged', async data => {
@@ -56,7 +58,7 @@ export function onNewCollectionByAddress(channel: BaseChannel, io: Server | Sock
   });
 }
 
-export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Socket) {
+export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Socket, i18n: I18n) {
   channel.subscribe('redeemableNft:pendingUtilityDelivery', async data => {
     if (data) {
       await delayEmit();
@@ -92,9 +94,17 @@ export function onPendingUtilityDelivery(channel: BaseChannel, io: Server | Sock
       await asyncForEach(Object.keys(accountMap), async address => {
         if (isFCMReady) {
           try {
-            await sendDataOnlyTopicMessaging(channel, address, 'deliverSecretNotif', {
+            const userMeta = await invokeGetEnevtiUserMeta(channel, address);
+            const addressLocale = userMeta ? userMeta.locale : undefined;
+            await sendDataNotificationToAddress(
+              channel,
               address,
-            });
+              'deliverSecretNotif',
+              { address },
+              i18n.__({ phrase: 'Yeayy, your NFT is sold!', locale: addressLocale }),
+              i18n.__({ phrase: 'Click this to claim your rewards!', locale: addressLocale }),
+              accountMap[address].length,
+            );
           } catch (err) {
             io.to(getSocketIdByAddress(address)).emit('deliverSecretNotif', address);
           }

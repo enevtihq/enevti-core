@@ -76,6 +76,7 @@ import postFCMIsTokenUpdated from './fcm/postFCMIsTokenUpdated';
 import deleteFCMAddress from './fcm/deleteFCMAddress';
 import renderAvatar from './avatar/renderAvatar';
 import getAvatarUrl from './avatar/getAvatarUrl';
+import postUserMeta from './usermeta/postUserMeta';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -105,6 +106,7 @@ export default {
   getProfilePendingDelivery,
   getProfileCollection,
   getProfileOwned,
+  postUserMeta,
   getPersonaByAddress,
   getPersonaByUsername,
   getStakePoolByAddress,

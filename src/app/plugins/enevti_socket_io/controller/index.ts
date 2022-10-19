@@ -1,6 +1,7 @@
 import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
+import { I18n } from 'i18n';
 import { onNewActivityCollection, onNewActivityNFT, onNewActivityProfile } from './activity';
 import { onNewCollectionComment, onNewCollectionLike, onNewNFTMinted } from './collection';
 import { onNewFeedItem } from './feeds';
@@ -25,6 +26,7 @@ export function createEnevtiSocket(
   channel: BaseChannel,
   io: Server | Socket,
   client: apiClient.APIClient,
+  i18n: I18n,
 ) {
   // App Socket
   onNewBlock(channel, io, client);
@@ -36,7 +38,7 @@ export function createEnevtiSocket(
   onTotalStakeChanged(channel, io);
   onNewCollectionByAddress(channel, io);
   onNewPendingByAddress(channel, io);
-  onPendingUtilityDelivery(channel, io);
+  onPendingUtilityDelivery(channel, io, i18n);
   onTotalNFTSoldChanged(channel, io);
   onTotalServeRateChanged(channel, io);
   onSecretDelivered(channel, io);
