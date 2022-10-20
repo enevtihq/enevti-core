@@ -1,4 +1,9 @@
 import { BaseChannel } from 'lisk-framework';
+import * as apn from 'apn';
+import {
+  invokeAPNIsAddressRegistered,
+  invokeAPNSendToAddress,
+} from '../../apple_push_notification_service/utils/invoker';
 import {
   invokeFCMIsAddressRegistered,
   invokeFCMSendToAddress,
@@ -61,4 +66,20 @@ export async function sendDataNotificationToAddress(
     },
   };
   await invokeFCMSendToAddress(channel, address, message);
+}
+
+export async function sendIOSVoipNotificationToAddress(
+  channel: BaseChannel,
+  address: string,
+  payload: Record<string, unknown>,
+) {
+  const isAddressRegistered = await invokeAPNIsAddressRegistered(channel, address);
+  if (!isAddressRegistered) throw new Error('address is not registered on APNs plugin');
+
+  const note = new apn.Notification();
+  note.payload = payload;
+  note.aps['apns-push-type'] = 'voip';
+  note.topic = 'com.enevti.app.voip';
+
+  await invokeAPNSendToAddress(channel, address, note);
 }

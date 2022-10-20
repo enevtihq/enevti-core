@@ -6,7 +6,7 @@ import { NFT } from '../../../../../types/core/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/invoker/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';
-import { sendDataNotificationToAddress } from '../../utils/firebase';
+import { sendDataNotificationToAddress } from '../../utils/pushNotification';
 import { getSocketIdByAddress } from '../../utils/mapper';
 import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';
 import { delayEmit } from '../../utils/delayEmit';

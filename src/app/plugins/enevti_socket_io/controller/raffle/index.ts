@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { Server, Socket } from 'socket.io';
-import { sendDataOnlyTopicMessaging } from '../../utils/firebase';
+import { sendDataOnlyTopicMessaging } from '../../utils/pushNotification';
 import idBufferToCollection from '../../../enevti_http_api/utils/transformer/idBufferToCollection';
 import { getSocketIdByAddress } from '../../utils/mapper';
 import { invokeFCMIsReady } from '../../../firebase_cloud_messaging/utils/invoker';

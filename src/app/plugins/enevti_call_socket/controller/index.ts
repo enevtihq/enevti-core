@@ -4,11 +4,16 @@ import { Server } from 'socket.io';
 import {
   StartVideoCallHandlerPayload,
   StartVideoCallPayload,
+  StartVideoCallPayloadIOS,
 } from '../../../../types/core/service/call';
+import { invokeAPNIsAddressRegistered } from '../../apple_push_notification_service/utils/invoker';
 import { addressToAvatarUrl } from '../../enevti_http_api/controller/avatar/getAvatarUrl';
 import { invokeGetNFT } from '../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../enevti_http_api/utils/transformer/idBufferToNFT';
-import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebase';
+import {
+  sendDataOnlyTopicMessaging,
+  sendIOSVoipNotificationToAddress,
+} from '../../enevti_socket_io/utils/pushNotification';
 import { invokeGetEnevtiUserMeta } from '../../enevti_user_meta/utils/invoker';
 import {
   getCallIdByAddress,
@@ -23,6 +28,7 @@ import {
 } from '../utils/addressToRejectableCall';
 import { generateCallId } from '../utils/call';
 import { getRoomByCallId, mapCallIdToRoom, removeRoomMapByCallId } from '../utils/callIdToRoom';
+import { parsePersonaLabel } from '../utils/persona';
 import { isRedeemTimeUTC } from '../utils/redeemDate';
 import { getCallIdByRoom, mapRoomToCallId, removeCallIdMapByRoom } from '../utils/roomToCallId';
 import {
@@ -131,8 +137,16 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             avatarUrl,
           };
           const userMeta = await invokeGetEnevtiUserMeta(channel, callTo);
-          if (userMeta && userMeta.os === 'ios') {
-            // TODO: implement
+          const isRegisteredOnAPN = await invokeAPNIsAddressRegistered(channel, callTo);
+          if (userMeta && userMeta.os === 'ios' && isRegisteredOnAPN) {
+            const startVideoCallIOSPayload: StartVideoCallPayloadIOS = {
+              uuid: socketId,
+              callerName: `Redeem NFT Video Call of ${nftTransformed.symbol}#${nftTransformed.serial}`,
+              handle: parsePersonaLabel(callerPersona),
+              caller: caller as 'owner' | 'creator',
+              data: payload,
+            };
+            await sendIOSVoipNotificationToAddress(channel, callTo, startVideoCallIOSPayload);
           } else {
             const startVideoCallPayload: StartVideoCallPayload = {
               uuid: socketId,
