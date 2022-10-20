@@ -90,5 +90,7 @@ export class EnevtiUserMetaPlugin extends BasePlugin {
     this._db = await getDBInstance();
   }
 
-  public async unload(): Promise<void> {}
+  public async unload(): Promise<void> {
+    await this._db?.close();
+  }
 }

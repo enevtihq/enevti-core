@@ -47,11 +47,15 @@ dist
 # Lisk Secret Config
 config/*/accounts.json
 
-# Firebase Admin Key for HTTP API
+# Firebase Admin Key for Plugin
 **/firebase.json
+
+# APN p8 file for Plugin
+**/*.p8
 
 # Environment Variable
 .env
 .env*
 !.env.project
 !.env.vault
+.flaskenv*

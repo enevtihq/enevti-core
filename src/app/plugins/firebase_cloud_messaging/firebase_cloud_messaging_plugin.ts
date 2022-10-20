@@ -11,11 +11,15 @@ import {
   removeAddress,
 } from './utils/actions';
 import { getDBInstance } from './utils/db';
+import {
+  invokeAPNIsAddressRegistered,
+  invokeAPNRemoveAddress,
+} from '../apple_push_notification_service/utils/invoker';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
 export class FirebaseCloudMessagingPlugin extends BasePlugin {
-  // private _channel!: BaseChannel;
+  private _channel: BaseChannel | undefined = undefined;
   private _admin: typeof admin | undefined = undefined;
   private _db: db.KVStore | undefined = undefined;
 
@@ -80,7 +84,7 @@ export class FirebaseCloudMessagingPlugin extends BasePlugin {
         return isAddressRegistered(this._db, address);
       },
       registerAddress: async params => {
-        if (this._admin === undefined || this._db === undefined) {
+        if (this._admin === undefined || this._db === undefined || this._channel === undefined) {
           throw new Error('firebase is not configured!');
         }
         const { publicKey, token, signature } = params as {
@@ -103,6 +107,11 @@ export class FirebaseCloudMessagingPlugin extends BasePlugin {
           .getAddressFromPublicKey(Buffer.from(publicKey, 'hex'))
           .toString('hex');
         await registerAddress(this._db, address, token);
+
+        const isRegisteredOnAPN = await invokeAPNIsAddressRegistered(this._channel, address);
+        if (isRegisteredOnAPN) {
+          await invokeAPNRemoveAddress(this._channel, address);
+        }
       },
       removeAddress: async params => {
         if (this._admin === undefined || this._db === undefined) {
@@ -115,7 +124,8 @@ export class FirebaseCloudMessagingPlugin extends BasePlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async load(_: BaseChannel): Promise<void> {
+  public async load(channel: BaseChannel): Promise<void> {
+    this._channel = channel;
     const firebaseConfigPath = path.join(__dirname, './firebase.json');
     const firebaseConfigured = fs.existsSync(firebaseConfigPath);
     if (firebaseConfigured) {

@@ -108,6 +108,7 @@
     "@types/react-dom": "^18.0.6",
     "@types/seedrandom": "^3.0.2",
     "@types/uuid": "^8.3.4",
+    "apn": "^2.2.0",
     "axios": "0.21.1",
     "bignumber.js": "^9.0.2",
     "cors": "^2.8.5",
