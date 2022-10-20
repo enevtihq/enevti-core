@@ -1,11 +1,15 @@
 import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server } from 'socket.io';
-import { StartVideoCallHandlerPayload } from '../../../../types/core/service/call';
+import {
+  StartVideoCallHandlerPayload,
+  StartVideoCallPayload,
+} from '../../../../types/core/service/call';
 import { addressToAvatarUrl } from '../../enevti_http_api/controller/avatar/getAvatarUrl';
 import { invokeGetNFT } from '../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../enevti_http_api/utils/transformer/idBufferToNFT';
 import { sendDataOnlyTopicMessaging } from '../../enevti_socket_io/utils/firebase';
+import { invokeGetEnevtiUserMeta } from '../../enevti_user_meta/utils/invoker';
 import {
   getCallIdByAddress,
   mapAddressToCallId,
@@ -93,7 +97,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           }
 
           let callTo = '';
-          let caller = '';
+          let caller: 'owner' | 'creator' | undefined;
           if (Buffer.compare(address, nft.owner) === 0) {
             callTo = nft.creator.toString('hex');
             caller = 'owner';
@@ -126,11 +130,23 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             callerPersona,
             avatarUrl,
           };
-          await sendDataOnlyTopicMessaging(channel, callTo, 'startVideoCall', {
-            socketId,
-            caller,
-            payload,
-          });
+          const userMeta = await invokeGetEnevtiUserMeta(channel, callTo);
+          if (userMeta && userMeta.os === 'ios') {
+            // TODO: implement
+          } else {
+            const startVideoCallPayload: StartVideoCallPayload = {
+              uuid: socketId,
+              caller: caller as 'owner' | 'creator',
+              payload,
+            };
+            await sendDataOnlyTopicMessaging(
+              channel,
+              callTo,
+              'startVideoCall',
+              startVideoCallPayload,
+            );
+          }
+
           socket
             .to(socketId)
             .emit('callStarted', { callId: socketId, emitter: params.publicKey, twilioToken });
