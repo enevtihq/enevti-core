@@ -77,6 +77,11 @@ import deleteFCMAddress from './fcm/deleteFCMAddress';
 import renderAvatar from './avatar/renderAvatar';
 import getAvatarUrl from './avatar/getAvatarUrl';
 import postUserMeta from './usermeta/postUserMeta';
+import getAPNIsReady from './apn/getAPNIsReady';
+import getAPNIsAddressRegistered from './apn/getAPNIsAddressRegistered';
+import postAPNRegisterAddress from './apn/postAPNRegisterAddress';
+import postAPNIsTokenUpdated from './apn/postAPNIsTokenUpdated';
+import deleteAPNAddress from './apn/deleteAPNAddress';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -159,4 +164,9 @@ export default {
   postFCMRegisterAddress,
   postFCMIsTokenUpdated,
   deleteFCMAddress,
+  getAPNIsReady,
+  getAPNIsAddressRegistered,
+  postAPNRegisterAddress,
+  postAPNIsTokenUpdated,
+  deleteAPNAddress,
 };

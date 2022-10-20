@@ -168,6 +168,11 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.post('/fcm/register', controller.postFCMRegisterAddress(this._channel));
     this._app.post('/fcm/isupdated', controller.postFCMIsTokenUpdated(this._channel));
     this._app.delete('/fcm/remove', controller.deleteFCMAddress(this._channel));
+    this._app.get('/apn/ready', controller.getAPNIsReady(this._channel));
+    this._app.get('/apn/registered/:address', controller.getAPNIsAddressRegistered(this._channel));
+    this._app.post('/apn/register', controller.postAPNRegisterAddress(this._channel));
+    this._app.post('/apn/isupdated', controller.postAPNIsTokenUpdated(this._channel));
+    this._app.delete('/apn/remove', controller.deleteAPNAddress(this._channel));
     this._app.post('/usermeta/set', controller.postUserMeta(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
