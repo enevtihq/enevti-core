@@ -11,10 +11,6 @@ import {
   removeAddress,
 } from './utils/actions';
 import { getDBInstance } from './utils/db';
-import {
-  invokeFCMIsAddressRegistered,
-  invokeFCMRemoveAddress,
-} from '../firebase_cloud_messaging/utils/invoker';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -114,11 +110,6 @@ export class ApplePushNotificationServicePlugin extends BasePlugin {
           .getAddressFromPublicKey(Buffer.from(publicKey, 'hex'))
           .toString('hex');
         await registerAddress(this._db, address, token);
-
-        const isRegisteredOnFCM = await invokeFCMIsAddressRegistered(this._channel, address);
-        if (isRegisteredOnFCM) {
-          await invokeFCMRemoveAddress(this._channel, address);
-        }
       },
       removeAddress: async params => {
         if (this._provider === undefined || this._db === undefined) {

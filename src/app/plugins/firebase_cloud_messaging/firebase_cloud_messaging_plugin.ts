@@ -11,10 +11,6 @@ import {
   removeAddress,
 } from './utils/actions';
 import { getDBInstance } from './utils/db';
-import {
-  invokeAPNIsAddressRegistered,
-  invokeAPNRemoveAddress,
-} from '../apple_push_notification_service/utils/invoker';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -107,11 +103,6 @@ export class FirebaseCloudMessagingPlugin extends BasePlugin {
           .getAddressFromPublicKey(Buffer.from(publicKey, 'hex'))
           .toString('hex');
         await registerAddress(this._db, address, token);
-
-        const isRegisteredOnAPN = await invokeAPNIsAddressRegistered(this._channel, address);
-        if (isRegisteredOnAPN) {
-          await invokeAPNRemoveAddress(this._channel, address);
-        }
       },
       removeAddress: async params => {
         if (this._admin === undefined || this._db === undefined) {

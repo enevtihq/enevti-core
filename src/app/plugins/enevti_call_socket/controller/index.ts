@@ -138,6 +138,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           };
           const userMeta = await invokeGetEnevtiUserMeta(channel, callTo);
           const isRegisteredOnAPN = await invokeAPNIsAddressRegistered(channel, callTo);
+
           if (userMeta && userMeta.os === 'ios' && isRegisteredOnAPN) {
             const startVideoCallIOSPayload: StartVideoCallPayloadIOS = {
               uuid: socketId,
@@ -151,7 +152,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             const startVideoCallPayload: StartVideoCallPayload = {
               uuid: socketId,
               caller: caller as 'owner' | 'creator',
-              payload,
+              data: payload,
             };
             await sendDataOnlyTopicMessaging(
               channel,
