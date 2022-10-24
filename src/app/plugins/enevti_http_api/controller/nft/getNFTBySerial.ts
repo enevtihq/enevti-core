@@ -12,7 +12,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
   try {
     const { serial } = req.params;
     const { viewer } = req.query as Record<string, string>;
-    const id = await invokeGetNFTIdFromSerial(channel, serial);
+    const id = await invokeGetNFTIdFromSerial(channel, decodeURIComponent(serial));
     if (!id) {
       res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
       return;
