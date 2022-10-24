@@ -132,7 +132,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           const payload: StartVideoCallHandlerPayload = {
             id: nftTransformed.id,
             serial: `${nftTransformed.symbol}#${nftTransformed.serial}`,
-            rejectData: `${nftTransformed.id}:${nftTransformed.redeem.count}:${nftTransformed.redeem.velocity}:${nftTransformed.redeem.nonce}`,
+            signatureFormat: `${nftTransformed.id}:${nftTransformed.redeem.count}:${nftTransformed.redeem.velocity}:${nftTransformed.redeem.nonce}`,
             callerPersona,
             avatarUrl,
           };
@@ -250,9 +250,10 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
+          const signatureFormat = `${params.nftId}:${nft.redeem.count}:${nft.redeem.velocity}:${nft.redeem.nonce}`;
           if (
             !cryptography.verifyData(
-              cryptography.stringToBuffer(params.nftId),
+              cryptography.stringToBuffer(signatureFormat),
               Buffer.from(params.signature, 'hex'),
               Buffer.from(params.emitter, 'hex'),
             )
@@ -265,6 +266,7 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           mapSocketToAddress(socket.id, address.toString('hex'));
           mapAddressToPublicKey(address.toString('hex'), params.emitter);
           socket.to(params.callId).emit('callRinging');
+          socket.emit('callRinged');
         } catch (err) {
           socket.emit('callError', { code: 500, reason: 'internal-error' });
         }
@@ -294,9 +296,10 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
           return;
         }
 
+        const signatureFormat = `${params.nftId}:${nft.redeem.count}:${nft.redeem.velocity}:${nft.redeem.nonce}`;
         if (
           !cryptography.verifyData(
-            cryptography.stringToBuffer(params.nftId),
+            cryptography.stringToBuffer(signatureFormat),
             Buffer.from(params.signature, 'hex'),
             Buffer.from(params.emitter, 'hex'),
           )
@@ -548,10 +551,10 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
             return;
           }
 
-          const rejectData = `${params.nftId}:${nft.redeem.count}:${nft.redeem.velocity}:${nft.redeem.nonce}`;
+          const signatureFormat = `${params.nftId}:${nft.redeem.count}:${nft.redeem.velocity}:${nft.redeem.nonce}`;
           if (
             !cryptography.verifyData(
-              cryptography.stringToBuffer(rejectData),
+              cryptography.stringToBuffer(signatureFormat),
               Buffer.from(params.signature, 'hex'),
               Buffer.from(params.emitter, 'hex'),
             )

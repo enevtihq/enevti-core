@@ -1,5 +1,6 @@
 import { db } from 'lisk-sdk';
 import { getAddressMap, setAddressMap } from './addressMap';
+import { getTokenMap, setTokenMap } from './tokenMap';
 
 export async function getTokenByAddress(dbInstance: db.KVStore, address: string): Promise<string> {
   const addressToToken = await getAddressMap(dbInstance, address);
@@ -11,6 +12,11 @@ export async function registerAddress(
   address: string,
   token: string,
 ): Promise<void> {
+  const tokenToAddress = await getTokenMap(dbInstance, token);
+  if (tokenToAddress.address !== '') {
+    await removeAddress(dbInstance, tokenToAddress.address);
+  }
+  await setTokenMap(dbInstance, token, { address });
   await setAddressMap(dbInstance, address, { token });
 }
 
