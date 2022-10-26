@@ -71,7 +71,7 @@ export class EnevtiSocketIoPlugin extends BasePlugin {
     registerAccountSocket(this._io);
     createEnevtiSocket(this._channel, this._io, client, i18n);
 
-    this._server.listen(8082);
+    this._server.listen(8882);
   }
 
   public async unload(): Promise<void> {

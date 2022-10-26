@@ -17,6 +17,13 @@ import { DashboardPlugin } from '@liskhq/lisk-framework-dashboard-plugin';
 import { FaucetPlugin } from '@liskhq/lisk-framework-faucet-plugin';
 import { join } from 'path';
 import { getApplication } from '../app/app';
+import { EnevtiHttpApiPlugin } from '../app/plugins/enevti_http_api/enevti_http_api_plugin';
+import { EnevtiFaucetApiPlugin } from '../app/plugins/enevti_faucet_api/enevti_faucet_api_plugin';
+import { EnevtiSocketIoPlugin } from '../app/plugins/enevti_socket_io/enevti_socket_io_plugin';
+import { FirebaseCloudMessagingPlugin } from '../app/plugins/firebase_cloud_messaging/firebase_cloud_messaging_plugin';
+import { EnevtiCallSocketPlugin } from '../app/plugins/enevti_call_socket/enevti_call_socket_plugin';
+import { ApplePushNotificationServicePlugin } from '../app/plugins/apple_push_notification_service/apple_push_notification_service_plugin';
+import { EnevtiUserMetaPlugin } from '../app/plugins/enevti_user_meta/enevti_user_meta_plugin';
 
 interface Flags {
   [key: string]: string | number | boolean | undefined;
@@ -137,6 +144,12 @@ export class StartCommand extends BaseStartCommand {
       env: 'LISK_DASHBOARD_PLUGIN_PORT',
       dependsOn: ['enable-dashboard-plugin'],
     }),
+    'enable-enevti-plugins': flagParser.boolean({
+      description:
+        'Enable Enevti Plugins. Environment variable "ENEVTI_ENABLE_PLUGINS" can also be used.',
+      env: 'ENEVTI_ENABLE_PLUGINS',
+      default: false,
+    }),
   };
 
   public getApplication(
@@ -166,6 +179,15 @@ export class StartCommand extends BaseStartCommand {
     }
     if (flags['enable-dashboard-plugin']) {
       app.registerPlugin(DashboardPlugin, { loadAsChildProcess: true });
+    }
+    if (flags['enable-enevti-plugins']) {
+      app.registerPlugin(EnevtiHttpApiPlugin);
+      app.registerPlugin(EnevtiFaucetApiPlugin);
+      app.registerPlugin(EnevtiSocketIoPlugin);
+      app.registerPlugin(FirebaseCloudMessagingPlugin);
+      app.registerPlugin(EnevtiCallSocketPlugin);
+      app.registerPlugin(ApplePushNotificationServicePlugin);
+      app.registerPlugin(EnevtiUserMetaPlugin);
     }
 
     return app;

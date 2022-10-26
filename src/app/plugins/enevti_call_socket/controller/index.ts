@@ -38,11 +38,19 @@ import {
 } from '../utils/socketToAddress';
 import { generateTwilioToken, TwilioConfig } from '../utils/twilio';
 
-export function callHandler(channel: BaseChannel, io: Server, twilioConfig: TwilioConfig) {
+export function callHandler(
+  channel: BaseChannel,
+  io: Server,
+  twilioConfig: TwilioConfig | undefined,
+) {
   io.on('connection', socket => {
     socket.on(
       'startVideoCall',
       async (params: { nftId: string; signature: string; publicKey: string }) => {
+        if (twilioConfig === undefined) {
+          socket.emit('callError', { code: 500, reason: 'internal-error' });
+          return;
+        }
         const socketId = await generateCallId();
         try {
           const nft = await invokeGetNFT(channel, params.nftId);
@@ -179,6 +187,11 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       'requestToken',
       async (params: { nftId: string; callId: string; emitter: string; signature: string }) => {
         try {
+          if (twilioConfig === undefined) {
+            socket.emit('callError', { code: 500, reason: 'internal-error' });
+            return;
+          }
+
           const callRoom = io.sockets.adapter.rooms.get(params.callId);
           if (callRoom === undefined) {
             socket.emit('callError', { code: 404, reason: 'room-not-found' });
@@ -316,6 +329,11 @@ export function callHandler(channel: BaseChannel, io: Server, twilioConfig: Twil
       'answered',
       async (params: { nftId: string; callId: string; emitter: string; signature: string }) => {
         try {
+          if (twilioConfig === undefined) {
+            socket.emit('callError', { code: 500, reason: 'internal-error' });
+            return;
+          }
+
           const callRoom = io.sockets.adapter.rooms.get(params.callId);
           if (callRoom === undefined) {
             socket.emit('callError', { code: 404, reason: 'room-not-found' });

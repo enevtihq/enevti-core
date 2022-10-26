@@ -73,7 +73,9 @@ export class EnevtiCallSocketPlugin extends BasePlugin {
         .options as unknown) as TwilioConfig;
       this._twilioConfig = { twilioAccountSid, twilioApiKeySecret, twilioApiKeySid };
     } else {
-      throw new Error('Twilio is not configured, Enevti Call Soket Plugin cannot be started!');
+      this._logger.warn(
+        'Twilio is not configured, Enevti Call Soket Plugin will not work to serve video calls!',
+      );
     }
     this._app = express();
     this._channel = channel;
@@ -82,7 +84,7 @@ export class EnevtiCallSocketPlugin extends BasePlugin {
 
     callHandler(this._channel, this._io, this._twilioConfig);
 
-    this._server.listen(8083);
+    this._server.listen(8883);
   }
 
   public async unload(): Promise<void> {

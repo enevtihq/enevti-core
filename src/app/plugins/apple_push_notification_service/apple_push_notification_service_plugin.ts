@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import * as dotenv from 'dotenv';
 import { BasePlugin, cryptography, db, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
@@ -11,6 +12,7 @@ import {
   removeAddress,
 } from './utils/actions';
 import { getDBInstance } from './utils/db';
+import { APNConfig, applePushNotificationServiceSchema } from './schema/config';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -38,13 +40,7 @@ export class ApplePushNotificationServicePlugin extends BasePlugin {
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   public get defaults(): SchemaWithDefault {
-    return {
-      $id: '/plugins/plugin-applePushNotificationService/config',
-      type: 'object',
-      properties: {},
-      required: [],
-      default: {},
-    };
+    return applePushNotificationServiceSchema;
   }
 
   public get events(): EventsDefinition {
@@ -123,23 +119,42 @@ export class ApplePushNotificationServicePlugin extends BasePlugin {
 
   public async load(channel: BaseChannel): Promise<void> {
     this._channel = channel;
-    const apnKeyFileName = process.env.APN_KEY_FILE_NAME ? process.env.APN_KEY_FILE_NAME : 'apn.p8';
+    const apnConfig = (this.options as unknown) as APNConfig;
+    const apnKeyFileName = process.env.APN_KEY_FILE_NAME
+      ? process.env.APN_KEY_FILE_NAME
+      : apnConfig.apnKeyFileName
+      ? apnConfig.apnKeyFileName
+      : 'apn.p8';
     const apnAuthKeyPath = path.join(__dirname, `./${apnKeyFileName}`);
     const apnConfigured = fs.existsSync(apnAuthKeyPath);
     if (apnConfigured) {
-      if (!process.env.APN_KEY_ID || !process.env.APN_TEAM_ID) {
-        this._logger.warn(`please configure APN_KEY_ID and APN_TEAM_ID in your .env file`);
+      const keyId = process.env.APN_KEY_ID
+        ? process.env.APN_KEY_ID
+        : apnConfig.apnKeyId
+        ? apnConfig.apnKeyId
+        : undefined;
+      const teamId = process.env.APN_TEAM_ID
+        ? process.env.APN_TEAM_ID
+        : apnConfig.apnTeamId
+        ? apnConfig.apnTeamId
+        : undefined;
+      const production = process.env.APN_IS_PRODUCTION
+        ? process.env.APN_IS_PRODUCTION
+        : apnConfig.apnIsProduction
+        ? apnConfig.apnIsProduction
+        : 'true';
+      if (!keyId || !teamId) {
+        this._logger.warn(
+          `please configure APN_KEY_ID and APN_TEAM_ID in your .env file, or set apnKeyId and apnTeamId in your config file`,
+        );
       } else {
         const options = {
           token: {
             key: apnAuthKeyPath,
-            keyId: process.env.APN_KEY_ID,
-            teamId: process.env.APN_TEAM_ID,
+            keyId,
+            teamId,
           },
-          production:
-            process.env.APN_IS_PRODUCTION !== undefined
-              ? process.env.APN_IS_PRODUCTION === 'true'
-              : true,
+          production: production === 'true',
         };
         this._provider = new apn.Provider(options);
         this._db = await getDBInstance();
