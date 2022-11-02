@@ -16,6 +16,7 @@ import {
   CommentClubsAtAsset,
 } from '../../../../types/core/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../types/core/chain/id';
+import { MomentAsset, MomentAtAsset } from '../../../../types/core/chain/moment';
 import { NFTAsset } from '../../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
@@ -54,6 +55,7 @@ import {
   accessReplyClubsById,
   accessCommentClubsReplyById,
 } from '../utils/engagement';
+import { accessMomentAt, accessMomentById } from '../utils/moment';
 import {
   accessAllNFTTemplate,
   accessNFTTemplateById,
@@ -299,6 +301,16 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const activity = await accessActivityNFT(this._dataAccess, id);
       return activity;
+    },
+    getMoment: async (params): Promise<MomentAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const moment = await accessMomentById(this._dataAccess, id);
+      return moment ?? undefined;
+    },
+    getMomentAt: async (params): Promise<MomentAtAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const momentAt = await accessMomentAt(this._dataAccess, id);
+      return momentAt ?? undefined;
     },
     getActivityCollection: async (params): Promise<CollectionActivityChain> => {
       const { id } = params as Record<string, string>;

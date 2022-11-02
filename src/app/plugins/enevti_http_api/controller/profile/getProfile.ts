@@ -19,9 +19,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       treasuryAct: account.redeemableNft.treasuryAct,
       serveRate: account.redeemableNft.serveRate,
       momentSlot: account.redeemableNft.momentSlot,
-      momentCreated: account.redeemableNft.momentCreated,
       owned: [],
       onSale: [],
+      momentCreated: [], // TODO: implement in separate endpoint
       collection: [],
       pending: account.redeemableNft.pending.length,
       raffled: account.redeemableNft.raffled,

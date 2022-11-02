@@ -19,6 +19,7 @@ import {
   ReplyAtAsset,
 } from '../../../../../types/core/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../../types/core/chain/id';
+import { MomentAsset, MomentAtAsset } from '../../../../../types/core/chain/moment';
 import { NFTAsset } from '../../../../../types/core/chain/nft';
 import { NFTActivityChain } from '../../../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../../../types/core/chain/nft/NFTTemplate';
@@ -211,6 +212,12 @@ export const invokeGetActivityNFT = async (
   channel: BaseChannel,
   id: string,
 ): Promise<NFTActivityChain> => channel.invoke('redeemableNft:getActivityNFT', { id });
+
+export const invokeGetMoment = async (channel: BaseChannel, id: string): Promise<MomentAsset> =>
+  channel.invoke('redeemableNft:getMoment', { id });
+
+export const invokeGetMomentAt = async (channel: BaseChannel, id: string): Promise<MomentAtAsset> =>
+  channel.invoke('redeemableNft:getMomentAt', { id });
 
 export const invokeGetActivityCollection = async (
   channel: BaseChannel,
