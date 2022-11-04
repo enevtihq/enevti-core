@@ -82,7 +82,16 @@ export const accountStatsSchema: SchemaWithDefault = {
     likeSent: {
       fieldNumber: 6,
       type: 'object',
-      required: ['total', 'nft', 'collection', 'comment', 'reply', 'commentClubs', 'replyClubs'],
+      required: [
+        'total',
+        'nft',
+        'collection',
+        'comment',
+        'reply',
+        'commentClubs',
+        'replyClubs',
+        'moment',
+      ],
       properties: {
         total: {
           dataType: 'uint32',
@@ -125,6 +134,13 @@ export const accountStatsSchema: SchemaWithDefault = {
         },
         replyClubs: {
           fieldNumber: 7,
+          type: 'array',
+          items: {
+            dataType: 'bytes',
+          },
+        },
+        moment: {
+          fieldNumber: 8,
           type: 'array',
           items: {
             dataType: 'bytes',

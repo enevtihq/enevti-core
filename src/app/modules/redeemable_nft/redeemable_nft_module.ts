@@ -19,6 +19,7 @@ import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { LikeCollectionAsset } from './assets/like_collection_asset';
 import { LikeCommentAsset } from './assets/like_comment_asset';
 import { LikeCommentClubsAsset } from './assets/like_comment_clubs_asset';
+import { LikeMomentAsset } from './assets/like_moment_asset';
 import { LikeNftAsset } from './assets/like_nft_asset';
 import { LikeReplyAsset } from './assets/like_reply_asset';
 import { LikeReplyClubsAsset } from './assets/like_reply_clubs_asset';
@@ -60,6 +61,7 @@ export class RedeemableNftModule extends BaseModule {
     new MintMomentAsset(),
     new CommentMomentAsset(),
     new CommentMomentClubsAsset(),
+    new LikeMomentAsset(),
   ];
   public events = [
     'newCollection',

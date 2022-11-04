@@ -16,7 +16,8 @@ export default async function idBufferToActivityCollection(channel: BaseChannel,
         act.nfts.map(
           async (item): Promise<NFT> => {
             const nft = await idBufferToNFT(channel, item);
-            if (!nft) throw new Error('NFT not found while processing minted');
+            if (!nft)
+              throw new Error('NFT not found while processing idBufferToActivityCollection');
             return nft;
           },
         ),

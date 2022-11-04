@@ -43,6 +43,7 @@ export type RedeemableNFTAccountStatsChain = {
   likeSent: {
     total: number;
     nft: Buffer[];
+    moment: Buffer[];
     collection: Buffer[];
     comment: Buffer[];
     reply: Buffer[];

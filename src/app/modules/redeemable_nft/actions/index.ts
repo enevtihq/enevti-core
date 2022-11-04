@@ -63,6 +63,7 @@ import {
   accessMomentCommentById,
   accessMomentCommentClubsById,
 } from '../utils/engagement';
+import { accessMomentLikeById } from '../utils/engagement/like/moment';
 import { accessAllMoment, accessMomentAt, accessMomentById } from '../utils/moment';
 import {
   accessAllNFTTemplate,
@@ -87,6 +88,11 @@ export function redeemableNftActions(this: BaseModule) {
     getNFTLike: async (params): Promise<LikeAtAsset> => {
       const { id } = params as Record<string, string>;
       const likeNft = await accessNFTLikeById(this._dataAccess, id);
+      return likeNft;
+    },
+    getMomentLike: async (params): Promise<LikeAtAsset> => {
+      const { id } = params as Record<string, string>;
+      const likeNft = await accessMomentLikeById(this._dataAccess, id);
       return likeNft;
     },
     getCollectionLike: async (params): Promise<LikeAtAsset> => {

@@ -95,6 +95,9 @@ export const invokeGetLiked = async (
 export const invokeGetNFTLike = async (channel: BaseChannel, id: string): Promise<LikeAtAsset> =>
   channel.invoke('redeemableNft:getNFTLike', { id });
 
+export const invokeGetMomentLike = async (channel: BaseChannel, id: string): Promise<LikeAtAsset> =>
+  channel.invoke('redeemableNft:getMomentLike', { id });
+
 export const invokeGetCollectionLike = async (
   channel: BaseChannel,
   id: string,

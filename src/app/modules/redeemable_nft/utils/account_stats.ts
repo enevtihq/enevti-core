@@ -18,6 +18,7 @@ export const accessAccountStats = async (
       likeSent: {
         total: 0,
         nft: [],
+        moment: [],
         collection: [],
         comment: [],
         reply: [],
@@ -46,6 +47,7 @@ export const getAccountStats = async (
       likeSent: {
         total: 0,
         nft: [],
+        moment: [],
         collection: [],
         comment: [],
         reply: [],
