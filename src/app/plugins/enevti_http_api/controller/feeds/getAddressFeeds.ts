@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
-import { FeedItem, Feeds, FeedsAndMoments } from '../../../../../types/core/service/feed';
+import { FeedItem, Feeds, HomeFeeds } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import {
@@ -12,10 +12,15 @@ import {
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import { MomentBase } from '../../../../../types/core/chain/moment';
+import { getProfileEndpoint } from '../profile/getProfile';
+import { validateAddress } from '../../utils/validation/address';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
+    const { address } = req.params;
     const { offset, limit, version, viewer } = req.query as Record<string, string>;
+
+    validateAddress(address);
     const collections = await invokeGetAllCollection(
       channel,
       offset ? parseInt(offset, 10) : undefined,
@@ -99,12 +104,13 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     };
 
-    const feedAndMoment: FeedsAndMoments = {
+    const homeFeeds: HomeFeeds = {
+      profile: await getProfileEndpoint(channel, address, 'true', 'true', 'true', 'true', 'true'),
       feed: collectionFeeds,
       moment: momentsFeeds,
     };
 
-    res.status(200).json({ data: feedAndMoment, meta: req.query });
+    res.status(200).json({ data: homeFeeds, meta: req.query });
   } catch (err: unknown) {
     res.status(409).json({ data: (err as string).toString(), meta: req.query });
   }

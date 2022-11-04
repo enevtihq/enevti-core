@@ -29,6 +29,7 @@ import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
 import getStakePoolByUsername from './stake/getStakePoolByUsername';
 import getStakePoolStakerByAddress from './stake/getStakePoolStakerByAddress';
+import getAddressFeeds from './feeds/getAddressFeeds';
 import getAvailableFeeds from './feeds/getAvailableFeeds';
 import getUnavailableFeeds from './feeds/getUnavailableFeeds';
 import isNameExists from './registrar/isNameExists';
@@ -127,6 +128,7 @@ export default {
   getStakePoolByAddress,
   getStakePoolByUsername,
   getStakePoolStakerByAddress,
+  getAddressFeeds,
   getAvailableFeeds,
   getUnavailableFeeds,
   isNameExists,

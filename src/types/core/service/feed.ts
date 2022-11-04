@@ -4,6 +4,7 @@ import { Persona } from '../account/persona';
 import { NFTType } from '../chain/nft/NFTType';
 import { MomentBase } from '../chain/moment';
 import { ResponseVersioned } from './api';
+import { ProfileAPIResponse } from '../account/profile';
 
 export interface FeedItem {
   type: NFTType | 'nft';
@@ -30,7 +31,8 @@ export type MomentItem = MomentBase;
 
 export type Moments = MomentItem[];
 
-export type FeedsAndMoments = {
+export type HomeFeeds = {
+  profile: ProfileAPIResponse;
   feed: ResponseVersioned<Feeds>;
   moment: ResponseVersioned<Moments>;
 };
