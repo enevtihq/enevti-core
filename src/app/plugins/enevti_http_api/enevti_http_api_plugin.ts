@@ -112,7 +112,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
       controller.getStakePoolStakerByAddress(this._channel),
     );
     this._app.get('/stake/u/:username', controller.getStakePoolByUsername(this._channel));
-    this._app.get('/feeds/:address', controller.getAddressFeeds(this._channel));
+    this._app.get('/feeds/address/:address', controller.getAddressFeeds(this._channel));
     this._app.get('/feeds/unavailable', controller.getUnavailableFeeds(this._channel));
     this._app.get('/feeds/available', controller.getAvailableFeeds(this._channel));
     this._app.get('/registrar/name/:name', controller.isNameExists(this._channel));
