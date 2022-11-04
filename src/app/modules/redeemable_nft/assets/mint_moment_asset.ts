@@ -1,40 +1,40 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import {
-  ProfileActivityChainItems,
   RedeemableNFTAccountProps,
+  ProfileActivityChainItems,
 } from '../../../../types/core/account/profile';
-import { CreateMomentAssetProps } from '../../../../types/core/asset/redeemable_nft/create_moment_asset';
+import { MintMomentAssetProps } from '../../../../types/core/asset/redeemable_nft/mint_moment_asset';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
-import { MomentActivityChainItems, MomentAsset } from '../../../../types/core/chain/moment';
+import { MomentAsset, MomentActivityChainItems } from '../../../../types/core/chain/moment';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
-import { createMomentAssetSchema } from '../schemas/asset/create_moment_asset';
+import { mintMomentAssetSchema } from '../schemas/asset/mint_moment_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import {
   addActivityCollection,
-  addActivityMoment,
   addActivityNFT,
   addActivityProfile,
+  addActivityMoment,
 } from '../utils/activity';
 import {
-  getAllMoment,
-  getMomentAt,
-  setAllMoment,
-  setMomentAt,
   setMomentById,
+  getMomentAt,
+  setMomentAt,
+  getAllMoment,
+  setAllMoment,
 } from '../utils/moment';
 import { getNFTById } from '../utils/redeemable_nft';
-import { generateID, getBlockTimestamp } from '../utils/transaction';
+import { getBlockTimestamp, generateID } from '../utils/transaction';
 
-export class CreateMomentAsset extends BaseAsset {
-  public name = 'createMoment';
+export class MintMomentAsset extends BaseAsset {
+  public name = 'mintMoment';
   public id = 18;
 
   // Define schema for asset
-  public schema = createMomentAssetSchema;
+  public schema = mintMomentAssetSchema;
 
-  public validate(_input: ValidateAssetContext<CreateMomentAssetProps>): void {
+  public validate(_input: ValidateAssetContext<MintMomentAssetProps>): void {
     // Validate your asset
   }
 
@@ -43,7 +43,7 @@ export class CreateMomentAsset extends BaseAsset {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<CreateMomentAssetProps>): Promise<void> {
+  }: ApplyAssetContext<MintMomentAssetProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);

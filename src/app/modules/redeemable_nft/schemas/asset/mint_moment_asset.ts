@@ -1,6 +1,6 @@
-export const createMomentAssetSchema = {
-  $id: 'enevti/redeemableNft/createMomentAsset',
-  title: 'createMomentAsset transaction asset for redeemableNft module',
+export const mintMomentAssetSchema = {
+  $id: 'enevti/redeemableNft/mintMomentAsset',
+  title: 'mintMomentAsset transaction asset for redeemableNft module',
   type: 'object',
   required: [
     'nftId',

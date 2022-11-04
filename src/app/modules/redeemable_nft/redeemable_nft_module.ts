@@ -12,7 +12,6 @@ import { CommentCollectionAsset } from './assets/comment_collection_asset';
 import { CommentCollectionClubsAsset } from './assets/comment_collection_clubs_asset';
 import { CommentNftAsset } from './assets/comment_nft_asset';
 import { CommentNftClubsAsset } from './assets/comment_nft_clubs_asset';
-import { CreateMomentAsset } from './assets/create_moment_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
 import { LikeCollectionAsset } from './assets/like_collection_asset';
@@ -21,6 +20,7 @@ import { LikeCommentClubsAsset } from './assets/like_comment_clubs_asset';
 import { LikeNftAsset } from './assets/like_nft_asset';
 import { LikeReplyAsset } from './assets/like_reply_asset';
 import { LikeReplyClubsAsset } from './assets/like_reply_clubs_asset';
+import { MintMomentAsset } from './assets/mint_moment_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
 import { ReplyCommentAsset } from './assets/reply_comment_asset';
@@ -55,7 +55,7 @@ export class RedeemableNftModule extends BaseModule {
     new LikeCommentClubsAsset(),
     new SetVideoCallRejectedAsset(),
     new SetVideoCallAnsweredAsset(),
-    new CreateMomentAsset(),
+    new MintMomentAsset(),
   ];
   public events = [
     'newCollection',

@@ -1,10 +1,10 @@
-import { CreateMomentAsset } from '../../../../../src/app/modules/redeemableNft/assets/create_moment_asset';
+import { MintMomentAsset } from '../../../../../src/app/modules/redeemableNft/assets/mint_moment_asset';
 
-describe('CreateMomentAsset', () => {
-  let transactionAsset: CreateMomentAsset;
+describe('MintMomentAsset', () => {
+  let transactionAsset: MintMomentAsset;
 
 	beforeEach(() => {
-		transactionAsset = new CreateMomentAsset();
+		transactionAsset = new MintMomentAsset();
 	});
 
 	describe('constructor', () => {
@@ -13,7 +13,7 @@ describe('CreateMomentAsset', () => {
 		});
 
 		it('should have valid name', () => {
-			expect(transactionAsset.name).toEqual('createMoment');
+			expect(transactionAsset.name).toEqual('mintMoment');
 		});
 
 		it('should have valid schema', () => {
