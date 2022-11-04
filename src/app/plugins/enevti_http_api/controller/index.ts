@@ -56,6 +56,7 @@ import getNFTComment from './engagement/getNFTComment';
 import getMomentComment from './engagement/getMomentComment';
 import getMomentCommentClubs from './engagement/getMomentCommentClubs';
 import getNFTLike from './engagement/getNFTLike';
+import getMomentLike from './engagement/getMomentLike';
 import getReply from './engagement/getReply';
 import getReplyLike from './engagement/getReplyLike';
 import getCollectionTag from './tag/getCollectionTag';
@@ -152,6 +153,7 @@ export default {
   getMomentComment,
   getMomentCommentClubs,
   getNFTLike,
+  getMomentLike,
   getReply,
   getReplyLike,
   getCollectionTag,
