@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { NFT } from '../../../../../types/core/chain/nft';
-import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
+import { FeedItem, Feeds, FeedsAndMoments } from '../../../../../types/core/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
-import { invokeGetAllCollection, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
+import {
+  invokeGetAllCollection,
+  invokeGetAllMoment,
+  invokeGetLiked,
+} from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
+import { MomentBase } from '../../../../../types/core/chain/moment';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -18,7 +23,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       version ? parseInt(version, 10) : undefined,
     );
 
-    const feeds: { checkpoint: number; data: Feeds; version: number } = {
+    const collectionFeeds: { checkpoint: number; data: Feeds; version: number } = {
       checkpoint: collections.checkpoint,
       version: collections.version,
       data: await Promise.all(
@@ -74,7 +79,32 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     };
 
-    res.status(200).json({ data: feeds, meta: req.query });
+    const moments = await invokeGetAllMoment(
+      channel,
+      offset ? parseInt(offset, 10) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
+      version ? parseInt(version, 10) : undefined,
+    );
+
+    const momentsFeeds: { checkpoint: number; data: MomentBase[]; version: number } = {
+      checkpoint: moments.checkpoint,
+      version: moments.version,
+      data: await Promise.all(
+        moments.data.map(
+          (item): MomentBase => ({
+            id: item.id.toString('hex'),
+            cover: item.cover,
+          }),
+        ),
+      ),
+    };
+
+    const feedAndMoment: FeedsAndMoments = {
+      feed: collectionFeeds,
+      moment: momentsFeeds,
+    };
+
+    res.status(200).json({ data: feedAndMoment, meta: req.query });
   } catch (err: unknown) {
     res.status(409).json({ data: (err as string).toString(), meta: req.query });
   }

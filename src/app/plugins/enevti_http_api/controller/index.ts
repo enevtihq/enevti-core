@@ -29,7 +29,7 @@ import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
 import getStakePoolByUsername from './stake/getStakePoolByUsername';
 import getStakePoolStakerByAddress from './stake/getStakePoolStakerByAddress';
-import getFeeds from './feeds/getFeeds';
+import getAvailableFeeds from './feeds/getAvailableFeeds';
 import getUnavailableFeeds from './feeds/getUnavailableFeeds';
 import isNameExists from './registrar/isNameExists';
 import isSymbolExists from './registrar/isSymbolExists';
@@ -84,6 +84,8 @@ import getAPNIsAddressRegistered from './apn/getAPNIsAddressRegistered';
 import postAPNRegisterAddress from './apn/postAPNRegisterAddress';
 import postAPNIsTokenUpdated from './apn/postAPNIsTokenUpdated';
 import deleteAPNAddress from './apn/deleteAPNAddress';
+import getAllMoment from './moment/getAllMoment';
+import getMomentById from './moment/getMomentById';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -121,7 +123,7 @@ export default {
   getStakePoolByAddress,
   getStakePoolByUsername,
   getStakePoolStakerByAddress,
-  getFeeds,
+  getAvailableFeeds,
   getUnavailableFeeds,
   isNameExists,
   isSymbolExists,
@@ -173,4 +175,6 @@ export default {
   postAPNRegisterAddress,
   postAPNIsTokenUpdated,
   deleteAPNAddress,
+  getAllMoment,
+  getMomentById,
 };

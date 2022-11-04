@@ -112,7 +112,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     );
     this._app.get('/stake/u/:username', controller.getStakePoolByUsername(this._channel));
     this._app.get('/feeds/unavailable', controller.getUnavailableFeeds(this._channel));
-    this._app.get('/feeds/available', controller.getFeeds(this._channel));
+    this._app.get('/feeds/available', controller.getAvailableFeeds(this._channel));
     this._app.get('/registrar/name/:name', controller.isNameExists(this._channel));
     this._app.get('/registrar/name/:name/id', controller.nameToCollection(this._channel));
     this._app.get('/registrar/symbol/:symbol', controller.isSymbolExists(this._channel));
@@ -179,6 +179,8 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.post('/apn/isupdated', controller.postAPNIsTokenUpdated(this._channel));
     this._app.delete('/apn/remove', controller.deleteAPNAddress(this._channel));
     this._app.post('/usermeta/set', controller.postUserMeta(this._channel));
+    this._app.get('/moment', controller.getAllMoment(this._channel));
+    this._app.get('/moment/:id', controller.getMomentById(this._channel));
 
     this._server = this._app.listen(8880, '0.0.0.0');
   }
