@@ -72,6 +72,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/avatar/:wallet', controller.renderAvatar());
     this._app.get('/avatar/url/:address', controller.getAvatarUrl(this._channel));
     this._app.get('/activity/collection/:id', controller.getActivityCollection(this._channel));
+    this._app.get('/activity/moment/:id', controller.getActivityMoment(this._channel));
     this._app.get('/activity/nft/:id', controller.getActivityNFT(this._channel));
     this._app.get(
       '/activity/profile/:address',
@@ -97,6 +98,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/profile/:address', controller.getProfile(this._channel));
     this._app.get('/profile/:address/staked', controller.getProfileStaked(this._channel));
     this._app.get('/profile/:address/owned', controller.getProfileOwned(this._channel));
+    this._app.get('/profile/:address/moment', controller.getProfileCreatedMoment(this._channel));
     this._app.get('/profile/:address/collection', controller.getProfileCollection(this._channel));
     this._app.get('/profile/:address/pending', controller.getProfilePendingDelivery(this._channel));
     this._app.get('/profile/:address/nonce', controller.getProfileNonce(this._channel));

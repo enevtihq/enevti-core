@@ -77,5 +77,9 @@ export class CreateMomentAsset extends BaseAsset {
     senderAccount.redeemableNft.momentSlot -= 1;
     senderAccount.redeemableNft.momentCreated.unshift(moment.id);
     await stateStore.account.set(senderAddress, senderAccount);
+
+    // TODO: add activity to collection & nft
+    // TODO: add activity to moment
+    // TODO: add to all moment
   }
 }

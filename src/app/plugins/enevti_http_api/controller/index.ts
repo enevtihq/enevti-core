@@ -1,4 +1,5 @@
 import getActivityCollection from './activity/getActivityCollection';
+import getActivityMoment from './activity/getActivityMoment';
 import getActivityNFT from './activity/getActivityNFT';
 import getActivityProfile from './activity/getActivityProfile';
 import getActivityEngagement from './activity/getActivityEngagement';
@@ -22,6 +23,7 @@ import getProfileBalance from './profile/getProfileBalance';
 import getProfilePendingDelivery from './profile/getProfilePendingDelivery';
 import getProfileCollection from './profile/getProfileCollection';
 import getProfileOwned from './profile/getProfileOwned';
+import getProfileCreatedMoment from './profile/getProfileCreatedMoment';
 import getPersonaByAddress from './persona/getPersonaByAddress';
 import getPersonaByUsername from './persona/getPersonaByUsername';
 import getStakePoolByAddress from './stake/getStakePoolByAddress';
@@ -88,6 +90,7 @@ export default {
   renderAvatar,
   getAvatarUrl,
   getActivityCollection,
+  getActivityMoment,
   getActivityNFT,
   getActivityProfile,
   getActivityEngagement,
@@ -111,6 +114,7 @@ export default {
   getProfilePendingDelivery,
   getProfileCollection,
   getProfileOwned,
+  getProfileCreatedMoment,
   postUserMeta,
   getPersonaByAddress,
   getPersonaByUsername,
