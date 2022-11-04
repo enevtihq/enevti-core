@@ -29,6 +29,10 @@ export const {
   setCollectionCommentById,
   setCommentById,
   setNFTCommentById,
+  accessMomentCommentById,
+  addMomentCommentById,
+  getMomentCommentById,
+  setMomentCommentById,
 } = comment;
 
 export const {

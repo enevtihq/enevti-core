@@ -59,6 +59,9 @@ export const ACTIVITY: {
     COMMENTNFTCLUBS: 'commentNftClubs',
     SETVIDEOCALLANSWERED: 'setVideoCallAnswered',
     SETVIDEOCALLREJECTED: 'setVideoCallRejected',
+    COMMENTMOMENT: 'commentMoment',
+    COMMENTMOMENTCLUBS: 'commentMomentClubs',
+    LIKEMOMENT: 'likeMoment',
   },
   MOMENT: {
     MINTED: 'minted',

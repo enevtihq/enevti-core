@@ -10,6 +10,7 @@ import { SocialRaffleGenesisConfig } from '../../../types/core/chain/config/Soci
 import { redeemableNftActions } from './actions';
 import { CommentCollectionAsset } from './assets/comment_collection_asset';
 import { CommentCollectionClubsAsset } from './assets/comment_collection_clubs_asset';
+import { CommentMomentAsset } from './assets/comment_moment_asset';
 import { CommentNftAsset } from './assets/comment_nft_asset';
 import { CommentNftClubsAsset } from './assets/comment_nft_clubs_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
@@ -56,6 +57,7 @@ export class RedeemableNftModule extends BaseModule {
     new SetVideoCallRejectedAsset(),
     new SetVideoCallAnsweredAsset(),
     new MintMomentAsset(),
+    new CommentMomentAsset(),
   ];
   public events = [
     'newCollection',

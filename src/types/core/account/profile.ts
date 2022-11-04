@@ -122,14 +122,17 @@ export type EngagementActivityName =
   | 'likeCollection'
   | 'likeComment'
   | 'likeReply'
+  | 'likeMoment'
   | 'likeCommentClubs'
   | 'likeReplyClubs'
   | 'commentNft'
   | 'commentCollection'
+  | 'commentMoment'
   | 'replyComment'
   | 'replyCommentClubs'
   | 'commentCollectionClubs'
   | 'commentNftClubs'
+  | 'commentMomentClubs'
   | 'setVideoCallAnswered'
   | 'setVideoCallRejected';
 
