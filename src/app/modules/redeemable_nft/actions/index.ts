@@ -307,10 +307,10 @@ export function redeemableNftActions(this: BaseModule) {
       const moment = await accessMomentById(this._dataAccess, id);
       return moment ?? undefined;
     },
-    getMomentAt: async (params): Promise<MomentAtAsset | undefined> => {
+    getMomentAt: async (params): Promise<MomentAtAsset> => {
       const { id } = params as Record<string, string>;
       const momentAt = await accessMomentAt(this._dataAccess, id);
-      return momentAt ?? undefined;
+      return momentAt;
     },
     getActivityCollection: async (params): Promise<CollectionActivityChain> => {
       const { id } = params as Record<string, string>;

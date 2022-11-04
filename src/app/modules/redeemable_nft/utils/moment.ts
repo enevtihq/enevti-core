@@ -32,10 +32,10 @@ export const setMomentById = async (stateStore: StateStore, id: string, moment: 
 export const accessMomentAt = async (
   dataAccess: BaseModuleDataAccess,
   target: string,
-): Promise<MomentAtAsset | undefined> => {
+): Promise<MomentAtAsset> => {
   const momentAtBuffer = await dataAccess.getChainState(`${CHAIN_STATE_MOMENT}:at:${target}`);
   if (!momentAtBuffer) {
-    return undefined;
+    return { moment: [] };
   }
   return codec.decode<MomentAtAsset>(momentAtSchema, momentAtBuffer);
 };
@@ -43,10 +43,10 @@ export const accessMomentAt = async (
 export const getMomentAt = async (
   stateStore: StateStore,
   target: string,
-): Promise<MomentAtAsset | undefined> => {
+): Promise<MomentAtAsset> => {
   const momentAtBuffer = await stateStore.chain.get(`${CHAIN_STATE_MOMENT}:at:${target}`);
   if (!momentAtBuffer) {
-    return undefined;
+    return { moment: [] };
   }
   return codec.decode<MomentAtAsset>(momentAtSchema, momentAtBuffer);
 };
