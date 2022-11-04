@@ -15,6 +15,10 @@ export const {
   setCollectionCommentClubsById,
   setCommentClubsById,
   setNftCommentClubsById,
+  accessMomentCommentClubsById,
+  addMomentCommentClubsById,
+  getMomentCommentClubsById,
+  setMomentCommentClubsById,
 } = clubs;
 
 export const {
