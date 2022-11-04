@@ -3,6 +3,10 @@ import { ActivityBase, ActivityChainBase } from './activity';
 import { MomentIdAsset, NFTIdAsset } from './id';
 import { NFTContent } from './nft/NFTContent';
 
+export type AllMoment = {
+  items: MomentIdAsset[];
+};
+
 export type MomentActivityName = 'minted';
 
 export type MomentActivity = Omit<ActivityBase, 'name'> & {

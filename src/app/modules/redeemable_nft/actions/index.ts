@@ -26,6 +26,7 @@ import { NFTActivityChain } from '../../../../types/core/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
 import { SocialRaffleRecord, SocialRaffleChain } from '../../../../types/core/chain/socialRaffle';
 import { collectionSchema } from '../schemas/chain/collection';
+import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';
 import { redeemableNFTSchema } from '../schemas/chain/redeemable_nft';
 import { accessAccountStats } from '../utils/account_stats';
@@ -60,7 +61,7 @@ import {
   accessReplyClubsById,
   accessCommentClubsReplyById,
 } from '../utils/engagement';
-import { accessMomentAt, accessMomentById } from '../utils/moment';
+import { accessAllMoment, accessMomentAt, accessMomentById } from '../utils/moment';
 import {
   accessAllNFTTemplate,
   accessNFTTemplateById,
@@ -255,6 +256,29 @@ export function redeemableNftActions(this: BaseModule) {
           },
         ),
       );
+    },
+    getAllMoment: async (
+      params,
+    ): Promise<{ checkpoint: number; version: number; data: MomentAsset[] }> => {
+      const { offset, limit, version } = params as {
+        limit?: number;
+        offset?: number;
+        version?: number;
+      };
+      const moments = await accessAllMoment(this._dataAccess, offset, limit, version);
+      const data = await Promise.all(
+        moments.allMoment.items.map(
+          async (item): Promise<MomentAsset> => {
+            const moment = await accessMomentById(this._dataAccess, item.toString('hex'));
+            return moment ?? ((momentSchema.default as unknown) as MomentAsset);
+          },
+        ),
+      );
+      return {
+        checkpoint: Number(offset ?? 0) + Number(limit ?? 0),
+        version: moments.version,
+        data,
+      };
     },
     getNFT: async (params): Promise<NFTAsset | undefined> => {
       const { id } = params as Record<string, string>;

@@ -65,6 +65,14 @@ export const invokeGetAllCollection = async (
 ): Promise<{ checkpoint: number; version: number; data: CollectionAsset[] }> =>
   channel.invoke('redeemableNft:getAllCollection', { offset, limit, version });
 
+export const invokeGetAllMoment = async (
+  channel: BaseChannel,
+  offset?: number,
+  limit?: number,
+  version?: number,
+): Promise<{ checkpoint: number; version: number; data: MomentAsset[] }> =>
+  channel.invoke('redeemableNft:getAllMoment', { offset, limit, version });
+
 export const invokeGetUnavailableCollection = async (
   channel: BaseChannel,
   offset?: number,

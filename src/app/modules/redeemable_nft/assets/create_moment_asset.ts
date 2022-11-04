@@ -1,10 +1,29 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
+import {
+  ProfileActivityChainItems,
+  RedeemableNFTAccountProps,
+} from '../../../../types/core/account/profile';
 import { CreateMomentAssetProps } from '../../../../types/core/asset/redeemable_nft/create_moment_asset';
-import { MomentAsset } from '../../../../types/core/chain/moment';
+import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
+import { MomentActivityChainItems, MomentAsset } from '../../../../types/core/chain/moment';
+import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { ACTIVITY } from '../constants/activity';
+import { COIN_NAME } from '../constants/chain';
 import { createMomentAssetSchema } from '../schemas/asset/create_moment_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
-import { getMomentAt, setMomentAt, setMomentById } from '../utils/moment';
+import {
+  addActivityCollection,
+  addActivityMoment,
+  addActivityNFT,
+  addActivityProfile,
+} from '../utils/activity';
+import {
+  getAllMoment,
+  getMomentAt,
+  setAllMoment,
+  setMomentAt,
+  setMomentById,
+} from '../utils/moment';
 import { getNFTById } from '../utils/redeemable_nft';
 import { generateID, getBlockTimestamp } from '../utils/transaction';
 
@@ -78,8 +97,59 @@ export class CreateMomentAsset extends BaseAsset {
     senderAccount.redeemableNft.momentCreated.unshift(moment.id);
     await stateStore.account.set(senderAddress, senderAccount);
 
-    // TODO: add activity to collection & nft
-    // TODO: add activity to moment
-    // TODO: add to all moment
+    const collectionActivity: CollectionActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.COLLECTION.MOMENTCREATED,
+      to: senderAddress,
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+      nfts: [nft.id],
+    };
+    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
+
+    const nftActivity: NFTActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.NFT.MOMENTCREATED,
+      to: senderAddress,
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+    };
+    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
+
+    const profileActivity: ProfileActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.PROFILE.MOMENTCREATED,
+      from: senderAddress,
+      to: Buffer.alloc(0),
+      payload: nft.collectionId,
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+    };
+    await addActivityProfile(stateStore, senderAddress.toString('hex'), profileActivity);
+
+    const momentActivity: MomentActivityChainItems = {
+      transaction: transaction.id,
+      date: BigInt(timestamp),
+      name: ACTIVITY.MOMENT.MINTED,
+      to: senderAddress,
+      value: {
+        amount: BigInt(0),
+        currency: COIN_NAME,
+      },
+    };
+    await addActivityMoment(stateStore, moment.id.toString('hex'), momentActivity);
+
+    const allMoment = await getAllMoment(stateStore);
+    allMoment.items.unshift(moment.id);
+    await setAllMoment(stateStore, allMoment);
   }
 }

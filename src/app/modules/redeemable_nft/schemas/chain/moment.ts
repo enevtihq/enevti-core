@@ -1,6 +1,21 @@
 import { SchemaWithDefault } from 'lisk-framework';
 import { contentSchema } from './deps/content';
 
+export const allMomentSchema: SchemaWithDefault = {
+  $id: 'enevti/redeemableNft/allMoment',
+  type: 'object',
+  required: ['items'],
+  properties: {
+    items: {
+      type: 'array',
+      fieldNumber: 1,
+      items: {
+        dataType: 'bytes',
+      },
+    },
+  },
+};
+
 export const momentAtSchema: SchemaWithDefault = {
   $id: 'enevti/redeemableNft/momentAt',
   type: 'object',

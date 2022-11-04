@@ -3,6 +3,7 @@ import {
   ProfileActivityName,
 } from '../../../../types/core/account/profile';
 import { CollectionActivityName } from '../../../../types/core/chain/collection';
+import { MomentActivityName } from '../../../../types/core/chain/moment';
 import { NFTActivityName } from '../../../../types/core/chain/nft/NFTActivity';
 
 export const ACTIVITY: {
@@ -10,6 +11,7 @@ export const ACTIVITY: {
   COLLECTION: Record<Uppercase<CollectionActivityName>, CollectionActivityName>;
   PROFILE: Record<Uppercase<ProfileActivityName>, ProfileActivityName>;
   ENGAGEMENT: Record<Uppercase<EngagementActivityName>, EngagementActivityName>;
+  MOMENT: Record<Uppercase<MomentActivityName>, MomentActivityName>;
 } = {
   NFT: {
     MINT: 'mint',
@@ -18,6 +20,7 @@ export const ACTIVITY: {
     SECRETDELIVERED: 'secretDelivered',
     VIDEOCALLANSWERED: 'videoCallAnswered',
     VIDEOCALLREJECTED: 'videoCallRejected',
+    MOMENTCREATED: 'momentCreated',
   },
   COLLECTION: {
     RAFFLED: 'raffled',
@@ -26,6 +29,7 @@ export const ACTIVITY: {
     SECRETDELIVERED: 'secretDelivered',
     VIDEOCALLANSWERED: 'videoCallAnswered',
     VIDEOCALLREJECTED: 'videoCallRejected',
+    MOMENTCREATED: 'momentCreated',
   },
   PROFILE: {
     WINRAFFLE: 'winRaffle',
@@ -38,6 +42,7 @@ export const ACTIVITY: {
     MINTNFT: 'mintNFT',
     NFTSALE: 'NFTSale',
     DELIVERSECRET: 'deliverSecret',
+    MOMENTCREATED: 'momentCreated',
   },
   ENGAGEMENT: {
     LIKENFT: 'likeNft',
@@ -54,5 +59,8 @@ export const ACTIVITY: {
     COMMENTNFTCLUBS: 'commentNftClubs',
     SETVIDEOCALLANSWERED: 'setVideoCallAnswered',
     SETVIDEOCALLREJECTED: 'setVideoCallRejected',
+  },
+  MOMENT: {
+    MINTED: 'minted',
   },
 };
