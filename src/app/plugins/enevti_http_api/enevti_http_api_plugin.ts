@@ -99,6 +99,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/profile/:address/staked', controller.getProfileStaked(this._channel));
     this._app.get('/profile/:address/owned', controller.getProfileOwned(this._channel));
     this._app.get('/profile/:address/moment', controller.getProfileCreatedMoment(this._channel));
+    this._app.get('/profile/:address/moment/slot', controller.getProfileMomentSlot(this._channel));
     this._app.get('/profile/:address/collection', controller.getProfileCollection(this._channel));
     this._app.get('/profile/:address/pending', controller.getProfilePendingDelivery(this._channel));
     this._app.get('/profile/:address/nonce', controller.getProfileNonce(this._channel));

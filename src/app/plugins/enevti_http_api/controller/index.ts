@@ -89,6 +89,7 @@ import postAPNIsTokenUpdated from './apn/postAPNIsTokenUpdated';
 import deleteAPNAddress from './apn/deleteAPNAddress';
 import getAllMoment from './moment/getAllMoment';
 import getMomentById from './moment/getMomentById';
+import getProfileMomentSlot from './profile/getProfileMomentSlot';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -183,4 +184,5 @@ export default {
   deleteAPNAddress,
   getAllMoment,
   getMomentById,
+  getProfileMomentSlot,
 };
