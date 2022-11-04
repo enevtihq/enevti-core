@@ -139,6 +139,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/wallet/:address', controller.getWallet(this._channel));
     this._app.get('/comment/:id', controller.getComment(this._channel));
     this._app.get('/comment/clubs/:id', controller.getCommentClubs(this._channel));
+    this._app.get('/comment/moment/:id', controller.getMomentComment(this._channel));
     this._app.get('/comment/nft/:id', controller.getNFTComment(this._channel));
     this._app.get('/comment/nft/clubs/:id', controller.getNFTCommentClubs(this._channel));
     this._app.get('/comment/collection/:id', controller.getCollectionComment(this._channel));

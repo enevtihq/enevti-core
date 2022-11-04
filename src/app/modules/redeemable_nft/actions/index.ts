@@ -60,6 +60,7 @@ import {
   accessNftCommentClubsById,
   accessReplyClubsById,
   accessCommentClubsReplyById,
+  accessMomentCommentById,
 } from '../utils/engagement';
 import { accessAllMoment, accessMomentAt, accessMomentById } from '../utils/moment';
 import {
@@ -141,6 +142,11 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const commentCollection = await accessCollectionCommentClubsById(this._dataAccess, id);
       return commentCollection;
+    },
+    getMomentComment: async (params): Promise<CommentAtAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const commentMoment = await accessMomentCommentById(this._dataAccess, id);
+      return commentMoment;
     },
     getReply: async (params): Promise<ReplyAsset | undefined> => {
       const { id } = params as Record<string, string>;
