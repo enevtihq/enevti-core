@@ -154,6 +154,11 @@ export const invokeGetMomentComment = async (
   id: string,
 ): Promise<CommentAtAsset> => channel.invoke('redeemableNft:getMomentComment', { id });
 
+export const invokeGetMomentCommentClubs = async (
+  channel: BaseChannel,
+  id: string,
+): Promise<CommentClubsAtAsset> => channel.invoke('redeemableNft:getMomentCommentClubs', { id });
+
 export const invokeGetReply = async (
   channel: BaseChannel,
   id: string,
