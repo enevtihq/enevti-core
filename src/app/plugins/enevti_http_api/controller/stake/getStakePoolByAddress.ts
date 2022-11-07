@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { StakePoolData } from '../../../../../types/core/chain/stake';
+import { StakePoolData, StakerItem } from '../../../../../types/core/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module.ts';
 import { validateAddress } from '../../utils/validation/address';
+import { STAKER_INITIAL_LENGTH } from '../../constant/limit';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
+    const { staker } = req.query as Record<string, 'true' | 'false' | undefined>;
     validateAddress(address);
     const stakerChain = await invokeGetStakerByAddress(channel, address);
     if (!stakerChain) {
@@ -15,12 +17,34 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       return;
     }
 
+    const stakerVersions = staker === 'true' ? stakerChain.items.length : 0;
+    const stakerData =
+      staker === 'true'
+        ? await Promise.all(
+            stakerChain.items.slice(0, STAKER_INITIAL_LENGTH).map(
+              async (item): Promise<StakerItem> => {
+                const persona = await addressBufferToPersona(channel, item.persona);
+                return {
+                  ...item,
+                  id: item.id.toString('hex'),
+                  persona,
+                  stake: item.stake.toString(),
+                };
+              },
+            ),
+          )
+        : [];
+
     const stake: StakePoolData = {
       owner: await addressBufferToPersona(channel, Buffer.from(address, 'hex')),
-      staker: [],
+      staker: stakerData,
     };
 
-    res.status(200).json({ data: stake, meta: req.params });
+    const version = {
+      stakePool: stakerVersions,
+    };
+
+    res.status(200).json({ data: stake, version, meta: req.params });
   } catch (err: unknown) {
     res.status(409).json({ data: (err as string).toString(), meta: req.params });
   }

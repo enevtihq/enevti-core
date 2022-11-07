@@ -28,7 +28,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     >;
     validateAddress(address);
 
-    const profile = await getProfileEndpoint(
+    const { profile, version } = await getProfileEndpoint(
       channel,
       address,
       persona,
@@ -38,7 +38,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       collection,
     );
 
-    res.status(200).json({ data: profile, meta: req.params });
+    res.status(200).json({ data: profile, version, meta: req.params });
   } catch (err: unknown) {
     res.status(409).json({ data: (err as string).toString(), meta: req.params });
   }
@@ -137,13 +137,14 @@ export async function getProfileEndpoint(
     raffled: account.redeemableNft.raffled,
     likeSent: account.redeemableNft.likeSent,
     commentSent: account.redeemableNft.commentSent,
-    versions: {
-      owned: ownedDataVersion,
-      onSale: onSaleDataVersion,
-      momentCreated: momentDataVersion,
-      collection: collectionDataVersion,
-    },
   };
 
-  return profile;
+  const version = {
+    owned: ownedDataVersion,
+    onSale: onSaleDataVersion,
+    momentCreated: momentDataVersion,
+    collection: collectionDataVersion,
+  };
+
+  return { profile, version };
 }

@@ -138,7 +138,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
       controller.getTransactionBaseFee(this._channel),
     );
     this._app.post('/transaction/post', controller.postTransaction(this._channel, this.codec));
-    this._app.get('/wallet/:address', controller.getWallet(this._channel));
+    this._app.get('/wallet/:address', controller.getWallet(this._channel, client));
     this._app.get('/comment/:id', controller.getComment(this._channel));
     this._app.get('/comment/clubs/:id', controller.getCommentClubs(this._channel));
     this._app.get('/comment/moment/:id', controller.getMomentComment(this._channel));
