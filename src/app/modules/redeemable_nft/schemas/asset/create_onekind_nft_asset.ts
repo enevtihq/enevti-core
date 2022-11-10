@@ -31,9 +31,7 @@ export const createOnekindNftAssetSchema = {
     'contentExtension',
     'contentSize',
     'contentProtocol',
-    'contentIv',
-    'contentSalt',
-    'contentSecurityVersion',
+    'contentSecurity',
     'recurring',
     'time',
     'from',
@@ -150,61 +148,53 @@ export const createOnekindNftAssetSchema = {
       dataType: 'string',
       fieldNumber: 23,
     },
-    contentIv: {
+    contentSecurity: {
       dataType: 'string',
       fieldNumber: 24,
     },
-    contentSalt: {
+    recurring: {
       dataType: 'string',
       fieldNumber: 25,
     },
-    contentSecurityVersion: {
-      dataType: 'uint32',
-      fieldNumber: 26,
-    },
-    recurring: {
-      dataType: 'string',
-      fieldNumber: 27,
-    },
     time: {
-      fieldNumber: 28,
+      fieldNumber: 26,
       ...scheduleTimeSchema,
     },
     from: {
-      fieldNumber: 29,
+      fieldNumber: 27,
       ...scheduleFromSchema,
     },
     until: {
       dataType: 'uint32',
-      fieldNumber: 30,
+      fieldNumber: 28,
     },
     redeemNonceLimit: {
       dataType: 'uint32',
-      fieldNumber: 31,
+      fieldNumber: 29,
     },
     redeemCountLimit: {
       dataType: 'uint32',
-      fieldNumber: 32,
+      fieldNumber: 30,
     },
     royalty: {
-      fieldNumber: 33,
+      fieldNumber: 31,
       ...royaltySchema,
     },
     price: {
-      fieldNumber: 34,
+      fieldNumber: 32,
       ...priceSchema,
     },
     quantity: {
       dataType: 'uint32',
-      fieldNumber: 35,
+      fieldNumber: 33,
     },
     mintingExpire: {
       dataType: 'uint32',
-      fieldNumber: 36,
+      fieldNumber: 34,
     },
     raffled: {
       dataType: 'sint32',
-      fieldNumber: 37,
+      fieldNumber: 35,
     },
   },
 };

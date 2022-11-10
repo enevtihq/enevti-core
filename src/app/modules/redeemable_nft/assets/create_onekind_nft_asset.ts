@@ -263,9 +263,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
             extension: asset.contentExtension,
             size: asset.contentSize,
             protocol: asset.contentProtocol,
-            iv: asset.contentIv,
-            salt: asset.contentSalt,
-            version: asset.contentSecurityVersion,
+            security: asset.contentSecurity,
           },
           schedule: {
             recurring: asset.recurring,

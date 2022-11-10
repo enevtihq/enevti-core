@@ -29,20 +29,12 @@ export const contentSchema: Omit<Schema, '$id'> = {
 
 export const nftContentSecureSchema: Omit<Schema, '$id'> = {
   ...contentSchema,
-  required: contentSchema.required?.concat(['iv', 'salt', 'version']),
+  required: contentSchema.required?.concat(['security']),
   properties: {
     ...contentSchema.properties,
-    iv: {
+    security: {
       dataType: 'string',
       fieldNumber: 6,
-    },
-    salt: {
-      dataType: 'string',
-      fieldNumber: 7,
-    },
-    version: {
-      dataType: 'uint32',
-      fieldNumber: 8,
     },
   },
 };

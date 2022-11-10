@@ -21,9 +21,7 @@ export interface DecryptedData {
 export interface EncryptedFile {
   status: 'success' | 'error' | '';
   output: string;
-  iv: string;
-  salt: string;
-  version: number;
+  security: string;
 }
 
 export type DecryptedFile = DecryptedData;
