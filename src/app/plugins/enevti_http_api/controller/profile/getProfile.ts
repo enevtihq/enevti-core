@@ -18,14 +18,12 @@ import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { minimizeCollection, minimizeNFT } from '../../utils/transformer/minimizeToBase';
 import { validateAddress } from '../../utils/validation/address';
+import { isNumeric } from '../../utils/validation/number';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const { persona, owned, onsale, moment, collection } = req.query as Record<
-      string,
-      'true' | 'false' | undefined
-    >;
+    const { persona, owned, onsale, moment, collection } = req.query as Record<string, string>;
     validateAddress(address);
 
     const { profile, version } = await getProfileEndpoint(
@@ -68,55 +66,66 @@ export async function getProfileEndpoint(
         }
       : undefined;
 
-  const ownedDataVersion = owned === 'true' ? account.redeemableNft.owned.length : 0;
+  const ownedDataVersion = owned && isNumeric(owned) ? account.redeemableNft.owned.length : 0;
   const ownedData =
-    owned === 'true'
+    owned && isNumeric(owned)
       ? await Promise.all(
-          account.redeemableNft.owned.slice(0, PROFILE_OWNED_INITIAL_LENGTH).map(
-            async (item): Promise<NFTBase> => {
-              const nft = await idBufferToNFT(channel, item);
-              if (!nft)
-                throw new Error('NFT not found while iterating account.redeemableNft.owned');
-              return minimizeNFT(nft);
-            },
-          ),
+          account.redeemableNft.owned
+            .slice(0, owned === '0' ? PROFILE_OWNED_INITIAL_LENGTH : parseInt(owned, 10))
+            .map(
+              async (item): Promise<NFTBase> => {
+                const nft = await idBufferToNFT(channel, item);
+                if (!nft)
+                  throw new Error('NFT not found while iterating account.redeemableNft.owned');
+                return minimizeNFT(nft);
+              },
+            ),
         )
       : [];
 
-  const onSaleDataVersion = onsale === 'true' ? 0 : 0;
-  const onSaleData = onsale === 'true' ? [] : [];
+  const onSaleDataVersion = onsale && isNumeric(onsale) ? 0 : 0;
+  const onSaleData = onsale && isNumeric(onsale) ? [] : [];
 
-  const momentDataVersion = moment === 'true' ? account.redeemableNft.momentCreated.length : 0;
+  const momentDataVersion =
+    moment && isNumeric(moment) ? account.redeemableNft.momentCreated.length : 0;
   const momentData =
-    moment === 'true'
+    moment && isNumeric(moment)
       ? await Promise.all(
-          account.redeemableNft.momentCreated.slice(0, PROFILE_MOMENT_INITIAL_LENGTH).map(
-            async (item): Promise<MomentBase> => {
-              const momn = await idBufferToMoment(channel, item);
-              if (!momn)
-                throw new Error(
-                  'Moment not found while iterating account.redeemableNft.momentCreated',
-                );
-              return momn;
-            },
-          ),
+          account.redeemableNft.momentCreated
+            .slice(0, moment === '0' ? PROFILE_MOMENT_INITIAL_LENGTH : parseInt(moment, 10))
+            .map(
+              async (item): Promise<MomentBase> => {
+                const momn = await idBufferToMoment(channel, item);
+                if (!momn)
+                  throw new Error(
+                    'Moment not found while iterating account.redeemableNft.momentCreated',
+                  );
+                return momn;
+              },
+            ),
         )
       : [];
 
-  const collectionDataVersion = collection === 'true' ? account.redeemableNft.collection.length : 0;
+  const collectionDataVersion =
+    collection && isNumeric(collection) ? account.redeemableNft.collection.length : 0;
   const collectionData =
-    collection === 'true'
+    collection && isNumeric(collection)
       ? await Promise.all(
-          account.redeemableNft.collection.slice(0, PROFILE_COLLECTION_INITIAL_LENGTH).map(
-            async (item): Promise<CollectionBase> => {
-              const col = await idBufferToCollection(channel, item);
-              if (!col)
-                throw new Error(
-                  'Collection not found while iterating account.redeemableNft.collection',
-                );
-              return minimizeCollection(col);
-            },
-          ),
+          account.redeemableNft.collection
+            .slice(
+              0,
+              collection === '0' ? PROFILE_COLLECTION_INITIAL_LENGTH : parseInt(collection, 10),
+            )
+            .map(
+              async (item): Promise<CollectionBase> => {
+                const col = await idBufferToCollection(channel, item);
+                if (!col)
+                  throw new Error(
+                    'Collection not found while iterating account.redeemableNft.collection',
+                  );
+                return minimizeCollection(col);
+              },
+            ),
         )
       : [];
 

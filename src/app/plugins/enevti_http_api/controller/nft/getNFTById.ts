@@ -6,6 +6,7 @@ import { NFT_ACTIVITY_INITIAL_LENGTH } from '../../constant/limit';
 import { invokeGetLiked, invokeGetNFT } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
+import { isNumeric } from '../../utils/validation/number';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -24,9 +25,12 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     let activityVersion = 0;
     let activityData: NFTActivity[] = [];
-    if (activity === 'true') {
+    if (activity && isNumeric(activity)) {
       const collectionActivity = await idBufferToActivityNFT(channel, Buffer.from(id, 'hex'));
-      activityData = collectionActivity.slice(0, NFT_ACTIVITY_INITIAL_LENGTH);
+      activityData = collectionActivity.slice(
+        0,
+        activity === '0' ? NFT_ACTIVITY_INITIAL_LENGTH : parseInt(activity, 10),
+      );
       activityVersion = collectionActivity.length;
     }
 

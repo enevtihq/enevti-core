@@ -14,6 +14,7 @@ import {
 } from '../../constant/limit';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
+import { isNumeric } from '../../utils/validation/number';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -37,24 +38,29 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     let activityVersion = 0;
     let activityData: CollectionActivity[] = [];
-    if (activity === 'true') {
+    if (activity && isNumeric(activity)) {
       const collectionActivity = await idBufferToActivityCollection(channel, id);
-      activityData = collectionActivity.slice(0, COLLECTION_ACTIVITY_INITIAL_LENGTH);
+      activityData = collectionActivity.slice(
+        0,
+        activity === '0' ? COLLECTION_ACTIVITY_INITIAL_LENGTH : parseInt(activity, 10),
+      );
       activityVersion = collectionActivity.length;
     }
 
     let mintedVersion = 0;
     let mintedData: Collection['minted'] = [];
-    if (minted === 'true') {
+    if (minted && isNumeric(minted)) {
       mintedVersion = collection.minted.length;
       mintedData = await Promise.all(
-        collection.minted.slice(0, COLLECTION_MINTED_INITIAL_LENGTH).map(
-          async (item): Promise<NFT> => {
-            const nft = await idBufferToNFT(channel, item);
-            if (!nft) throw new Error('NFT not found while iterating collection.minted');
-            return nft;
-          },
-        ),
+        collection.minted
+          .slice(0, minted === '0' ? COLLECTION_MINTED_INITIAL_LENGTH : parseInt(minted, 10))
+          .map(
+            async (item): Promise<NFT> => {
+              const nft = await idBufferToNFT(channel, item);
+              if (!nft) throw new Error('NFT not found while iterating collection.minted');
+              return nft;
+            },
+          ),
       );
     }
 

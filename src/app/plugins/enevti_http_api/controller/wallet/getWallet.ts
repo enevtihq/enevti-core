@@ -8,6 +8,7 @@ import { WALLET_HISTORY_INITIAL_LENGTH } from '../../constant/limit';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import idBufferToActivityProfile from '../../utils/transformer/idBufferToActivityProfile';
 import { validateAddress } from '../../utils/validation/address';
+import { isNumeric } from '../../utils/validation/number';
 
 export default (channel: BaseChannel, client: apiClient.APIClient) => async (
   req: Request,
@@ -15,7 +16,7 @@ export default (channel: BaseChannel, client: apiClient.APIClient) => async (
 ) => {
   try {
     const { address } = req.params;
-    const { history } = req.query as Record<string, 'true' | 'false' | undefined>;
+    const { history } = req.query as Record<string, string>;
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
@@ -26,13 +27,16 @@ export default (channel: BaseChannel, client: apiClient.APIClient) => async (
 
     let historyDataVersions = 0;
     let historyData: ProfileActivity[] = [];
-    if (history === 'true') {
+    if (history && isNumeric(history)) {
       const profileActivity = await idBufferToActivityProfile(
         channel,
         client,
         Buffer.from(address, 'hex'),
       );
-      historyData = profileActivity.slice(0, WALLET_HISTORY_INITIAL_LENGTH);
+      historyData = profileActivity.slice(
+        0,
+        history === '0' ? WALLET_HISTORY_INITIAL_LENGTH : parseInt(history, 10),
+      );
       historyDataVersions = profileActivity.length;
     }
 

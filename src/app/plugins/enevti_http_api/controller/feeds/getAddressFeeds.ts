@@ -95,15 +95,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       ),
     );
 
-    const profileEndpoint = await getProfileEndpoint(
-      channel,
-      address,
-      'true',
-      'true',
-      'true',
-      'true',
-      'true',
-    );
+    const profileEndpoint = await getProfileEndpoint(channel, address, 'true', '0', '0', '0', '0');
 
     const homeFeeds: HomeFeeds = {
       profile: profileEndpoint.profile,
