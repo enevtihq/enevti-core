@@ -24,6 +24,7 @@ import { FirebaseCloudMessagingPlugin } from '../app/plugins/firebase_cloud_mess
 import { EnevtiCallSocketPlugin } from '../app/plugins/enevti_call_socket/enevti_call_socket_plugin';
 import { ApplePushNotificationServicePlugin } from '../app/plugins/apple_push_notification_service/apple_push_notification_service_plugin';
 import { EnevtiUserMetaPlugin } from '../app/plugins/enevti_user_meta/enevti_user_meta_plugin';
+import { IpfsImageResizedPlugin } from '../app/plugins/ipfs_image_resized/ipfs_image_resized_plugin';
 
 interface Flags {
   [key: string]: string | number | boolean | undefined;
@@ -188,6 +189,7 @@ export class StartCommand extends BaseStartCommand {
       app.registerPlugin(EnevtiCallSocketPlugin);
       app.registerPlugin(ApplePushNotificationServicePlugin);
       app.registerPlugin(EnevtiUserMetaPlugin);
+      app.registerPlugin(IpfsImageResizedPlugin);
     }
 
     return app;
