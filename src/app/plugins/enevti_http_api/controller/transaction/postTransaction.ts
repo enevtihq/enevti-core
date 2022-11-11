@@ -3,6 +3,7 @@ import { BaseChannel, PluginCodec, TransactionJSON } from 'lisk-framework';
 import { cryptography, transactions } from 'lisk-sdk';
 import { invokeGetNodeIndo, invokePostTransaction } from '../../utils/invoker/app';
 import { getAssetSchema } from '../../utils/schema/getAssetSchema';
+import { afterTransactionPosted } from './hook';
 import transformAsset from './transformer';
 
 export default (channel: BaseChannel, codec: PluginCodec) => async (
@@ -43,6 +44,7 @@ export default (channel: BaseChannel, codec: PluginCodec) => async (
     const encodedTransaction = codec.encodeTransaction((tx as unknown) as TransactionJSON);
     const result = await invokePostTransaction(channel, encodedTransaction);
 
+    await afterTransactionPosted(channel, payload);
     res.status(200).json({ data: result, meta: req.body as { payload: Record<string, unknown> } });
   } catch (err: unknown) {
     res.status(409).json({

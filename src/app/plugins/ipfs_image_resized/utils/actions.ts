@@ -1,8 +1,13 @@
 import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import { getPluginsDirectory } from './dir';
 import { fetchIPFS } from './ipfs';
 import { resizeImage, SizeCode, widthMap } from './resizer';
+
+export async function getIpfsResizedDirName() {
+  return getPluginsDirectory();
+}
 
 export async function isIpfsResized(hash: string) {
   const dir = await getPluginsDirectory();
@@ -14,6 +19,7 @@ export async function storeResizedImage(hash: string) {
     if (!(await isIpfsResized(hash))) {
       let status = false;
       const dir = await getPluginsDirectory();
+      await fsExtra.ensureDir(path.join(dir, hash));
       const ipfsResponse = await fetchIPFS(hash);
       if (ipfsResponse.status === 200) {
         const imgBuff = await ipfsResponse.buffer();

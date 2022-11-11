@@ -1,7 +1,13 @@
 import { BasePlugin, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
-import { getIpfsResizedUri, isIpfsResized, storeResizedImage } from './utils/actions';
+import {
+  getIpfsResizedDirName,
+  getIpfsResizedUri,
+  isIpfsResized,
+  storeResizedImage,
+} from './utils/actions';
 import { isValidSize, SizeCode } from './utils/resizer';
+import { initPluginDirectory } from './utils/dir';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -41,6 +47,10 @@ export class IpfsImageResizedPlugin extends BasePlugin {
 
   public get actions(): ActionsDefinition {
     return {
+      getIpfsResizedDirName: async () => {
+        const dir = await getIpfsResizedDirName();
+        return dir;
+      },
       isIpfsResized: async params => {
         const { hash } = params as { hash: string };
         const isResized = await isIpfsResized(hash);
@@ -60,8 +70,7 @@ export class IpfsImageResizedPlugin extends BasePlugin {
   }
 
   public async load(_: BaseChannel): Promise<void> {
-    // this._channel = channel;
-    // this._channel.once('app:ready', () => {});
+    await initPluginDirectory();
   }
 
   public async unload(): Promise<void> {}

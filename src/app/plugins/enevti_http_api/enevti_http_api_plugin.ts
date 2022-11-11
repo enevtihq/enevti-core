@@ -61,12 +61,14 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async load(channel: BaseChannel): Promise<void> {
     const client = await this.getClient();
+    const ipfsResizedDir = await channel.invoke('ipfsImageResized:getIpfsResizedDirName');
 
     this._app = express();
     this._channel = channel;
 
     this._app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT'] }));
     this._app.use(express.json());
+    this._app.use('/ipfs-resized', express.static(ipfsResizedDir as string));
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     this._app.get('/avatar/:wallet', controller.renderAvatar());

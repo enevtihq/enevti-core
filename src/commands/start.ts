@@ -182,14 +182,14 @@ export class StartCommand extends BaseStartCommand {
       app.registerPlugin(DashboardPlugin, { loadAsChildProcess: true });
     }
     if (flags['enable-enevti-plugins']) {
-      app.registerPlugin(EnevtiHttpApiPlugin);
+      app.registerPlugin(IpfsImageResizedPlugin);
+      app.registerPlugin(FirebaseCloudMessagingPlugin);
+      app.registerPlugin(ApplePushNotificationServicePlugin);
       app.registerPlugin(EnevtiFaucetApiPlugin);
       app.registerPlugin(EnevtiSocketIoPlugin);
-      app.registerPlugin(FirebaseCloudMessagingPlugin);
       app.registerPlugin(EnevtiCallSocketPlugin);
-      app.registerPlugin(ApplePushNotificationServicePlugin);
       app.registerPlugin(EnevtiUserMetaPlugin);
-      app.registerPlugin(IpfsImageResizedPlugin);
+      app.registerPlugin(EnevtiHttpApiPlugin);
     }
 
     return app;

@@ -14,3 +14,6 @@ export const invokeStoreResizedImage = async (
   channel: BaseChannel,
   hash: string,
 ): Promise<boolean> => channel.invoke('ipfsImageResized:storeResizedImage', { hash });
+
+export const invokeGetIpfsResizedDirName = async (channel: BaseChannel): Promise<string> =>
+  channel.invoke('ipfsImageResized:getIpfsResizedDirName');
