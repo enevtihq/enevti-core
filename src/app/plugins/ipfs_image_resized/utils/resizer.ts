@@ -1,5 +1,6 @@
 import * as sharp from 'sharp';
 import * as fs from 'fs';
+import { SizeCode } from '../../../../types/core/service/api';
 
 export const widthMap = {
   xxs: 32,
@@ -8,8 +9,6 @@ export const widthMap = {
   m: 256,
   l: 512,
 };
-
-export type SizeCode = keyof typeof widthMap;
 
 export function isValidSize(size: string) {
   return Object.keys(widthMap).includes(size);

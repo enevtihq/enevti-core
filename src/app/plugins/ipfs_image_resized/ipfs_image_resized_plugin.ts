@@ -6,8 +6,9 @@ import {
   isIpfsResized,
   storeResizedImage,
 } from './utils/actions';
-import { isValidSize, SizeCode } from './utils/resizer';
+import { isValidSize } from './utils/resizer';
 import { initPluginDirectory } from './utils/dir';
+import { SizeCode } from '../../../types/core/service/api';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */

@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
+import { SizeCode } from '../../../../types/core/service/api';
 import { getPluginsDirectory } from './dir';
 import { fetchIPFS } from './ipfs';
-import { resizeImage, SizeCode, widthMap } from './resizer';
+import { resizeImage, widthMap } from './resizer';
 
 export async function getIpfsResizedDirName() {
   return getPluginsDirectory();
