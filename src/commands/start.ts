@@ -25,6 +25,7 @@ import { EnevtiCallSocketPlugin } from '../app/plugins/enevti_call_socket/enevti
 import { ApplePushNotificationServicePlugin } from '../app/plugins/apple_push_notification_service/apple_push_notification_service_plugin';
 import { EnevtiUserMetaPlugin } from '../app/plugins/enevti_user_meta/enevti_user_meta_plugin';
 import { IpfsImageResizedPlugin } from '../app/plugins/ipfs_image_resized/ipfs_image_resized_plugin';
+import { IpfsTextCachePlugin } from '../app/plugins/ipfs_text_cache/ipfs_text_cache_plugin';
 
 interface Flags {
   [key: string]: string | number | boolean | undefined;
@@ -183,6 +184,7 @@ export class StartCommand extends BaseStartCommand {
     }
     if (flags['enable-enevti-plugins']) {
       app.registerPlugin(IpfsImageResizedPlugin);
+      app.registerPlugin(IpfsTextCachePlugin);
       app.registerPlugin(FirebaseCloudMessagingPlugin);
       app.registerPlugin(ApplePushNotificationServicePlugin);
       app.registerPlugin(EnevtiFaucetApiPlugin);
