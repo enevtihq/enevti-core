@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Comment } from '../../../../../types/core/chain/engagement';
+import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { invokeGetComment, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
@@ -23,6 +24,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       date: chainDateToUI(comment.date),
       owner: await addressBufferToPersona(channel, comment.owner),
       target: comment.target.toString('hex'),
+      text: await invokeGetIPFSTextCache(channel, comment.data),
       liked,
     };
 

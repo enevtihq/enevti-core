@@ -2,6 +2,7 @@ import { BasePlugin, db, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
 import { getIPFSTextCache, setIPFSTextCache } from './utils/actions';
 import { getDBInstance } from './utils/db';
+import { fetchIPFS } from './utils/ipfs';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -55,16 +56,15 @@ export class IpfsTextCachePlugin extends BasePlugin {
           throw new Error('enevti user meta db instance is not ready!');
         }
 
-        const { hash, text } = params as {
-          hash: string;
-          text: string;
-        };
+        const { hash } = params as { hash: string };
 
         const ipfsTextCache = await getIPFSTextCache(this._db, hash);
         if (ipfsTextCache) {
           return;
         }
 
+        const ipfs = await fetchIPFS(hash);
+        const text = (await ipfs.buffer()).toString();
         await setIPFSTextCache(this._db, hash, { text });
       },
     };

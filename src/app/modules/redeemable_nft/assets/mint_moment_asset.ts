@@ -3,7 +3,7 @@ import {
   RedeemableNFTAccountProps,
   ProfileActivityChainItems,
 } from '../../../../types/core/account/profile';
-import { MintMomentAssetProps } from '../../../../types/core/asset/redeemable_nft/mint_moment_asset';
+import { MintMomentProps } from '../../../../types/core/asset/redeemable_nft/mint_moment_asset';
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 import { MomentAsset, MomentActivityChainItems } from '../../../../types/core/chain/moment';
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
@@ -34,7 +34,7 @@ export class MintMomentAsset extends BaseAsset {
   // Define schema for asset
   public schema = mintMomentAssetSchema;
 
-  public validate(_input: ValidateAssetContext<MintMomentAssetProps>): void {
+  public validate(_input: ValidateAssetContext<MintMomentProps>): void {
     // Validate your asset
   }
 
@@ -43,7 +43,7 @@ export class MintMomentAsset extends BaseAsset {
     asset,
     transaction,
     stateStore,
-  }: ApplyAssetContext<MintMomentAssetProps>): Promise<void> {
+  }: ApplyAssetContext<MintMomentProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);

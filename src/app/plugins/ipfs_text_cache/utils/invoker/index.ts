@@ -5,8 +5,5 @@ export const invokeGetIPFSTextCache = async (
   hash: string,
 ): Promise<string | undefined> => channel.invoke('ipfsTextCache:getIPFSTextCache', { hash });
 
-export const invokeSetIPFSTextCache = async (
-  channel: BaseChannel,
-  hash: string,
-  text: string,
-): Promise<void> => channel.invoke('ipfsTextCache:setIPFSTextCache', { hash, text });
+export const invokeSetIPFSTextCache = async (channel: BaseChannel, hash: string): Promise<void> =>
+  channel.invoke('ipfsTextCache:setIPFSTextCache', { hash });

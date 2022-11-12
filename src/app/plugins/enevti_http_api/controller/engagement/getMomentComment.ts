@@ -10,6 +10,7 @@ import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { ResponseVersioned } from '../../../../../types/core/service/api';
 import createPagination from '../../utils/misc/createPagination';
+import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -39,6 +40,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
                 date: chainDateToUI(commentAsset.date),
                 owner: await addressBufferToPersona(channel, commentAsset.owner),
                 target: commentAsset.target.toString('hex'),
+                text: await invokeGetIPFSTextCache(channel, commentAsset.data),
                 liked,
               };
             },
