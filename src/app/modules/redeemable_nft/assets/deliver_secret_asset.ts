@@ -79,8 +79,6 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     );
 
     accountStats.serveRate.score = serveRate;
-    accountStats.momentSlot.push(nft.id);
-
     senderAccount.redeemableNft.serveRate = serveRate;
     await setAccountStats(stateStore, senderAccount.address.toString('hex'), accountStats);
 
@@ -118,7 +116,6 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     );
     if (index === -1) throw new Error('NFT id not found in account pending list');
     senderAccount.redeemableNft.pending.splice(index, 1);
-    senderAccount.redeemableNft.momentSlot += 1;
     await stateStore.account.set(senderAddress, senderAccount);
 
     const nftActivity: NFTActivityChainItems = {

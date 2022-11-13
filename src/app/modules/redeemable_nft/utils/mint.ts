@@ -77,6 +77,10 @@ export async function mintNFT({
   }
 
   const accountStats = await getAccountStats(stateStore, creatorAccount.address.toString('hex'));
+  const senderAccountStats = await getAccountStats(
+    stateStore,
+    senderAccount.address.toString('hex'),
+  );
 
   await asyncForEach<Buffer>(boughtItem, async item => {
     const nft = await getNFTById(stateStore, item.toString('hex'));
@@ -104,6 +108,8 @@ export async function mintNFT({
     senderAccount.redeemableNft.owned.unshift(nft.id);
     if (nft.redeem.status === 'pending-secret') {
       creatorAccount.redeemableNft.pending.unshift(nft.id);
+      senderAccount.redeemableNft.momentSlot += 1;
+      senderAccountStats.momentSlot.push(nft.id);
     }
 
     if (collection.minting.price.amount > BigInt(0)) {
@@ -185,6 +191,7 @@ export async function mintNFT({
 
   accountStats.serveRate.score = serveRate;
   await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);
+  await setAccountStats(stateStore, senderAccount.address.toString('hex'), senderAccountStats);
 
   collection.stat.minted += boughtItem.length;
   if (collection.stat.owner.findIndex(o => Buffer.compare(o, senderAddress) === 0) === -1) {
