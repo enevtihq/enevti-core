@@ -13,12 +13,12 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const { staker } = req.query as Record<string, string>;
     const usernameRegistrar = await invokeGetAddressByUsername(channel, username);
     if (!usernameRegistrar) {
-      res.status(404).json({ data: { message: 'Not Found' }, meta: req.params });
+      res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
     }
     const stakerChain = await invokeGetStakerByAddress(channel, usernameRegistrar.toString('hex'));
     if (!stakerChain) {
-      res.status(404).json('Staker data not found');
+      res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
     }
 
@@ -53,6 +53,6 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     res.status(200).json({ data: stake, version, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json({ data: (err as string).toString(), meta: req.params });
+    res.status(409).json({ data: (err as string).toString(), version: {}, meta: req.params });
   }
 };

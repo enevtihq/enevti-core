@@ -38,7 +38,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     res.status(200).json({ data: profile, version, meta: req.params });
   } catch (err: unknown) {
-    res.status(409).json({ data: (err as string).toString(), meta: req.params });
+    res.status(409).json({ data: (err as string).toString(), version: {}, meta: req.params });
   }
 };
 
