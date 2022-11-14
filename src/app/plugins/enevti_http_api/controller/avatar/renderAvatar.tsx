@@ -12,11 +12,11 @@ const svg2img = require('svg2img');
 
 export default () => async (req: Request, res: Response) => {
   try {
-    const { wallet } = req.params;
-    const height = 250;
+    const { wallet, width } = req.params;
+    const imgWidth = width ?? 250;
 
     const avatarSVG = ReactDOMServer.renderToStaticMarkup(
-      <AccountVisual address={wallet} size={height} />,
+      <AccountVisual address={wallet} size={imgWidth} />,
     );
 
     svg2img(avatarSVG, (error, buffer: Buffer) => {
