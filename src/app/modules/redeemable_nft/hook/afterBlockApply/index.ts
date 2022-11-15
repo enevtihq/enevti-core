@@ -45,6 +45,7 @@ export default async function redeemableNftAfterBlockApply(
 
   const accountWithNewCollection: Set<Buffer> = new Set<Buffer>();
   const accountWithNewPending: Set<Buffer> = new Set<Buffer>();
+  const accountWithNewMomentSlot: Set<Buffer> = new Set<Buffer>();
   const accountWithNewActivity: Set<Buffer> = new Set<Buffer>();
   const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
   const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
@@ -293,9 +294,17 @@ export default async function redeemableNftAfterBlockApply(
     const collection = await getCollectionById(input.stateStore, collectionId);
     if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
-    collection.minted
-      .slice(0, totalNftMintedInCollection[collectionId])
-      .forEach(nft => nftWithNewActivity.add(nft));
+    collection.minted.slice(0, totalNftMintedInCollection[collectionId]).forEach(nft => {
+      nftWithNewActivity.add(nft);
+      getNFTById(input.stateStore, nft.toString('hex'))
+        .then(nftAsset => {
+          if (nftAsset && nftAsset.redeem.status === 'pending-secret')
+            accountWithNewMomentSlot.add(nftAsset.owner);
+        })
+        .catch(err => {
+          throw new Error(err);
+        });
+    });
 
     channel.publish('redeemableNft:newNFTMinted', {
       collection: collection.id.toString('hex'),
@@ -321,6 +330,14 @@ export default async function redeemableNftAfterBlockApply(
         address: address.toString('hex'),
       });
       channel.publish('redeemableNft:totalServeRateChanged', {
+        address: address.toString('hex'),
+      });
+    });
+  }
+
+  if (accountWithNewMomentSlot.size > 0) {
+    accountWithNewMomentSlot.forEach(address => {
+      channel.publish('redeemableNft:totalMomentSlotChanged', {
         address: address.toString('hex'),
       });
     });

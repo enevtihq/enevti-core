@@ -11,6 +11,7 @@ import {
   onNewPendingByAddress,
   onPendingUtilityDelivery,
   onSecretDelivered,
+  onTotalMomentSlotChanged,
   onTotalNFTSoldChanged,
   onTotalServeRateChanged,
   onTotalStakeChanged,
@@ -36,6 +37,7 @@ export function createEnevtiSocket(
   onUsernameUpdated(channel, io);
   onBalanceChanged(channel, io);
   onTotalStakeChanged(channel, io);
+  onTotalMomentSlotChanged(channel, io);
   onNewCollectionByAddress(channel, io);
   onNewPendingByAddress(channel, io);
   onPendingUtilityDelivery(channel, io, i18n);
