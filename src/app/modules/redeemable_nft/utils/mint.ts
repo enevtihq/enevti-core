@@ -77,10 +77,10 @@ export async function mintNFT({
   }
 
   const accountStats = await getAccountStats(stateStore, creatorAccount.address.toString('hex'));
-  const senderAccountStats = await getAccountStats(
-    stateStore,
-    senderAccount.address.toString('hex'),
-  );
+  const senderAccountStats =
+    Buffer.compare(creatorAddress, senderAddress) === 0
+      ? accountStats
+      : await getAccountStats(stateStore, senderAccount.address.toString('hex'));
 
   await asyncForEach<Buffer>(boughtItem, async item => {
     const nft = await getNFTById(stateStore, item.toString('hex'));
@@ -191,7 +191,9 @@ export async function mintNFT({
 
   accountStats.serveRate.score = serveRate;
   await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);
-  await setAccountStats(stateStore, senderAccount.address.toString('hex'), senderAccountStats);
+  if (Buffer.compare(creatorAddress, senderAddress) !== 0) {
+    await setAccountStats(stateStore, senderAccount.address.toString('hex'), senderAccountStats);
+  }
 
   collection.stat.minted += boughtItem.length;
   if (collection.stat.owner.findIndex(o => Buffer.compare(o, senderAddress) === 0) === -1) {
