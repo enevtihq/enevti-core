@@ -11,9 +11,11 @@ import {
 } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
-import { MomentBase } from '../../../../../types/core/chain/moment';
+import { Moment } from '../../../../../types/core/chain/moment';
 import { getProfileEndpoint } from '../profile/getProfile';
 import { validateAddress } from '../../utils/validation/address';
+import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
+import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -86,12 +88,20 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       undefined,
     );
 
-    const momentsFeeds = await Promise.all(
+    const momentsFeeds: (Moment & { liked: boolean })[] = await Promise.all(
       moments.data.map(
-        (item): MomentBase => ({
-          id: item.id.toString('hex'),
-          cover: item.cover,
-        }),
+        async (item): Promise<Moment & { liked: boolean }> => {
+          const liked = viewer
+            ? (await invokeGetLiked(channel, item.id.toString('hex'), viewer)) === 1
+            : false;
+          const data = await idBufferToMoment(channel, item.id);
+          if (!data) throw new Error('Error while iterating allMoments.data');
+          return {
+            ...data,
+            liked,
+            textPlain: await invokeGetIPFSTextCache(channel, item.text),
+          };
+        },
       ),
     );
 
