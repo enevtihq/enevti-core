@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Moment } from '../../../../../types/core/chain/moment';
+import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
 
@@ -18,6 +19,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const response: Moment & { liked: boolean } = {
       ...moment,
       liked,
+      textPlain: await invokeGetIPFSTextCache(channel, moment.text),
     };
 
     res.status(200).json({ data: response, meta: req.params });

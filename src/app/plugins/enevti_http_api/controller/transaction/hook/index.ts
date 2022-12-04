@@ -6,6 +6,7 @@ import { CommentMomentClubsUI } from '../../../../../../types/core/asset/redeema
 import { CommentNFTUI } from '../../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
 import { CommentNFTClubsUI } from '../../../../../../types/core/asset/redeemable_nft/comment_nft_clubs_asset';
 import { CreateOneKindNFTUI } from '../../../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
+import { MintMomentUI } from '../../../../../../types/core/asset/redeemable_nft/mint_moment_asset';
 import { ReplyCommentUI } from '../../../../../../types/core/asset/redeemable_nft/reply_comment_asset';
 import { ReplyCommentClubsUI } from '../../../../../../types/core/asset/redeemable_nft/reply_comment_clubs_asset';
 import { AppTransaction } from '../../../../../../types/core/service/transaction';
@@ -24,6 +25,13 @@ export async function commentAfterTransaction(
   payload: AppTransaction<CommentNFTUI>,
 ) {
   await invokeSetIPFSTextCache(channel, payload.asset.cid);
+}
+
+export async function mintMomentAfterTransaction(
+  channel: BaseChannel,
+  payload: AppTransaction<MintMomentUI>,
+) {
+  await invokeSetIPFSTextCache(channel, payload.asset.text);
 }
 
 export async function afterTransactionPosted(
@@ -85,6 +93,12 @@ export async function afterTransactionPosted(
           await commentAfterTransaction(
             channel,
             (payload as unknown) as AppTransaction<CommentMomentClubsUI>,
+          );
+          break;
+        case 18:
+          await mintMomentAfterTransaction(
+            channel,
+            (payload as unknown) as AppTransaction<MintMomentUI>,
           );
           break;
         default:

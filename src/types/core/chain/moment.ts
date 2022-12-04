@@ -38,6 +38,7 @@ export interface Moment extends MomentBase {
   creator: Persona;
   data: NFTContent;
   text: string;
+  textPlain?: string;
   like: number;
   comment: number;
   clubs: number;
