@@ -30,6 +30,9 @@ export type MomentAtAsset = {
 export type MomentBase = {
   id: string;
   cover: NFTContent;
+  text: string;
+  textPlain?: string;
+  like: number;
 };
 
 export interface Moment extends MomentBase {
@@ -37,9 +40,6 @@ export interface Moment extends MomentBase {
   owner: Persona;
   creator: Persona;
   data: NFTContent;
-  text: string;
-  textPlain?: string;
-  like: number;
   comment: number;
   clubs: number;
   createdOn: number;
