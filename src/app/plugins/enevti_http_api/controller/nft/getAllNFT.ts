@@ -20,6 +20,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
             ...item,
             ...restNFT,
             activity: [],
+            moment: [],
             liked,
           };
         },
