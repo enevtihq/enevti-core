@@ -6,6 +6,7 @@ import { SocialProfile, SocialProfileAsset } from '../account/social';
 import { CollectionIdAsset, NFTIdAsset } from './id';
 import { NFTType } from './nft/NFTType';
 import { ActivityBase, ActivityChainBase } from './activity';
+import { Moment } from './moment';
 
 export type AllCollection = {
   items: CollectionIdAsset[];
@@ -69,6 +70,7 @@ export interface Collection extends CollectionBase {
   minted: NFTBase[];
   creator: Persona;
   activity: CollectionActivity[];
+  moment: Moment[];
   promoted: boolean;
   raffled: number;
 }
@@ -76,7 +78,15 @@ export interface Collection extends CollectionBase {
 export interface CollectionAsset
   extends Omit<
     Collection,
-    'creator' | 'id' | 'minted' | 'activity' | 'social' | 'stat' | 'minting' | 'createdOn'
+    | 'creator'
+    | 'id'
+    | 'minted'
+    | 'activity'
+    | 'social'
+    | 'stat'
+    | 'minting'
+    | 'createdOn'
+    | 'moment'
   > {
   id: CollectionIdAsset;
   creator: PersonaAsset;

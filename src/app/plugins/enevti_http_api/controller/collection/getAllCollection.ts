@@ -4,6 +4,7 @@ import { Collection } from '../../../../../types/core/chain/collection';
 import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
 import { invokeGetAllCollection, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
+import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -22,12 +23,14 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
             ? (await invokeGetLiked(channel, item.id.toString('hex'), viewer)) === 1
             : false;
           const activity = await idBufferToActivityCollection(channel, item.id);
+          const moment = await idBufferToMomentAt(channel, item.id);
           const restCollection = await collectionChainToUI(channel, item);
           return {
             ...item,
             ...restCollection,
             activity,
             liked,
+            moment,
           };
         },
       ),
