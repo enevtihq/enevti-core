@@ -4,6 +4,7 @@ import collectionChainToUI from './collectionChainToUI';
 import { invokeGetCollection } from '../invoker/redeemable_nft_module';
 import idBufferToActivityCollection from './idBufferToActivityCollection';
 import { idBufferToMomentAt } from './idBufferToMomentAt';
+import { minimizeMoment } from './minimizeToBase';
 
 export default async function idBufferToCollection(
   channel: BaseChannel,
@@ -13,7 +14,9 @@ export default async function idBufferToCollection(
   if (!collection) return undefined;
   const activity = await idBufferToActivityCollection(channel, id);
   const restCollection = await collectionChainToUI(channel, collection);
-  const moment = await idBufferToMomentAt(channel, id);
+  const moment = (await idBufferToMomentAt(channel, id)).map(momentItem =>
+    minimizeMoment(momentItem),
+  );
   return {
     ...collection,
     ...restCollection,

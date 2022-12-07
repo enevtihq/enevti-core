@@ -13,6 +13,7 @@ import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { NFT } from '../../../../../types/core/chain/nft';
 import { isNumeric } from '../../utils/validation/number';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
+import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -61,7 +62,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentVersion = 0;
     let momentData: Collection['moment'] = [];
     if (moment && isNumeric(moment)) {
-      const collectionMoment = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'));
+      const collectionMoment = (
+        await idBufferToMomentAt(channel, Buffer.from(id, 'hex'))
+      ).map(momentItem => minimizeMoment(momentItem));
       momentData = collectionMoment.slice(
         0,
         moment === '0' ? COLLECTION_MOMENT_INITIAL_LENGTH : parseInt(moment, 10),

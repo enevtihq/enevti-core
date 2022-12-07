@@ -6,7 +6,7 @@ import { SocialProfile, SocialProfileAsset } from '../account/social';
 import { CollectionIdAsset, NFTIdAsset } from './id';
 import { NFTType } from './nft/NFTType';
 import { ActivityBase, ActivityChainBase } from './activity';
-import { Moment } from './moment';
+import { MomentBase } from './moment';
 
 export type AllCollection = {
   items: CollectionIdAsset[];
@@ -70,7 +70,7 @@ export interface Collection extends CollectionBase {
   minted: NFTBase[];
   creator: Persona;
   activity: CollectionActivity[];
-  moment: Moment[];
+  moment: MomentBase[];
   promoted: boolean;
   raffled: number;
 }
