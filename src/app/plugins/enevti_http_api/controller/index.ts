@@ -9,6 +9,7 @@ import getCollectionByName from './collection/getCollectionByName';
 import getCollectionBySymbol from './collection/getCollectionBySymbol';
 import getCollectionActivityById from './collection/getCollectionActivityById';
 import getCollectionMintedById from './collection/getCollectionMintedById';
+import getCollectionMomentById from './collection/getCollectionMomentById';
 import getAllNFT from './nft/getAllNFT';
 import getNFTById from './nft/getNFTById';
 import getNFTBySerial from './nft/getNFTBySerial';
@@ -91,6 +92,7 @@ import deleteAPNAddress from './apn/deleteAPNAddress';
 import getAllMoment from './moment/getAllMoment';
 import getMomentById from './moment/getMomentById';
 import getProfileMomentSlot from './profile/getProfileMomentSlot';
+import getMomentAt from './moment/getMomentAt';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -107,6 +109,7 @@ export default {
   getCollectionBySymbol,
   getCollectionActivityById,
   getCollectionMintedById,
+  getCollectionMomentById,
   getAllNFT,
   getNFTById,
   getNFTBySerial,
@@ -187,4 +190,5 @@ export default {
   getAllMoment,
   getMomentById,
   getProfileMomentSlot,
+  getMomentAt,
 };
