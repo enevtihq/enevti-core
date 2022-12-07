@@ -94,6 +94,7 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
     this._app.get('/nft', controller.getAllNFT(this._channel));
     this._app.get('/nft/id/:id', controller.getNFTById(this._channel));
     this._app.get('/nft/id/:id/activity', controller.getNFTActivityById(this._channel));
+    this._app.get('/nft/id/:id/moment', controller.getNFTMomentById(this._channel));
     this._app.get('/nft/s/:serial', controller.getNFTBySerial(this._channel));
     this._app.get('/nft/template', controller.getAllNFTTemplate(this._channel));
     this._app.get('/nft/template/genesis', controller.getAllNFTTemplateGenesis(this._channel));

@@ -14,6 +14,7 @@ import getAllNFT from './nft/getAllNFT';
 import getNFTById from './nft/getNFTById';
 import getNFTBySerial from './nft/getNFTBySerial';
 import getNFTActivityById from './nft/getNFTActivityById';
+import getNFTMomentById from './nft/getNFTMomentById';
 import getNFTTemplateById from './nft/getNFTTemplateById';
 import getAllNFTTemplateGenesis from './nft/getAllNFTTemplateGenesis';
 import getAllNFTTemplate from './nft/getAllNFTTemplate';
@@ -114,6 +115,7 @@ export default {
   getNFTById,
   getNFTBySerial,
   getNFTActivityById,
+  getNFTMomentById,
   getNFTTemplateById,
   getAllNFTTemplateGenesis,
   getAllNFTTemplate,
