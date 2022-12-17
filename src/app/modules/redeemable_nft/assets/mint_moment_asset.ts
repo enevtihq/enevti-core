@@ -61,7 +61,7 @@ export class MintMomentAsset extends BaseAsset {
     const moment: MomentAsset = {
       id: generateID(transaction, stateStore, BigInt(0)),
       nftId: Buffer.from(asset.nftId, 'hex'),
-      creator: senderAddress,
+      creator: nft.creator,
       owner: senderAddress,
       createdOn: BigInt(timestamp),
       text: asset.text,
@@ -127,8 +127,8 @@ export class MintMomentAsset extends BaseAsset {
       date: BigInt(timestamp),
       name: ACTIVITY.PROFILE.MOMENTCREATED,
       from: senderAddress,
-      to: Buffer.alloc(0),
-      payload: nft.collectionId,
+      to: nft.creator,
+      payload: nft.id,
       value: {
         amount: BigInt(0),
         currency: COIN_NAME,
