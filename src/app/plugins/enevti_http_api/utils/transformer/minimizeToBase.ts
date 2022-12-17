@@ -38,17 +38,4 @@ export const minimizeCollection = (collection: Collection): CollectionBase => {
   return collectionBase;
 };
 
-export const minimizeMoment = (moment: Moment): MomentBase => {
-  const {
-    nftId,
-    owner,
-    creator,
-    data,
-    comment,
-    clubs,
-    createdOn,
-    activity,
-    ...momentBase
-  } = moment;
-  return momentBase;
-};
+export const minimizeMoment = (moment: Moment): MomentBase => moment;

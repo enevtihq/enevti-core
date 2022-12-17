@@ -16,6 +16,7 @@ import { getProfileEndpoint } from '../profile/getProfile';
 import { validateAddress } from '../../utils/validation/address';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
 import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
+import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -94,10 +95,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
           const data = await idBufferToMoment(channel, item.id);
           if (!data) throw new Error('Error while iterating allMoments.data');
           return {
-            id: data.id,
-            cover: data.cover,
-            text: data.text,
-            like: data.like,
+            ...minimizeMoment(data),
             textPlain: await invokeGetIPFSTextCache(channel, item.text),
           };
         },

@@ -17,7 +17,11 @@ import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import idBufferToCollection from '../../utils/transformer/idBufferToCollection';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
-import { minimizeCollection, minimizeNFT } from '../../utils/transformer/minimizeToBase';
+import {
+  minimizeCollection,
+  minimizeMoment,
+  minimizeNFT,
+} from '../../utils/transformer/minimizeToBase';
 import { validateAddress } from '../../utils/validation/address';
 import { isNumeric } from '../../utils/validation/number';
 
@@ -102,10 +106,7 @@ export async function getProfileEndpoint(
                     'Moment not found while iterating account.redeemableNft.momentCreated',
                   );
                 return {
-                  id: momn.id,
-                  cover: momn.cover,
-                  like: momn.like,
-                  text: momn.text,
+                  ...minimizeMoment(momn),
                   textPlain: await invokeGetIPFSTextCache(channel, momn.text),
                 };
               },
