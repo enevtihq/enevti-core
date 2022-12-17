@@ -14,7 +14,7 @@ export default async function idBufferToMoment(
 ): Promise<Moment | undefined> {
   const moment = await invokeGetMoment(channel, id.toString('hex'));
   if (!moment) return undefined;
-  const nft = await idBufferToNFT(channel, moment.nftId);
+  const nft = await idBufferToNFT(channel, moment.nftId, false);
   if (!nft) return undefined;
   return {
     ...moment,
