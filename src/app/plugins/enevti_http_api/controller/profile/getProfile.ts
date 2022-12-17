@@ -6,7 +6,6 @@ import { ProfileAPIResponse } from '../../../../../types/core/account/profile';
 import { CollectionBase } from '../../../../../types/core/chain/collection';
 import { MomentBase } from '../../../../../types/core/chain/moment';
 import { NFTBase } from '../../../../../types/core/chain/nft';
-import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { BASE32_PREFIX } from '../../constant/base32prefix';
 import {
   PROFILE_COLLECTION_INITIAL_LENGTH,
@@ -107,7 +106,6 @@ export async function getProfileEndpoint(
                   );
                 return {
                   ...minimizeMoment(momn),
-                  textPlain: await invokeGetIPFSTextCache(channel, momn.text),
                 };
               },
             ),

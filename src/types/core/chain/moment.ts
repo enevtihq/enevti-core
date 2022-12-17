@@ -1,6 +1,8 @@
+/* eslint-disable import/no-cycle */
 import { Persona, PersonaAsset } from '../account/persona';
 import { ActivityBase, ActivityChainBase } from './activity';
 import { MomentIdAsset, NFTIdAsset } from './id';
+import { NFTBase } from './nft';
 import { NFTContent } from './nft/NFTContent';
 
 export type AllMoment = {
@@ -35,6 +37,7 @@ export interface Moment {
   textPlain?: string;
 
   nftId: string;
+  nft?: NFTBase;
   owner: Persona;
   creator: Persona;
   data: NFTContent;

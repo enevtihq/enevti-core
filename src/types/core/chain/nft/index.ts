@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { NFTRarity } from './NFTRarity';
 import { NFTType } from './NFTType';
 import { NFTTemplateData } from './NFTTemplate';

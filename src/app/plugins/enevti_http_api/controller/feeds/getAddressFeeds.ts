@@ -15,7 +15,6 @@ import { MomentBase } from '../../../../../types/core/chain/moment';
 import { getProfileEndpoint } from '../profile/getProfile';
 import { validateAddress } from '../../utils/validation/address';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
-import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
@@ -96,7 +95,6 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
           if (!data) throw new Error('Error while iterating allMoments.data');
           return {
             ...minimizeMoment(data),
-            textPlain: await invokeGetIPFSTextCache(channel, item.text),
           };
         },
       ),
