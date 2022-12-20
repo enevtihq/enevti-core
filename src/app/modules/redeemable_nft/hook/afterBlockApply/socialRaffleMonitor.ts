@@ -23,11 +23,11 @@ export const socialRaffleMonitor = async (
   input: AfterBlockApplyContext,
   config: SocialRaffleGenesisConfig,
   channel: BaseModuleChannel,
-  collectionWithNewActivity: Set<Buffer>,
-  accountWithNewActivity: Set<Buffer>,
+  collectionWithNewActivity: Set<string>,
+  accountWithNewActivity: Set<string>,
   totalNftMintedInCollection: { [collection: string]: number },
-  pendingNFTBuffer: Set<Buffer>,
-  accountWithNewPending: Set<Buffer>,
+  pendingNFTBuffer: Set<string>,
+  accountWithNewPending: Set<string>,
 ) => {
   const rafflePoolAmount =
     (input.block.header.reward * BigInt(config.socialRaffle.rewardsCutPercentage)) / BigInt(100);
@@ -43,16 +43,18 @@ export const socialRaffleMonitor = async (
       const collection = await getCollectionById(input.stateStore, items.id.toString('hex'));
       if (!collection) throw new Error('Collection not found while monintorng social raffle');
 
-      collectionWithNewActivity.add(items.id);
-      accountWithNewActivity.add(items.winner);
+      collectionWithNewActivity.add(items.id.toString('hex'));
+      accountWithNewActivity.add(items.winner.toString('hex'));
       addInObject(totalNftMintedInCollection, items.id, items.raffled.length);
 
       const creatorAccount = await input.stateStore.account.get<RedeemableNFTAccountProps>(
         collection.creator,
       );
       if (creatorAccount.redeemableNft.pending.length > 0) {
-        creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
-        accountWithNewPending.add(collection.creator);
+        creatorAccount.redeemableNft.pending.forEach(nft =>
+          pendingNFTBuffer.add(nft.toString('hex')),
+        );
+        accountWithNewPending.add(collection.creator.toString('hex'));
       }
     });
   }

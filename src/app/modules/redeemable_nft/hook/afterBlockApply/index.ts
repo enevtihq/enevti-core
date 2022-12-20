@@ -43,17 +43,17 @@ export default async function redeemableNftAfterBlockApply(
   await collectionMintingAvailabilityMonitor(input);
   const timestampBlock = input.stateStore.chain.lastBlockHeaders[0];
 
-  const accountWithNewCollection: Set<Buffer> = new Set<Buffer>();
-  const accountWithNewPending: Set<Buffer> = new Set<Buffer>();
-  const accountWithNewMomentSlot: Set<Buffer> = new Set<Buffer>();
-  const accountWithNewActivity: Set<Buffer> = new Set<Buffer>();
-  const pendingNFTBuffer: Set<Buffer> = new Set<Buffer>();
-  const collectionWithNewActivity: Set<Buffer> = new Set<Buffer>();
-  const collectionWithNewLike: Set<Buffer> = new Set<Buffer>();
-  const collectionWithNewComment: Set<Buffer> = new Set<Buffer>();
-  const nftWithNewActivity: Set<Buffer> = new Set<Buffer>();
-  const nftWithNewLike: Set<Buffer> = new Set<Buffer>();
-  const nftWithNewComment: Set<Buffer> = new Set<Buffer>();
+  const accountWithNewCollection: Set<string> = new Set<string>();
+  const accountWithNewPending: Set<string> = new Set<string>();
+  const accountWithNewMomentSlot: Set<string> = new Set<string>();
+  const accountWithNewActivity: Set<string> = new Set<string>();
+  const pendingNFTBuffer: Set<string> = new Set<string>();
+  const collectionWithNewActivity: Set<string> = new Set<string>();
+  const collectionWithNewLike: Set<string> = new Set<string>();
+  const collectionWithNewComment: Set<string> = new Set<string>();
+  const nftWithNewActivity: Set<string> = new Set<string>();
+  const nftWithNewLike: Set<string> = new Set<string>();
+  const nftWithNewComment: Set<string> = new Set<string>();
   const totalNftMintedInCollection: { [collection: string]: number } = {};
   const totalCollectionCreatedByAddress: { [address: string]: number } = {};
 
@@ -90,7 +90,7 @@ export default async function redeemableNftAfterBlockApply(
           currency: COIN_NAME,
         },
       });
-      accountWithNewActivity.add(senderAddress);
+      accountWithNewActivity.add(senderAddress.toString('hex'));
 
       await addActivityProfile(input.stateStore, transferAsset.recipientAddress.toString('hex'), {
         transaction: payload.id,
@@ -104,7 +104,7 @@ export default async function redeemableNftAfterBlockApply(
           currency: COIN_NAME,
         },
       });
-      accountWithNewActivity.add(transferAsset.recipientAddress);
+      accountWithNewActivity.add(transferAsset.recipientAddress.toString('hex'));
     }
 
     // registerTransactionAsset
@@ -124,7 +124,7 @@ export default async function redeemableNftAfterBlockApply(
           currency: COIN_NAME,
         },
       });
-      accountWithNewActivity.add(senderAddress);
+      accountWithNewActivity.add(senderAddress.toString('hex'));
     }
 
     // voteTransactionAsset
@@ -150,13 +150,13 @@ export default async function redeemableNftAfterBlockApply(
           },
         });
       });
-      accountWithNewActivity.add(senderAddress);
+      accountWithNewActivity.add(senderAddress.toString('hex'));
     }
 
     // createNftAsset
     if (payload.moduleID === 1000 && payload.assetID === 0) {
-      accountWithNewCollection.add(senderAddress);
-      accountWithNewActivity.add(senderAddress);
+      accountWithNewCollection.add(senderAddress.toString('hex'));
+      accountWithNewActivity.add(senderAddress.toString('hex'));
       addInObject(totalCollectionCreatedByAddress, senderAddress, 1);
     }
 
@@ -166,8 +166,8 @@ export default async function redeemableNftAfterBlockApply(
       const collection = await getCollectionById(input.stateStore, mintNFTAsset.id);
       if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
-      collectionWithNewActivity.add(collection.id);
-      accountWithNewActivity.add(senderAddress);
+      collectionWithNewActivity.add(collection.id.toString('hex'));
+      accountWithNewActivity.add(senderAddress.toString('hex'));
       addInObject(totalNftMintedInCollection, collection.id, mintNFTAsset.quantity);
 
       channel.publish('redeemableNft:totalServeRateChanged', {
@@ -184,10 +184,10 @@ export default async function redeemableNftAfterBlockApply(
       const nft = await getNFTById(input.stateStore, deliverSecretAsset.id);
       if (!nft) throw new Error('nft id not found in afterBlockApply hook');
 
-      collectionWithNewActivity.add(nft.collectionId);
-      nftWithNewActivity.add(nft.id);
-      accountWithNewPending.add(nft.creator);
-      accountWithNewActivity.add(nft.creator);
+      collectionWithNewActivity.add(nft.collectionId.toString('hex'));
+      nftWithNewActivity.add(nft.id.toString('hex'));
+      accountWithNewPending.add(nft.creator.toString('hex'));
+      accountWithNewActivity.add(nft.creator.toString('hex'));
 
       channel.publish('redeemableNft:secretDelivered', {
         nft: deliverSecretAsset.id,
@@ -203,8 +203,8 @@ export default async function redeemableNftAfterBlockApply(
       const collection = await getCollectionById(input.stateStore, id);
       if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
-      collectionWithNewActivity.add(collection.id);
-      accountWithNewActivity.add(senderAddress);
+      collectionWithNewActivity.add(collection.id.toString('hex'));
+      accountWithNewActivity.add(senderAddress.toString('hex'));
       addInObject(totalNftMintedInCollection, collection.id, quantity);
 
       channel.publish('redeemableNft:totalServeRateChanged', {
@@ -215,7 +215,7 @@ export default async function redeemableNftAfterBlockApply(
     // likeNFtAsset
     if (payload.moduleID === 1000 && payload.assetID === 4) {
       const likeNftAsset = codec.decode<LikeNFTProps>(likeNftAssetSchema, payload.asset);
-      nftWithNewLike.add(Buffer.from(likeNftAsset.id, 'hex'));
+      nftWithNewLike.add(likeNftAsset.id);
     }
 
     // likeCollectionAsset
@@ -224,13 +224,13 @@ export default async function redeemableNftAfterBlockApply(
         likeCollectionAssetSchema,
         payload.asset,
       );
-      collectionWithNewLike.add(Buffer.from(likeCollectionAsset.id, 'hex'));
+      collectionWithNewLike.add(likeCollectionAsset.id);
     }
 
     // commentNftAsset
     if (payload.moduleID === 1000 && payload.assetID === 6) {
       const commentNFTAsset = codec.decode<CommentNFTProps>(commentNftAssetSchema, payload.asset);
-      nftWithNewComment.add(Buffer.from(commentNFTAsset.id, 'hex'));
+      nftWithNewComment.add(commentNFTAsset.id);
     }
 
     // commentCollectionAsset
@@ -239,7 +239,7 @@ export default async function redeemableNftAfterBlockApply(
         commentCollectionAssetSchema,
         payload.asset,
       );
-      collectionWithNewComment.add(Buffer.from(commentCollectionAsset.id, 'hex'));
+      collectionWithNewComment.add(commentCollectionAsset.id);
     }
 
     // setVideoCallRejectedAsset
@@ -250,7 +250,7 @@ export default async function redeemableNftAfterBlockApply(
       );
       const nft = await getNFTById(input.stateStore, setVideoCallRejectedAsset.id);
       if (!nft) throw new Error('nft id not found in afterBlockApply hook');
-      nftWithNewActivity.add(nft.id);
+      nftWithNewActivity.add(nft.id.toString('hex'));
 
       channel.publish('redeemableNft:videoCallStatusChanged', {
         id: setVideoCallRejectedAsset.id,
@@ -269,7 +269,7 @@ export default async function redeemableNftAfterBlockApply(
       );
       const nft = await getNFTById(input.stateStore, setVideoCallAnsweredAsset.id);
       if (!nft) throw new Error('nft id not found in afterBlockApply hook');
-      nftWithNewActivity.add(nft.id);
+      nftWithNewActivity.add(nft.id.toString('hex'));
 
       channel.publish('redeemableNft:videoCallStatusChanged', {
         id: setVideoCallAnsweredAsset.id,
@@ -287,7 +287,7 @@ export default async function redeemableNftAfterBlockApply(
     );
     account.redeemableNft.collection
       .slice(0, totalCollectionCreatedByAddress[address])
-      .forEach(collection => collectionWithNewActivity.add(collection));
+      .forEach(collection => collectionWithNewActivity.add(collection.toString('hex')));
   });
 
   await asyncForEach(Object.keys(totalNftMintedInCollection), async collectionId => {
@@ -295,11 +295,11 @@ export default async function redeemableNftAfterBlockApply(
     if (!collection) throw new Error('Collection not found in AfterBlockApply hook');
 
     collection.minted.slice(0, totalNftMintedInCollection[collectionId]).forEach(nft => {
-      nftWithNewActivity.add(nft);
+      nftWithNewActivity.add(nft.toString('hex'));
       getNFTById(input.stateStore, nft.toString('hex'))
         .then(nftAsset => {
           if (nftAsset && nftAsset.redeem.status === 'pending-secret')
-            accountWithNewMomentSlot.add(nftAsset.owner);
+            accountWithNewMomentSlot.add(nftAsset.owner.toString('hex'));
         })
         .catch(err => {
           throw new Error(err);
@@ -319,18 +319,20 @@ export default async function redeemableNftAfterBlockApply(
       collection.creator,
     );
     if (creatorAccount.redeemableNft.pending.length > 0) {
-      creatorAccount.redeemableNft.pending.forEach(nft => pendingNFTBuffer.add(nft));
-      accountWithNewPending.add(collection.creator);
+      creatorAccount.redeemableNft.pending.forEach(nft =>
+        pendingNFTBuffer.add(nft.toString('hex')),
+      );
+      accountWithNewPending.add(collection.creator.toString('hex'));
     }
   });
 
   if (accountWithNewPending.size > 0) {
     accountWithNewPending.forEach(address => {
       channel.publish('redeemableNft:newPendingByAddress', {
-        address: address.toString('hex'),
+        address,
       });
       channel.publish('redeemableNft:totalServeRateChanged', {
-        address: address.toString('hex'),
+        address,
       });
     });
   }
@@ -338,7 +340,7 @@ export default async function redeemableNftAfterBlockApply(
   if (accountWithNewMomentSlot.size > 0) {
     accountWithNewMomentSlot.forEach(address => {
       channel.publish('redeemableNft:totalMomentSlotChanged', {
-        address: address.toString('hex'),
+        address,
       });
     });
   }
@@ -347,8 +349,8 @@ export default async function redeemableNftAfterBlockApply(
     channel.publish('redeemableNft:newCollection');
     accountWithNewCollection.forEach(address =>
       channel.publish('redeemableNft:newCollectionByAddress', {
-        address: address.toString('hex'),
-        count: totalCollectionCreatedByAddress[address.toString('hex')],
+        address,
+        count: totalCollectionCreatedByAddress[address],
       }),
     );
   }
@@ -356,7 +358,7 @@ export default async function redeemableNftAfterBlockApply(
   if (collectionWithNewActivity.size > 0) {
     collectionWithNewActivity.forEach(collection =>
       channel.publish('redeemableNft:newActivityCollection', {
-        collection: collection.toString('hex'),
+        collection,
         timestamp: timestampBlock.timestamp,
       }),
     );
@@ -365,7 +367,7 @@ export default async function redeemableNftAfterBlockApply(
   if (nftWithNewActivity.size > 0) {
     nftWithNewActivity.forEach(nft =>
       channel.publish('redeemableNft:newActivityNFT', {
-        nft: nft.toString('hex'),
+        nft,
         timestamp: timestampBlock.timestamp,
       }),
     );
@@ -374,7 +376,7 @@ export default async function redeemableNftAfterBlockApply(
   if (accountWithNewActivity.size > 0) {
     accountWithNewActivity.forEach(address =>
       channel.publish('redeemableNft:newActivityProfile', {
-        address: address.toString('hex'),
+        address,
         timestamp: timestampBlock.timestamp,
       }),
     );
@@ -387,26 +389,22 @@ export default async function redeemableNftAfterBlockApply(
   }
 
   if (nftWithNewLike.size > 0) {
-    nftWithNewLike.forEach(nft =>
-      channel.publish('redeemableNft:newNFTLike', { id: nft.toString('hex') }),
-    );
+    nftWithNewLike.forEach(nft => channel.publish('redeemableNft:newNFTLike', { id: nft }));
   }
 
   if (collectionWithNewLike.size > 0) {
     collectionWithNewLike.forEach(collection =>
-      channel.publish('redeemableNft:newCollectionLike', { id: collection.toString('hex') }),
+      channel.publish('redeemableNft:newCollectionLike', { id: collection }),
     );
   }
 
   if (nftWithNewComment.size > 0) {
-    nftWithNewComment.forEach(nft =>
-      channel.publish('redeemableNft:newNFTComment', { id: nft.toString('hex') }),
-    );
+    nftWithNewComment.forEach(nft => channel.publish('redeemableNft:newNFTComment', { id: nft }));
   }
 
   if (collectionWithNewComment.size > 0) {
     collectionWithNewComment.forEach(collection =>
-      channel.publish('redeemableNft:newCollectionComment', { id: collection.toString('hex') }),
+      channel.publish('redeemableNft:newCollectionComment', { id: collection }),
     );
   }
 }
