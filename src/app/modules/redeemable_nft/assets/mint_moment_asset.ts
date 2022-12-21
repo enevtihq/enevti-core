@@ -9,6 +9,7 @@ import { MomentAsset, MomentActivityChainItems } from '../../../../types/core/ch
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
+import { VALIDATION } from '../constants/validation';
 import { mintMomentAssetSchema } from '../schemas/asset/mint_moment_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import {
@@ -34,8 +35,37 @@ export class MintMomentAsset extends BaseAsset {
   // Define schema for asset
   public schema = mintMomentAssetSchema;
 
-  public validate(_input: ValidateAssetContext<MintMomentProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<MintMomentProps>): void {
+    if (asset.nftId.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.nftId max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
+    if (asset.text.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.text max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
+    if (asset.data.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.data max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
+    if (asset.dataMime.length > VALIDATION.MIME_MAXLENGTH) {
+      throw new Error(`asset.dataMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
+    }
+    if (asset.dataExtension.length > VALIDATION.FILE_EXTENSION_MAXLENGTH) {
+      throw new Error(`asset.dataExtension max length is ${VALIDATION.FILE_EXTENSION_MAXLENGTH}`);
+    }
+    if (asset.dataProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
+      throw new Error(`asset.dataProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
+    }
+    if (asset.cover.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.cover max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
+    if (asset.coverMime.length > VALIDATION.MIME_MAXLENGTH) {
+      throw new Error(`asset.coverMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
+    }
+    if (asset.coverExtension.length > VALIDATION.FILE_EXTENSION_MAXLENGTH) {
+      throw new Error(`asset.coverExtension max length is ${VALIDATION.FILE_EXTENSION_MAXLENGTH}`);
+    }
+    if (asset.coverProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
+      throw new Error(`asset.coverProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

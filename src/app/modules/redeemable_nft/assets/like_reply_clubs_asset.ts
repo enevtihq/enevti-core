@@ -2,6 +2,7 @@ import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { LikeReplyClubsProps } from '../../../../types/core/asset/redeemable_nft/like_reply_clubs_asset';
 import { ACTIVITY } from '../constants/activity';
+import { VALIDATION } from '../constants/validation';
 import { likeReplyClubsAssetSchema } from '../schemas/asset/like_reply_clubs_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
@@ -22,8 +23,10 @@ export class LikeReplyClubsAsset extends BaseAsset {
   // Define schema for asset
   public schema = likeReplyClubsAssetSchema;
 
-  public validate(_input: ValidateAssetContext<LikeReplyClubsProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<LikeReplyClubsProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

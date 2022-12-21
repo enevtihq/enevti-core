@@ -1,4 +1,4 @@
-import { BaseAsset, ApplyAssetContext, cryptography } from 'lisk-sdk';
+import { BaseAsset, ApplyAssetContext, cryptography, ValidateAssetContext } from 'lisk-sdk';
 import { deliverSecretAssetSchema } from '../schemas/asset/deliver_secret_asset';
 import { DeliverSecretProps } from '../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
@@ -10,6 +10,7 @@ import { addActivityCollection, addActivityNFT, addActivityProfile } from '../ut
 import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
 import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
+import { VALIDATION } from '../constants/validation';
 
 export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   public name = 'deliverSecret';
@@ -18,8 +19,10 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   // Define schema for asset
   public schema = deliverSecretAssetSchema;
 
-  public validate(): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<DeliverSecretProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

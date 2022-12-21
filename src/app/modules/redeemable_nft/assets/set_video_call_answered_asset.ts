@@ -5,6 +5,7 @@ import { CollectionActivityChainItems } from '../../../../types/core/chain/colle
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
+import { VALIDATION } from '../constants/validation';
 import { setVideoCallAnsweredAssetSchema } from '../schemas/asset/set_video_call_answered_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityCollection, addActivityEngagement, addActivityNFT } from '../utils/activity';
@@ -18,8 +19,10 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
   // Define schema for asset
   public schema = setVideoCallAnsweredAssetSchema;
 
-  public validate(_input: ValidateAssetContext<SetVideoCallAnsweredProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<SetVideoCallAnsweredProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

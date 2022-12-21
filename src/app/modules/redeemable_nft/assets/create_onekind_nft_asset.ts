@@ -47,11 +47,23 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public schema = createOnekindNftAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<CreateOneKindNFTProps>): void {
+    if (asset.name.length > 20) {
+      throw new Error(`asset.name max length is 20`);
+    }
+    if (asset.description.length > 280) {
+      throw new Error(`asset.description max length is 280`);
+    }
+    if (asset.symbol.length > 10) {
+      throw new Error(`asset.symbol max length is 10`);
+    }
     if (!Object.values(UTILITY).includes(asset.utility)) {
       throw new Error(`asset.utility is unknown`);
     }
     if (!Object.values(RECURRING).includes(asset.recurring)) {
       throw new Error(`asset.recurring is unknown`);
+    }
+    if (asset.recurring.length > 8) {
+      throw new Error(`asset.recurring max length is 8`);
     }
     if (asset.recurring === RECURRING.WEEKLY && asset.time.day < 0) {
       throw new Error(`asset.time.day is required on recurring perweek`);
@@ -96,6 +108,47 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     }
     if (asset.royalty.staker < 0) {
       throw new Error(`asset.royalty.staker can't be negative`);
+    }
+    if (asset.template.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.template max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
+    if (asset.data.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.data max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
+    if (asset.dataMime.length > VALIDATION.MIME_MAXLENGTH) {
+      throw new Error(`asset.dataMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
+    }
+    if (asset.dataExtension.length > VALIDATION.FILE_EXTENSION_MAXLENGTH) {
+      throw new Error(`asset.dataExtension max length is ${VALIDATION.FILE_EXTENSION_MAXLENGTH}`);
+    }
+    if (asset.dataProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
+      throw new Error(`asset.dataProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
+    }
+    if (asset.cover.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.cover max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
+    if (asset.coverMime.length > VALIDATION.MIME_MAXLENGTH) {
+      throw new Error(`asset.coverMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
+    }
+    if (asset.coverExtension.length > VALIDATION.FILE_EXTENSION_MAXLENGTH) {
+      throw new Error(`asset.coverExtension max length is ${VALIDATION.FILE_EXTENSION_MAXLENGTH}`);
+    }
+    if (asset.coverProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
+      throw new Error(`asset.coverProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
+    }
+    if (asset.content.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.content max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
+    if (asset.contentMime.length > VALIDATION.MIME_MAXLENGTH) {
+      throw new Error(`asset.contentMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
+    }
+    if (asset.contentExtension.length > VALIDATION.FILE_EXTENSION_MAXLENGTH) {
+      throw new Error(
+        `asset.contentExtension max length is ${VALIDATION.FILE_EXTENSION_MAXLENGTH}`,
+      );
+    }
+    if (asset.contentProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
+      throw new Error(`asset.contentProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
     }
   }
 

@@ -3,6 +3,7 @@ import { RedeemableNFTAccountProps } from '../../../../types/core/account/profil
 import { CommentCollectionProps } from '../../../../types/core/asset/redeemable_nft/comment_collection_asset';
 import { CommentAsset } from '../../../../types/core/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
+import { VALIDATION } from '../constants/validation';
 import { commentCollectionAssetSchema } from '../schemas/asset/comment_collection_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
@@ -17,8 +18,13 @@ export class CommentCollectionAsset extends BaseAsset<CommentCollectionProps> {
   // Define schema for asset
   public schema = commentCollectionAssetSchema;
 
-  public validate(_input: ValidateAssetContext<CommentCollectionProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<CommentCollectionProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
+    if (asset.cid.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
+      throw new Error(`asset.cid max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

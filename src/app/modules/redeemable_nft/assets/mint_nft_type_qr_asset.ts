@@ -6,6 +6,7 @@ import {
 } from '../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
 import { getCollectionById } from '../utils/collection';
 import { mintNFT } from '../utils/mint';
+import { VALIDATION } from '../constants/validation';
 
 export class MintNftTypeQrAsset extends BaseAsset {
   public name = 'mintNftTypeQr';
@@ -18,8 +19,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
     if (asset.body.length === 0) {
       throw new Error(`asset.body cannot be empty`);
     }
-    if (asset.signature.length === 0) {
-      throw new Error(`asset.signature cannot be empty`);
+    if (asset.signature.length > VALIDATION.SIGNATURE_MAXLENGTH) {
+      throw new Error(`asset.signature max length is ${VALIDATION.SIGNATURE_MAXLENGTH}`);
     }
   }
 

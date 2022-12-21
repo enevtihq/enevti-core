@@ -1,6 +1,7 @@
-import { BaseAsset, ApplyAssetContext } from 'lisk-sdk';
+import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { PersonaAccountProps } from '../../../../types/core/account/persona';
 import { ChangeTwitterProps } from '../../../../types/core/asset/persona/change_twitter_asset';
+import { VALIDATION } from '../constant/validation';
 import { changeTwitterAssetSchema } from '../schema/asset/change_twitter_asset';
 
 export class ChangeTwitterAsset extends BaseAsset {
@@ -10,8 +11,10 @@ export class ChangeTwitterAsset extends BaseAsset {
   // Define schema for asset
   public schema = changeTwitterAssetSchema;
 
-  public validate(): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<ChangeTwitterProps>): void {
+    if (asset.twitter.length > VALIDATION.TWITTER_ID_MAXLENGTH) {
+      throw new Error(`asset.twitter max length is ${VALIDATION.TWITTER_ID_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

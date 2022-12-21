@@ -5,6 +5,7 @@ import { CollectionActivityChainItems } from '../../../../types/core/chain/colle
 import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
+import { VALIDATION } from '../constants/validation';
 import { setVideoCallRejectedAssetSchema } from '../schemas/asset/set_video_call_rejected_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement, addActivityNFT, addActivityCollection } from '../utils/activity';
@@ -18,8 +19,16 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
   // Define schema for asset
   public schema = setVideoCallRejectedAssetSchema;
 
-  public validate(_input: ValidateAssetContext<SetVideoCallRejectedProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<SetVideoCallRejectedProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
+    if (asset.publicKey.length > VALIDATION.PUBLIC_KEY_MAXLENGTH) {
+      throw new Error(`asset.publicKey max length is ${VALIDATION.PUBLIC_KEY_MAXLENGTH}`);
+    }
+    if (asset.signature.length > VALIDATION.SIGNATURE_MAXLENGTH) {
+      throw new Error(`asset.signature max length is ${VALIDATION.SIGNATURE_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

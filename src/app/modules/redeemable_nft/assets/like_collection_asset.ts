@@ -3,6 +3,7 @@ import { RedeemableNFTAccountProps } from '../../../../types/core/account/profil
 import { LikeCollectionProps } from '../../../../types/core/asset/redeemable_nft/like_collection_asset';
 import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 import { ACTIVITY } from '../constants/activity';
+import { VALIDATION } from '../constants/validation';
 import { likeCollectionAssetSchema } from '../schemas/asset/like_collection_asset';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { addActivityEngagement } from '../utils/activity';
@@ -18,8 +19,10 @@ export class LikeCollectionAsset extends BaseAsset<LikeCollectionProps> {
   // Define schema for asset
   public schema = likeCollectionAssetSchema;
 
-  public validate(_input: ValidateAssetContext<LikeCollectionProps>): void {
-    // Validate your asset
+  public validate({ asset }: ValidateAssetContext<LikeCollectionProps>): void {
+    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
+      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
