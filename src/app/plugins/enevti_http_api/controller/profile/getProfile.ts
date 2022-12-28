@@ -27,7 +27,10 @@ import { isNumeric } from '../../utils/validation/number';
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const { persona, owned, onsale, moment, collection } = req.query as Record<string, string>;
+    const { persona, owned, onsale, moment, collection, viewer } = req.query as Record<
+      string,
+      string
+    >;
     validateAddress(address);
 
     const { profile, version } = await getProfileEndpoint(
@@ -38,6 +41,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       onsale,
       moment,
       collection,
+      viewer,
     );
 
     res.status(200).json({ data: profile, version, meta: req.params });
@@ -54,6 +58,7 @@ export async function getProfileEndpoint(
   onsale?: string,
   moment?: string,
   collection?: string,
+  viewer?: string,
 ) {
   const account = await invokeGetAccount(channel, address);
 
@@ -78,7 +83,7 @@ export async function getProfileEndpoint(
             .slice(0, owned === '0' ? PROFILE_OWNED_INITIAL_LENGTH : parseInt(owned, 10))
             .map(
               async (item): Promise<NFTBase> => {
-                const nft = await idBufferToNFT(channel, item);
+                const nft = await idBufferToNFT(channel, item, false, viewer);
                 if (!nft)
                   throw new Error('NFT not found while iterating account.redeemableNft.owned');
                 return minimizeNFT(nft);
@@ -99,7 +104,7 @@ export async function getProfileEndpoint(
             .slice(0, moment === '0' ? PROFILE_MOMENT_INITIAL_LENGTH : parseInt(moment, 10))
             .map(
               async (item): Promise<MomentBase> => {
-                const momn = await idBufferToMoment(channel, item);
+                const momn = await idBufferToMoment(channel, item, viewer);
                 if (!momn)
                   throw new Error(
                     'Moment not found while iterating account.redeemableNft.momentCreated',
@@ -124,7 +129,7 @@ export async function getProfileEndpoint(
             )
             .map(
               async (item): Promise<CollectionBase> => {
-                const col = await idBufferToCollection(channel, item);
+                const col = await idBufferToCollection(channel, item, false, viewer);
                 if (!col)
                   throw new Error(
                     'Collection not found while iterating account.redeemableNft.collection',

@@ -1,14 +1,16 @@
 import { BaseChannel } from 'lisk-framework';
 import { Collection, CollectionAsset } from '../../../../../types/core/chain/collection';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFTBase } from '../../../../../types/core/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
 import chainDateToUI from './chainDateToUI';
 import idBufferToNFT from './idBufferToNFT';
+import { minimizeNFT } from './minimizeToBase';
 
 export default async function collectionChainToUI(
   channel: BaseChannel,
   collection: CollectionAsset,
   withMinted = true,
+  viewer?: string,
 ) {
   const social: Collection['social'] = {
     twitter: {
@@ -19,10 +21,10 @@ export default async function collectionChainToUI(
   const minted: Collection['minted'] = withMinted
     ? await Promise.all(
         collection.minted.map(
-          async (item): Promise<NFT> => {
-            const nft = await idBufferToNFT(channel, item);
+          async (item): Promise<NFTBase> => {
+            const nft = await idBufferToNFT(channel, item, false, viewer);
             if (!nft) throw new Error('NFT not found while processing minted');
-            return nft;
+            return minimizeNFT(nft);
           },
         ),
       )

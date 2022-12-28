@@ -13,7 +13,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const ret: { id: string; secret: NFTSecret }[] = await Promise.all(
       account.redeemableNft.pending.map(async pending => {
-        const nft = await idBufferToNFT(channel, pending);
+        const nft = await idBufferToNFT(channel, pending, false);
         if (!nft) throw new Error('undefined NFT id while iterating redeemableNft.pending');
         return {
           id: nft.id,

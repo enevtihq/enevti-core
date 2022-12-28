@@ -13,7 +13,7 @@ type ProfileCollectionResponse = { checkpoint: number; version: number; data: Co
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
@@ -28,7 +28,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const collectionAsset = await Promise.all(
       account.redeemableNft.collection.slice(o, c).map(
         async (item): Promise<CollectionBase> => {
-          const collection = await idBufferToCollection(channel, item);
+          const collection = await idBufferToCollection(channel, item, false, viewer);
           if (!collection)
             throw new Error(
               'Collection not found while iterating account.redeemableNft.collection',

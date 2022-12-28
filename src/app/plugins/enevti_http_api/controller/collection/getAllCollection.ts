@@ -23,11 +23,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
           const liked = viewer
             ? (await invokeGetLiked(channel, item.id.toString('hex'), viewer)) === 1
             : false;
-          const activity = await idBufferToActivityCollection(channel, item.id);
-          const moment = (await idBufferToMomentAt(channel, item.id)).map(momentItem =>
+          const activity = await idBufferToActivityCollection(channel, item.id, viewer);
+          const moment = (await idBufferToMomentAt(channel, item.id, viewer)).map(momentItem =>
             minimizeMoment(momentItem),
           );
-          const restCollection = await collectionChainToUI(channel, item);
+          const restCollection = await collectionChainToUI(channel, item, true, viewer);
           return {
             ...item,
             ...restCollection,

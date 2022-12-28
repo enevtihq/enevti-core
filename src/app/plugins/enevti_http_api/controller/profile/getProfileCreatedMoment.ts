@@ -12,7 +12,7 @@ type ProfileCreatedMomentResponse = { checkpoint: number; version: number; data:
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
@@ -27,7 +27,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     const momentCreatedAsset = await Promise.all(
       account.redeemableNft.momentCreated.slice(o, c).map(
         async (item): Promise<MomentBase> => {
-          const moment = await idBufferToMoment(channel, item);
+          const moment = await idBufferToMoment(channel, item, viewer);
           if (!moment)
             throw new Error('Moment not found while iterating account.redeemableNft.momentCreated');
           return moment;

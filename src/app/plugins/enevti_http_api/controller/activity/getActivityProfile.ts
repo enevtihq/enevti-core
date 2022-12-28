@@ -17,12 +17,13 @@ export default (channel: BaseChannel, client: apiClient.APIClient) => async (
 ) => {
   try {
     const { address } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
     const profileActivity = await idBufferToActivityProfile(
       channel,
       client,
       Buffer.from(address, 'hex'),
+      viewer,
     );
 
     const { v, o, c } = createPagination(profileActivity.length, version, offset, limit);

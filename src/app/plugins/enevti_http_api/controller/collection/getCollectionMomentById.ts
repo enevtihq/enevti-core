@@ -11,8 +11,8 @@ type CollectionMomentResponse = { checkpoint: number; version: number; data: Mom
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
-    const momentAtCollection = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'));
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
+    const momentAtCollection = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'), viewer);
     const momentBaseAtCollection = momentAtCollection.map(moment => minimizeMoment(moment));
 
     const { v, o, c } = createPagination(momentBaseAtCollection.length, version, offset, limit);

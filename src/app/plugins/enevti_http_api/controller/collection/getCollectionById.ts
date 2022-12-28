@@ -10,10 +10,10 @@ import {
 } from '../../constant/limit';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFTBase } from '../../../../../types/core/chain/nft';
 import { isNumeric } from '../../utils/validation/number';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
-import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
+import { minimizeMoment, minimizeNFT } from '../../utils/transformer/minimizeToBase';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -34,6 +34,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
       const collectionActivity = await idBufferToActivityCollection(
         channel,
         Buffer.from(id, 'hex'),
+        viewer,
       );
       activityData = collectionActivity.slice(
         0,
@@ -50,10 +51,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
         collection.minted
           .slice(0, minted === '0' ? COLLECTION_MINTED_INITIAL_LENGTH : parseInt(minted, 10))
           .map(
-            async (item): Promise<NFT> => {
-              const nft = await idBufferToNFT(channel, item);
+            async (item): Promise<NFTBase> => {
+              const nft = await idBufferToNFT(channel, item, false, viewer);
               if (!nft) throw new Error('NFT not found while iterating collection.minted');
-              return nft;
+              return minimizeNFT(nft);
             },
           ),
       );
@@ -63,7 +64,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentData: Collection['moment'] = [];
     if (moment && isNumeric(moment)) {
       const collectionMoment = (
-        await idBufferToMomentAt(channel, Buffer.from(id, 'hex'))
+        await idBufferToMomentAt(channel, Buffer.from(id, 'hex'), viewer)
       ).map(momentItem => minimizeMoment(momentItem));
       momentData = collectionMoment.slice(
         0,

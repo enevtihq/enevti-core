@@ -7,12 +7,15 @@ export const minimizeNFT = (nft: NFT): NFTBase => {
     collectionId,
     redeem,
     comment,
+    clubs,
     description,
     createdOn,
+    owner,
     creator,
     networkIdentifier,
     royalty,
     activity,
+    moment,
     ...nftBase
   } = nft;
   return nftBase;
@@ -27,12 +30,15 @@ export const minimizeCollection = (collection: Collection): CollectionBase => {
     createdOn,
     like,
     comment,
+    clubs,
     social,
     packSize,
     minted,
     creator,
     activity,
+    moment,
     promoted,
+    raffled,
     ...collectionBase
   } = collection;
   return collectionBase;

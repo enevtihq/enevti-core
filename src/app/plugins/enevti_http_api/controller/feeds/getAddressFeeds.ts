@@ -93,14 +93,27 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
         async (item): Promise<MomentBase> => {
           const data = await idBufferToMoment(channel, item.id);
           if (!data) throw new Error('Error while iterating allMoments.data');
+          const liked = viewer
+            ? (await invokeGetLiked(channel, item.id.toString('hex'), viewer)) === 1
+            : false;
           return {
             ...minimizeMoment(data),
+            liked,
           };
         },
       ),
     );
 
-    const profileEndpoint = await getProfileEndpoint(channel, address, 'true', '0', '0', '0', '0');
+    const profileEndpoint = await getProfileEndpoint(
+      channel,
+      address,
+      'true',
+      '0',
+      '0',
+      '0',
+      '0',
+      viewer,
+    );
 
     const homeFeeds: HomeFeeds = {
       profile: profileEndpoint.profile,

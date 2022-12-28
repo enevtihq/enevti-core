@@ -11,8 +11,8 @@ type NFTMomentResponse = { checkpoint: number; version: number; data: MomentBase
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
-    const momentAtNFT = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'));
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
+    const momentAtNFT = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'), viewer);
     const momentBaseAtNFT = momentAtNFT.map(moment => minimizeMoment(moment));
 
     const { v, o, c } = createPagination(momentBaseAtNFT.length, version, offset, limit);

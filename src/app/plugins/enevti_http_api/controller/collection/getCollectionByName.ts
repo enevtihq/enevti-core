@@ -7,7 +7,7 @@ import {
   invokeGetCollectionIdFromName,
   invokeGetLiked,
 } from '../../utils/invoker/redeemable_nft_module';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFTBase } from '../../../../../types/core/chain/nft';
 import {
   COLLECTION_ACTIVITY_INITIAL_LENGTH,
   COLLECTION_MINTED_INITIAL_LENGTH,
@@ -17,7 +17,7 @@ import idBufferToActivityCollection from '../../utils/transformer/idBufferToActi
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { isNumeric } from '../../utils/validation/number';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
-import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
+import { minimizeMoment, minimizeNFT } from '../../utils/transformer/minimizeToBase';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
@@ -42,7 +42,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let activityVersion = 0;
     let activityData: CollectionActivity[] = [];
     if (activity && isNumeric(activity)) {
-      const collectionActivity = await idBufferToActivityCollection(channel, id);
+      const collectionActivity = await idBufferToActivityCollection(channel, id, viewer);
       activityData = collectionActivity.slice(
         0,
         activity === '0' ? COLLECTION_ACTIVITY_INITIAL_LENGTH : parseInt(activity, 10),
@@ -58,10 +58,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
         collection.minted
           .slice(0, minted === '0' ? COLLECTION_MINTED_INITIAL_LENGTH : parseInt(minted, 10))
           .map(
-            async (item): Promise<NFT> => {
-              const nft = await idBufferToNFT(channel, item);
+            async (item): Promise<NFTBase> => {
+              const nft = await idBufferToNFT(channel, item, false, viewer);
               if (!nft) throw new Error('NFT not found while iterating collection.minted');
-              return nft;
+              return minimizeNFT(nft);
             },
           ),
       );
@@ -70,7 +70,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentVersion = 0;
     let momentData: Collection['moment'] = [];
     if (moment && isNumeric(moment)) {
-      const collectionMoment = (await idBufferToMomentAt(channel, id)).map(momentItem =>
+      const collectionMoment = (await idBufferToMomentAt(channel, id, viewer)).map(momentItem =>
         minimizeMoment(momentItem),
       );
       momentData = collectionMoment.slice(

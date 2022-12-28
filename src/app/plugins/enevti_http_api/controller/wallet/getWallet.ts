@@ -16,7 +16,7 @@ export default (channel: BaseChannel, client: apiClient.APIClient) => async (
 ) => {
   try {
     const { address } = req.params;
-    const { history } = req.query as Record<string, string>;
+    const { history, viewer } = req.query as Record<string, string>;
     validateAddress(address);
     const account = await invokeGetAccount(channel, address);
 
@@ -32,6 +32,7 @@ export default (channel: BaseChannel, client: apiClient.APIClient) => async (
         channel,
         client,
         Buffer.from(address, 'hex'),
+        viewer,
       );
       historyData = profileActivity.slice(
         0,

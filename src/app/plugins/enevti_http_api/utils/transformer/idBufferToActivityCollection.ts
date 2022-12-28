@@ -6,7 +6,11 @@ import { invokeGetActivityCollection } from '../invoker/redeemable_nft_module';
 import idBufferToNFT from './idBufferToNFT';
 import chainDateToUI from './chainDateToUI';
 
-export default async function idBufferToActivityCollection(channel: BaseChannel, id: Buffer) {
+export default async function idBufferToActivityCollection(
+  channel: BaseChannel,
+  id: Buffer,
+  viewer?: string,
+) {
   const activityChain = await invokeGetActivityCollection(channel, id.toString('hex'));
   const activity: CollectionActivity[] = await Promise.all(
     activityChain.items.map(async act => {
@@ -15,7 +19,7 @@ export default async function idBufferToActivityCollection(channel: BaseChannel,
       const nfts = await Promise.all(
         act.nfts.map(
           async (item): Promise<NFT> => {
-            const nft = await idBufferToNFT(channel, item);
+            const nft = await idBufferToNFT(channel, item, false, viewer);
             if (!nft)
               throw new Error('NFT not found while processing idBufferToActivityCollection');
             return nft;

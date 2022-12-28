@@ -5,7 +5,11 @@ import { EngagementActivity } from '../../../../../types/core/account/profile';
 import idBufferToNFT from './idBufferToNFT';
 import idBufferToCollection from './idBufferToCollection';
 
-export default async function idBufferToActivityEngagement(channel: BaseChannel, address: Buffer) {
+export default async function idBufferToActivityEngagement(
+  channel: BaseChannel,
+  address: Buffer,
+  viewer?: string,
+) {
   const activityChain = await invokeGetActivityEngagement(channel, address.toString('hex'));
   const activity: EngagementActivity[] = await Promise.all(
     activityChain.items.map(async act => {
@@ -15,17 +19,19 @@ export default async function idBufferToActivityEngagement(channel: BaseChannel,
       switch (act.name) {
         case 'likeNft':
         case 'commentNft':
-          target = ((await idBufferToNFT(channel, act.target)) as unknown) as Record<
+          target = ((await idBufferToNFT(channel, act.target, false, viewer)) as unknown) as Record<
             string,
             unknown
           >;
           break;
         case 'likeCollection':
         case 'commentCollection':
-          target = ((await idBufferToCollection(channel, act.target)) as unknown) as Record<
-            string,
-            unknown
-          >;
+          target = ((await idBufferToCollection(
+            channel,
+            act.target,
+            false,
+            viewer,
+          )) as unknown) as Record<string, unknown>;
           break;
         default:
           break;

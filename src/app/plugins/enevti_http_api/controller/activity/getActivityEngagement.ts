@@ -13,11 +13,12 @@ type EngagementActivityResponse = {
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
     const profileActivity = await idBufferToActivityEngagement(
       channel,
       Buffer.from(address, 'hex'),
+      viewer,
     );
 
     const { v, o, c } = createPagination(profileActivity.length, version, offset, limit);

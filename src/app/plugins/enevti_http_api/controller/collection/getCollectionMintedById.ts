@@ -2,16 +2,17 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection } from '../../../../../types/core/chain/collection';
 import { invokeGetCollection } from '../../utils/invoker/redeemable_nft_module';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFTBase } from '../../../../../types/core/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import createPagination from '../../utils/misc/createPagination';
+import { minimizeNFT } from '../../utils/transformer/minimizeToBase';
 
 type CollectionMintedResponse = { checkpoint: number; version: number; data: Collection['minted'] };
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
     const collection = await invokeGetCollection(channel, id);
     if (!collection) {
@@ -23,10 +24,10 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
 
     const minted = await Promise.all(
       collection.minted.slice(o, c).map(
-        async (item): Promise<NFT> => {
-          const nft = await idBufferToNFT(channel, item);
+        async (item): Promise<NFTBase> => {
+          const nft = await idBufferToNFT(channel, item, false, viewer);
           if (!nft) throw new Error('NFT not found while iterating collection.minted');
-          return nft;
+          return minimizeNFT(nft);
         },
       ),
     );

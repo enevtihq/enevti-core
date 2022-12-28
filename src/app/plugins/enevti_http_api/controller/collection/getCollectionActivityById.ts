@@ -13,9 +13,13 @@ type CollectionActivityResponse = {
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { offset, limit, version } = req.query as Record<string, string>;
+    const { offset, limit, version, viewer } = req.query as Record<string, string>;
 
-    const collectionActivity = await idBufferToActivityCollection(channel, Buffer.from(id, 'hex'));
+    const collectionActivity = await idBufferToActivityCollection(
+      channel,
+      Buffer.from(id, 'hex'),
+      viewer,
+    );
 
     const { v, o, c } = createPagination(collectionActivity.length, version, offset, limit);
 

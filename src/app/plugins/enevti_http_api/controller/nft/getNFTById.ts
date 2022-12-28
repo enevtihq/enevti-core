@@ -39,7 +39,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentVersion = 0;
     let momentData: MomentBase[] = [];
     if (moment && isNumeric(moment)) {
-      const nftMoments = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'));
+      const nftMoments = await idBufferToMomentAt(channel, Buffer.from(id, 'hex'), viewer);
       momentData = nftMoments.slice(
         0,
         moment === '0' ? NFT_MOMENT_INITIAL_LENGTH : parseInt(moment, 10),

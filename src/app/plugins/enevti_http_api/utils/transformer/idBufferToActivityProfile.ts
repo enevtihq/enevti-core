@@ -12,6 +12,7 @@ export default async function idBufferToActivityProfile(
   channel: BaseChannel,
   client: apiClient.APIClient,
   address: Buffer,
+  viewer?: string,
 ) {
   const activityChain = await invokeGetActivityProfile(channel, address.toString('hex'));
   const activity: ProfileActivity[] = await Promise.all(
@@ -35,16 +36,20 @@ export default async function idBufferToActivityProfile(
         case 'mintNFT':
         case 'deliverSecret':
         case 'NFTSale':
-          payload = ((await idBufferToNFT(channel, act.payload)) as unknown) as Record<
-            string,
-            unknown
-          >;
+          payload = ((await idBufferToNFT(
+            channel,
+            act.payload,
+            false,
+            viewer,
+          )) as unknown) as Record<string, unknown>;
           break;
         case 'createNFT':
-          payload = ((await idBufferToCollection(channel, act.payload)) as unknown) as Record<
-            string,
-            unknown
-          >;
+          payload = ((await idBufferToCollection(
+            channel,
+            act.payload,
+            false,
+            viewer,
+          )) as unknown) as Record<string, unknown>;
           break;
         default:
           break;

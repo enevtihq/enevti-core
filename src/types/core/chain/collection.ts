@@ -73,6 +73,7 @@ export interface Collection extends CollectionBase {
   moment: MomentBase[];
   promoted: boolean;
   raffled: number;
+  liked: boolean;
 }
 
 export interface CollectionAsset
@@ -87,6 +88,7 @@ export interface CollectionAsset
     | 'minting'
     | 'createdOn'
     | 'moment'
+    | 'liked'
   > {
   id: CollectionIdAsset;
   creator: PersonaAsset;
