@@ -177,6 +177,10 @@ export class EnevtiHttpApiPlugin extends BasePlugin {
       controller.isAddressCollectionOwnerOrCreator(this._channel),
     );
     this._app.get('/authorized/nft/:id', controller.isAddressNFTOwnerOrCreator(this._channel));
+    this._app.get(
+      '/authorized/moment/:id',
+      controller.isAddressMomentOwnerOrCreator(this._channel),
+    );
     this._app.get('/fcm/ready', controller.getFCMIsReady(this._channel));
     this._app.get('/fcm/registered/:address', controller.getFCMIsAddressRegistered(this._channel));
     this._app.post('/fcm/register', controller.postFCMRegisterAddress(this._channel));

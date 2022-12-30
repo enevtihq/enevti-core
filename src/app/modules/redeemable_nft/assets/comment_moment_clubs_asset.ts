@@ -50,7 +50,7 @@ export class CommentMomentClubsAsset extends BaseAsset {
       Buffer.compare(nft.creator, transaction.senderAddress) !== 0 &&
       Buffer.compare(nft.owner, transaction.senderAddress) !== 0
     ) {
-      throw new Error('You are not authorized to give comment on this NFT clubs');
+      throw new Error('You are not authorized to give comment on this Moment clubs');
     }
 
     moment.clubs += 1;

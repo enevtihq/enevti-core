@@ -77,6 +77,7 @@ import getReplyClubs from './engagement/getReplyClubs';
 import getReplyClubsLike from './engagement/getReplyClubsLike';
 import isAddressCollectionOwnerOrCreator from './collection/isAddressCollectionOwnerOrCreator';
 import isAddressNFTOwnerOrCreator from './nft/isAddressNFTOwnerOrCreator';
+import isAddressMomentOwnerOrCreator from './moment/isAddressMomentOwnerOrCreator';
 import getFCMIsReady from './fcm/getFCMIsReady';
 import getFCMIsAddressRegistered from './fcm/getFCMIsAddressRegistered';
 import postFCMRegisterAddress from './fcm/postFCMRegisterAddress';
@@ -179,6 +180,7 @@ export default {
   getReplyClubsLike,
   isAddressCollectionOwnerOrCreator,
   isAddressNFTOwnerOrCreator,
+  isAddressMomentOwnerOrCreator,
   getFCMIsReady,
   getFCMIsAddressRegistered,
   postFCMRegisterAddress,
