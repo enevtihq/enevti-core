@@ -130,7 +130,7 @@
           },
           "dpos": {
             "delegate": {
-              "username": "delegate_77",
+              "username": "genesisValidator",
               "pomHeights": [],
               "consecutiveMissedBlocks": 0,
               "lastForgedHeight": 0,
