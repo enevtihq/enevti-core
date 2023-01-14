@@ -46,6 +46,8 @@ dist
 
 # Lisk Secret Config
 config/*/accounts.json
+config/*/password.json
+config/*/forging_info.json
 
 # Firebase Admin Key for Plugin
 **/firebase.json
