@@ -11,7 +11,7 @@ WORKDIR /home/enevti
 
 RUN git clone https://github.com/enevtihq/enevti-core.git
 WORKDIR /home/enevti/enevti-core
-RUN git checkout 69ce457d884d5f6c99e4b9e811cd86b92eef2ced
+RUN git checkout 9fb9430ac64d59f26f25b38af53fddc5eaf49c1f
 RUN npm i
 RUN chmod +x /home/enevti/enevti-core/bin/run
 
