@@ -12,7 +12,7 @@ enevti/core does not have any external dependencies and thus does not require us
 To run using default configuration, simply use [docker run](https://docs.docker.com/engine/reference/commandline/run/) command below:
 
 ```
-docker run -p 5000:5000 enevti/core:latest
+docker run -p 5000:5000 --name enevti-core enevti/core:latest
 ```
 
 ### Persistent Storage
@@ -21,6 +21,7 @@ To run with persistent storage, mount a volume to `/home/enevti/.lisk` by using 
 
 ```
 docker run -p 5000:5000 \
+           --name enevti-core \
            -v enevti-data:/home/enevti/.lisk \
            enevti/core:latest
 ```
@@ -31,6 +32,7 @@ To run the testnet with a custom `config.json` file, use below commands:
 
 ```
 docker run -p 5000:5000 \
+           --name enevti-core \
            -v enevti-data:/home/enevti/.lisk \
            -v {path-to-config}/config.json:/home/enevti/enevti-core/config/testnet/config.json \
            enevti/core:latest
@@ -42,10 +44,11 @@ If you want to run enevti-core with [off-chain plugins](https://github.com/enevt
 
 ### Provide Environment Variables and Config
 
-You must configure environment variables and provide additional files specific to each plugin. Please use the following commands:
+You must configure required environment variables and provide additional files specific to each plugin. Please use the following commands:
 
 ```
 docker run -p 5000:5000 -p 8880:8880 -p 8881:8881 -p 8882:8882 -p 8883:8883 \
+           --name enevti-core \
            -v enevti-data:/home/enevti/.lisk \
            -e TWILIO_ACCOUNT_SID=<insert value here> \
            -e TWILIO_API_KEY_SECRET=<insert value here> \
@@ -65,6 +68,7 @@ Or you can simply provide an `env` files for those environment variables, and ru
 
 ```
 docker run -p 5000:5000 -p 8880:8880 -p 8881:8881 -p 8882:8882 -p 8883:8883 \
+           --name enevti-core \
            --env-file {path-to-env-file} \
            -v enevti-data:/home/enevti/.lisk \
            -v {path-to-firebase-json}/firebase.json:/home/enevti/enevti-core/src/app/plugins/firebase_cloud_messaging/firebase.json \
