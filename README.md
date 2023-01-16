@@ -68,7 +68,7 @@ If you are using [NVM](https://github.com/nvm-sh/nvm), (Node.js Version Manager)
 nvm install v16.15.0
 ```
 
-If you are on Ubuntu OS, to build `sodium-native` make sure your system already have `build-essential` installed:
+If you are on Ubuntu OS, to build `sodium-native` make sure your system already has `build-essential` installed:
 
 ```
 sudo apt-get update
@@ -143,7 +143,7 @@ APN_KEY_FILE_NAME=<insert value here> # default to apn.p8
 APN_IS_PRODUCTION=<insert value here> # default to true
 ```
 
-Please note that, these information are required in order to run Enevti Core with plugins. More on these services will be explained below
+Please note that, these informations are required in order to run Enevti Core with plugins. More on these services will be explained below
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -157,15 +157,15 @@ The plugin `enevti_call_socket` use [Twilio WebRTC Go](https://www.twilio.com/bl
 
 Enevti Core use FCM to send a data only notification to mobile device. This is required to initiate an incoming call screen on Android device.
 
-To setup `firebase_cloud_messaging` plugin, please put a `firebase.json` file on `./src/app/plugins/firebase_cloud_messaging/firebase.json`. This file is a Firebase Service Account configuration file. Please refer to [Firebase Official Documentation](https://firebase.google.com/docs/admin/setup) on how to obtain these information.
+To setup `firebase_cloud_messaging` plugin, please put a `firebase.json` file on `./src/app/plugins/firebase_cloud_messaging/firebase.json`. This file is a Firebase Service Account configuration file. Please refer to [Firebase Official Documentation](https://firebase.google.com/docs/admin/setup) on how to obtain these informations.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Apple Push Notification Service
 
-Enevti Core use APNs to send a `voip` type notification to iOS device. This is required to initate an incoming call screen on iPhone device.
+Enevti Core uses APNs to send a `voip` type notification to iOS device. This is required to initiate an incoming call screen on iPhone device.
 
-To setup `apple_push_notification_service` plugin, please put a `apn.p8` file on `./src/app/plugins/apple_push_notification_service/apn.p8`. If you specify different value for `APN_KEY_FILE_NAME` env, please change the filename accordingly. This file is an APNs Authentication Key file. Please refer to [Apple Documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns), or [This Documentation](https://rnfirebase.io/messaging/usage/ios-setup#1-registering-a-key) on how to obtain these file.
+To setup `apple_push_notification_service` plugin, please put a `apn.p8` file on `./src/app/plugins/apple_push_notification_service/apn.p8`. If you specify different value for `APN_KEY_FILE_NAME` env, please change the filename accordingly. This file is an APNs Authentication Key file. Please refer to [Apple Documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns), or [This Documentation](https://rnfirebase.io/messaging/usage/ios-setup#1-registering-a-key) on how to obtain these files.
 
 Additionally, don't forget to provide env values for `APN_KEY_ID` and `APN_TEAM_ID`.
 
