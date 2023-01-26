@@ -71,6 +71,14 @@
       {
         "ip": "testnet.enevti.com",
         "port": 5000
+      },
+      {
+        "ip": "testnet1.enevti.com",
+        "port": 5000
+      },
+      {
+        "ip": "testnet2.enevti.com",
+        "port": 5000
       }
     ],
     "port": 5000
