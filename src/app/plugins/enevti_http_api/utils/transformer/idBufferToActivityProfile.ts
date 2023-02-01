@@ -17,13 +17,13 @@ export default async function idBufferToActivityProfile(
   const activityChain = await invokeGetActivityProfile(channel, address.toString('hex'));
   const activity: ProfileActivity[] = await Promise.all(
     activityChain.items.map(async act => {
+      let fee = '0';
       const transaction = act.transaction.toString('hex');
       const encodedTx = await invokeGetTransactionById(channel, transaction);
-      if (!encodedTx) {
-        throw new Error('transaction not found in idBufferToActivityProfile');
+      if (encodedTx) {
+        const decodedTx = client.transaction.decode(encodedTx);
+        fee = (decodedTx.fee as bigint).toString();
       }
-      const decodedTx = client.transaction.decode(encodedTx);
-      const fee = (decodedTx.fee as bigint).toString();
       const from = await addressBufferToPersona(channel, act.from);
       const to = await addressBufferToPersona(channel, act.to);
       const value = {
