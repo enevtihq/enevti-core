@@ -5,7 +5,7 @@ import {
   GENESIS_STATE_ALL_NFT_TEMPLATE,
 } from '../constants/codec';
 import { allNFTTemplateSchema, nftTemplateSchema } from '../schemas/chain/nft_template';
-import { AllNFTTemplate, NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
+import { AllNFTTemplate, NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
 import { createPagination } from './transaction';
 
 export const accessAllNFTTemplateGenesis = async (

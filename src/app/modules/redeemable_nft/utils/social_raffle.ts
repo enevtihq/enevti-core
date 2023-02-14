@@ -1,12 +1,12 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { CollectionAsset } from '../../../../types/core/chain/collection';
-import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { CollectionAsset } from 'enevti-types/chain/collection';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import {
   SocialRaffleChain,
   SocialRaffleRecord,
   SocialRaffleRegistrarItem,
-} from '../../../../types/core/chain/socialRaffle';
+} from 'enevti-types/chain/socialRaffle';
 import { CHAIN_STATE_SOCIAL_RAFFLE } from '../constants/codec';
 import { socialRaffleRecordSchema, socialRaffleSchema } from '../schemas/chain/social_raffle';
 

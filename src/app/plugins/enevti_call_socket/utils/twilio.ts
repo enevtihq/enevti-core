@@ -1,6 +1,6 @@
 import * as twilio from 'twilio';
 import { RoomInstance } from 'twilio/lib/rest/video/v1/room';
-import { NFTAsset } from '../../../../types/core/chain/nft';
+import { NFTAsset } from 'enevti-types/chain/nft';
 
 export type TwilioConfig = {
   twilioAccountSid: string;

@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { StakerChain } from '../../../../../types/core/chain/stake';
+import { StakerChain } from 'enevti-types/chain/stake';
 
 export const invokeGetStakerByAddress = async (
   channel: BaseChannel,

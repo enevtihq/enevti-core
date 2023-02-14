@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { BaseChannel } from 'lisk-framework';
-import { Moment } from '../../../../../types/core/chain/moment';
+import { Moment } from 'enevti-types/chain/moment';
 import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { invokeGetLiked, invokeGetMoment } from '../invoker/redeemable_nft_module';
 import addressBufferToPersona from './addressBufferToPersona';

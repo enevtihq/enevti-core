@@ -1,5 +1,5 @@
 import { StateStore, GenesisConfig, BaseModule } from 'lisk-framework';
-import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { MintNFTUtilsFunctionProps, mintNFT } from '../utils/mint';
 
 export function redeemableNftReducers(this: BaseModule) {

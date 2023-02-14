@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
-import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { invokeGetSocialRaffleConfig } from '../../utils/invoker/redeemable_nft_module';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {

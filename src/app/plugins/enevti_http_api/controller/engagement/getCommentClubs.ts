@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { CommentClubs } from '../../../../../types/core/chain/engagement';
+import { CommentClubs } from 'enevti-types/chain/engagement';
 import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 import { invokeGetCommentClubs, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';

@@ -1,9 +1,9 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
 import BigNumber from 'bignumber.js';
-import { StakerChain, StakerItemUtils } from '../../../../types/core/chain/stake';
+import { StakerChain, StakerItemUtils } from 'enevti-types/chain/stake';
 import { CHAIN_STATE_STAKER } from '../constant/codec';
 import { stakerSchema } from '../schema/chain/stake';
-import { CreaFiAccountProps } from '../../../../types/core/account/profile';
+import { CreaFiAccountProps } from 'enevti-types/account/profile';
 
 export const accessStakerByAddress = async (dataAccess: BaseModuleDataAccess, address: string) => {
   const stakerBuffer = await dataAccess.getChainState(`${CHAIN_STATE_STAKER}:${address}`);

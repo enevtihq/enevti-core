@@ -1,14 +1,14 @@
 import { BaseAsset, ApplyAssetContext, cryptography, ValidateAssetContext } from 'lisk-sdk';
 import { deliverSecretAssetSchema } from '../schemas/asset/deliver_secret_asset';
-import { DeliverSecretProps } from '../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+import { DeliverSecretProps } from 'enevti-types/asset/redeemable_nft/deliver_secret_asset';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
 import { getBlockTimestamp } from '../utils/transaction';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
 import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
-import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
+import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { getAccountStats, setAccountStats } from '../utils/account_stats';
 import { VALIDATION } from '../constants/validation';
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Moment } from '../../../../../types/core/chain/moment';
+import { Moment } from 'enevti-types/chain/moment';
 import createPagination from '../../utils/misc/createPagination';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 

@@ -5,7 +5,7 @@ import {
   StartVideoCallHandlerPayload,
   StartVideoCallPayload,
   StartVideoCallPayloadIOS,
-} from '../../../../types/core/service/call';
+} from 'enevti-types/service/call';
 import { invokeAPNIsAddressRegistered } from '../../apple_push_notification_service/utils/invoker';
 import { addressToAvatarUrl } from '../../enevti_http_api/controller/avatar/getAvatarUrl';
 import { invokeGetNFT } from '../../enevti_http_api/utils/invoker/redeemable_nft_module';

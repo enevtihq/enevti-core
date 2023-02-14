@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 
 import createPagination from '../../utils/misc/createPagination';
-import { MomentBase } from '../../../../../types/core/chain/moment';
+import { MomentBase } from 'enevti-types/chain/moment';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 import { minimizeMoment } from '../../utils/transformer/minimizeToBase';
 

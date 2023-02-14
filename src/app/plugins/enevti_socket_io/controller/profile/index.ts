@@ -2,7 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import { cryptography } from 'lisk-sdk';
 import { Server, Socket } from 'socket.io';
 import { I18n } from 'i18n';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFT } from 'enevti-types/chain/nft';
 import { invokeGetAccount } from '../../../enevti_http_api/utils/invoker/persona_module';
 import { invokeGetNFT } from '../../../enevti_http_api/utils/invoker/redeemable_nft_module';
 import { asyncForEach } from '../../../../modules/redeemable_nft/utils/transaction';

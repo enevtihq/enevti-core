@@ -2,7 +2,7 @@ import { AfterBlockApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { cryptography } from 'lisk-sdk';
 import * as seedrandom from 'seedrandom';
-import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { getCollectionById, isMintingAvailable, setCollectionById } from '../../utils/collection';
 import {
   getSocialRaffleState,
@@ -14,9 +14,9 @@ import {
   resetSocialRaffleStateRegistrar,
 } from '../../utils/social_raffle';
 import { debitBlockReward } from '../../utils/block_rewards';
-import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { addInObject, asyncForEach, getBlockTimestamp } from '../../utils/transaction';
-import { SocialRaffleRecord } from '../../../../../types/core/chain/socialRaffle';
+import { SocialRaffleRecord } from 'enevti-types/chain/socialRaffle';
 import { MintNFTUtilsFunctionProps } from '../../utils/mint';
 
 export const socialRaffleMonitor = async (

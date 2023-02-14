@@ -1,11 +1,8 @@
 import * as seedrandom from 'seedrandom';
 import { StateStore, ReducerHandler, cryptography } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import {
-  CollectionActivityChainItems,
-  CollectionAsset,
-} from '../../../../types/core/chain/collection';
-import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { CollectionActivityChainItems, CollectionAsset } from 'enevti-types/chain/collection';
+import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
 import { getAccountStats, setAccountStats } from './account_stats';

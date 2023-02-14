@@ -5,10 +5,10 @@ import {
   invokeGetLiked,
   invokeGetMomentComment,
 } from '../../utils/invoker/redeemable_nft_module';
-import { Comment, CommentAt } from '../../../../../types/core/chain/engagement';
+import { Comment, CommentAt } from 'enevti-types/chain/engagement';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
-import { ResponseVersioned } from '../../../../../types/core/service/api';
+import { ResponseVersioned } from 'enevti-types/service/api';
 import createPagination from '../../utils/misc/createPagination';
 import { invokeGetIPFSTextCache } from '../../../ipfs_text_cache/utils/invoker';
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
-import { Persona } from '../../../../../types/core/account/persona';
+import { Persona } from 'enevti-types/account/persona';
 import { BASE32_PREFIX } from '../../constant/base32prefix';
 import { invokeGetAccount, invokeGetAddressByUsername } from '../../utils/invoker/persona_module';
 

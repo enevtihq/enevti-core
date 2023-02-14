@@ -1,0 +1,3 @@
+const REGISTRAR_EVENT = 'event';
+
+export const CHAIN_STATE_REGISTRAR_EVENT = `${REGISTRAR_EVENT}`;

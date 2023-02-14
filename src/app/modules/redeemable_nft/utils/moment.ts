@@ -1,5 +1,5 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { AllMoment, MomentAsset, MomentAtAsset } from '../../../../types/core/chain/moment';
+import { AllMoment, MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { CHAIN_STATE_ALL_MOMENT, CHAIN_STATE_MOMENT } from '../constants/codec';
 import { allMomentSchema, momentAtSchema, momentSchema } from '../schemas/chain/moment';
 import { createPagination } from './transaction';

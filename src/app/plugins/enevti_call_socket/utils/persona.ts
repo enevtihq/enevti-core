@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Persona } from '../../../../types/core/account/persona';
+import { Persona } from 'enevti-types/account/persona';
 import { BASE32_PREFIX } from '../constant/base32prefix';
 
 export function compactBase32Address(base32: string) {

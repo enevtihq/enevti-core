@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Collection, CollectionActivity } from '../../../../../types/core/chain/collection';
+import { Collection, CollectionActivity } from 'enevti-types/chain/collection';
 import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
 import { invokeGetCollection, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import {
@@ -10,7 +10,7 @@ import {
 } from '../../constant/limit';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { NFTBase } from 'enevti-types/chain/nft';
 import { isNumeric } from '../../utils/validation/number';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 import { minimizeMoment, minimizeNFT } from '../../utils/transformer/minimizeToBase';

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Collection, CollectionActivity } from '../../../../../types/core/chain/collection';
+import { Collection, CollectionActivity } from 'enevti-types/chain/collection';
 import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
 import {
   invokeGetCollection,
   invokeGetCollectionIdFromName,
   invokeGetLiked,
 } from '../../utils/invoker/redeemable_nft_module';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { NFTBase } from 'enevti-types/chain/nft';
 import {
   COLLECTION_ACTIVITY_INITIAL_LENGTH,
   COLLECTION_MINTED_INITIAL_LENGTH,

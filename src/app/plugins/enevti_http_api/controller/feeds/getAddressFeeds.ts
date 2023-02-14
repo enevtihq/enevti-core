@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFT } from '../../../../../types/core/chain/nft';
-import { FeedItem, HomeFeeds } from '../../../../../types/core/service/feed';
+import { NFT } from 'enevti-types/chain/nft';
+import { FeedItem, HomeFeeds } from 'enevti-types/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import chainDateToUI from '../../utils/transformer/chainDateToUI';
-import { MomentBase } from '../../../../../types/core/chain/moment';
+import { MomentBase } from 'enevti-types/chain/moment';
 import { getProfileEndpoint } from '../profile/getProfile';
 import { validateAddress } from '../../utils/validation/address';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';

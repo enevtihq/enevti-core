@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import * as Lisk from 'lisk-sdk';
 
-import { ProfileAPIResponse } from '../../../../../types/core/account/profile';
-import { CollectionBase } from '../../../../../types/core/chain/collection';
-import { MomentBase } from '../../../../../types/core/chain/moment';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { ProfileAPIResponse } from 'enevti-types/account/profile';
+import { CollectionBase } from 'enevti-types/chain/collection';
+import { MomentBase } from 'enevti-types/chain/moment';
+import { NFTBase } from 'enevti-types/chain/nft';
 import { BASE32_PREFIX } from '../../constant/base32prefix';
 import {
   PROFILE_COLLECTION_INITIAL_LENGTH,

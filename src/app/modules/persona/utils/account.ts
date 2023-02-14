@@ -1,8 +1,8 @@
 import { Account } from '@liskhq/lisk-chain';
 import { DPOSAccountProps } from 'lisk-framework/dist-node/modules/dpos';
 import { TokenAccount } from 'lisk-framework/dist-node/modules/token/types';
-import { PersonaAccountProps } from '../../../../types/core/account/persona';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
+import { PersonaAccountProps } from 'enevti-types/account/persona';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 
 export function getDefaultAccount(
   address: string,

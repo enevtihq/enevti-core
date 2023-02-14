@@ -6,7 +6,7 @@ import {
   GenesisConfig,
   TransactionApplyContext,
 } from 'lisk-sdk';
-import { SocialRaffleGenesisConfig } from '../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { redeemableNftActions } from './actions';
 import { CommentCollectionAsset } from './assets/comment_collection_asset';
 import { CommentCollectionClubsAsset } from './assets/comment_collection_clubs_asset';

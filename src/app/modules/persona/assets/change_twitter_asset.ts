@@ -1,6 +1,6 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { PersonaAccountProps } from '../../../../types/core/account/persona';
-import { ChangeTwitterProps } from '../../../../types/core/asset/persona/change_twitter_asset';
+import { PersonaAccountProps } from 'enevti-types/account/persona';
+import { ChangeTwitterProps } from 'enevti-types/asset/persona/change_twitter_asset';
 import { VALIDATION } from '../constant/validation';
 import { changeTwitterAssetSchema } from '../schema/asset/change_twitter_asset';
 

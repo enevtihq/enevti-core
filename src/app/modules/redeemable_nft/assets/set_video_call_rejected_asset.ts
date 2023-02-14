@@ -1,8 +1,8 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { SetVideoCallRejectedProps } from '../../../../types/core/asset/redeemable_nft/set_video_call_rejected_asset';
-import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
-import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { SetVideoCallRejectedProps } from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
+import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
+import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
 import { VALIDATION } from '../constants/validation';

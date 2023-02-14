@@ -1,12 +1,9 @@
-import {
-  AddStakeUI,
-  AddStakeProps,
-} from '../../../../../../types/core/asset/chain/add_stake_asset';
+import { AddStakeUI, AddStakeProps } from 'enevti-types/asset/chain/add_stake_asset';
 import {
   RegisterUsernameUI,
   RegisterUsernameProps,
-} from '../../../../../../types/core/asset/chain/register_username';
-import { AppTransaction } from '../../../../../../types/core/service/transaction';
+} from 'enevti-types/asset/chain/register_username';
+import { AppTransaction } from 'enevti-types/service/transaction';
 
 export function registerDelegate(
   payload: AppTransaction<RegisterUsernameUI>,

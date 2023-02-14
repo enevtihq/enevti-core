@@ -1,15 +1,15 @@
 import { BaseChannel } from 'lisk-framework';
-import { CommentCollectionUI } from '../../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
-import { CommentCollectionClubsUI } from '../../../../../../types/core/asset/redeemable_nft/comment_collection_clubs_asset';
-import { CommentMomentUI } from '../../../../../../types/core/asset/redeemable_nft/comment_moment_asset';
-import { CommentMomentClubsUI } from '../../../../../../types/core/asset/redeemable_nft/comment_moment_clubs_asset';
-import { CommentNFTUI } from '../../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
-import { CommentNFTClubsUI } from '../../../../../../types/core/asset/redeemable_nft/comment_nft_clubs_asset';
-import { CreateOneKindNFTUI } from '../../../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
-import { MintMomentUI } from '../../../../../../types/core/asset/redeemable_nft/mint_moment_asset';
-import { ReplyCommentUI } from '../../../../../../types/core/asset/redeemable_nft/reply_comment_asset';
-import { ReplyCommentClubsUI } from '../../../../../../types/core/asset/redeemable_nft/reply_comment_clubs_asset';
-import { AppTransaction } from '../../../../../../types/core/service/transaction';
+import { CommentCollectionUI } from 'enevti-types/asset/redeemable_nft/comment_collection_asset';
+import { CommentCollectionClubsUI } from 'enevti-types/asset/redeemable_nft/comment_collection_clubs_asset';
+import { CommentMomentUI } from 'enevti-types/asset/redeemable_nft/comment_moment_asset';
+import { CommentMomentClubsUI } from 'enevti-types/asset/redeemable_nft/comment_moment_clubs_asset';
+import { CommentNFTUI } from 'enevti-types/asset/redeemable_nft/comment_nft_asset';
+import { CommentNFTClubsUI } from 'enevti-types/asset/redeemable_nft/comment_nft_clubs_asset';
+import { CreateOneKindNFTUI } from 'enevti-types/asset/redeemable_nft/create_onekind_nft_asset';
+import { MintMomentUI } from 'enevti-types/asset/redeemable_nft/mint_moment_asset';
+import { ReplyCommentUI } from 'enevti-types/asset/redeemable_nft/reply_comment_asset';
+import { ReplyCommentClubsUI } from 'enevti-types/asset/redeemable_nft/reply_comment_clubs_asset';
+import { AppTransaction } from 'enevti-types/service/transaction';
 import { invokeStoreResizedImage } from '../../../../ipfs_image_resized/utils/invoker';
 import { invokeSetIPFSTextCache } from '../../../../ipfs_text_cache/utils/invoker';
 

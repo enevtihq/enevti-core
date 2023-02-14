@@ -1,6 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import { CommentAsset } from '../../../../../../types/core/chain/engagement';
+import { CommentAsset } from 'enevti-types/chain/engagement';
 import { CHAIN_STATE_COMMENT } from '../../../constants/codec';
 import { commentSchema } from '../../../schemas/chain/engagement';
 

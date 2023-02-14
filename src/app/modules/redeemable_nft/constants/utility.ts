@@ -1,4 +1,4 @@
-import { NFTUtility } from '../../../../types/core/chain/nft/NFTUtility';
+import { NFTUtility } from 'enevti-types/chain/nft/NFTUtility';
 
 export const UTILITY: Record<string, NFTUtility> = {
   VIDEOCALL: 'videocall',

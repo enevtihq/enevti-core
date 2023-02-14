@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { BaseChannel } from 'lisk-framework';
-import { Moment } from '../../../../../types/core/chain/moment';
+import { Moment } from 'enevti-types/chain/moment';
 import { invokeGetMomentAt } from '../invoker/redeemable_nft_module';
 import idBufferToMoment from './idBufferToMoment';
 

@@ -1,6 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
-import { Collection, CollectionAsset } from '../../../../../types/core/chain/collection';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { Collection, CollectionAsset } from 'enevti-types/chain/collection';
+import { NFTBase } from 'enevti-types/chain/nft';
 import addressBufferToPersona from './addressBufferToPersona';
 import chainDateToUI from './chainDateToUI';
 import idBufferToNFT from './idBufferToNFT';

@@ -16,8 +16,8 @@ import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
 import { getDefaultAccount } from './utils/account';
 import { accessRegisteredUsername, setRegisteredUsername } from './utils/username';
-import { PersonaAccountProps } from '../../../types/core/account/persona';
-import { RedeemableNFTAccountProps } from '../../../types/core/account/profile';
+import { PersonaAccountProps } from 'enevti-types/account/persona';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 
 export class PersonaModule extends BaseModule {
   public actions = {

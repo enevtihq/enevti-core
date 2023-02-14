@@ -1,5 +1,5 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { RedeemableNFTAccountStatsChain } from '../../../../types/core/account/profile';
+import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
 import { CHAIN_STATE_ACCOUNT_STATS } from '../constants/codec';
 import { accountStatsSchema } from '../schemas/chain/account_stats';
 

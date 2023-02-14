@@ -1,7 +1,7 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { ReplyCommentProps } from '../../../../types/core/asset/redeemable_nft/reply_comment_asset';
-import { ReplyAsset } from '../../../../types/core/chain/engagement';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { ReplyCommentProps } from 'enevti-types/asset/redeemable_nft/reply_comment_asset';
+import { ReplyAsset } from 'enevti-types/chain/engagement';
 import { ACTIVITY } from '../constants/activity';
 import { VALIDATION } from '../constants/validation';
 import { replyCommentAssetSchema } from '../schemas/asset/reply_comment_asset';

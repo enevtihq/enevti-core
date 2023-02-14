@@ -113,6 +113,7 @@
     "bignumber.js": "^9.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
+    "enevti-types": "github:enevtihq/enevti-types",
     "express": "^4.17.3",
     "firebase-admin": "^11.0.0",
     "fs-extra": "9.1.0",

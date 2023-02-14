@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { MomentBase } from '../../../../../types/core/chain/moment';
-import { NFT } from '../../../../../types/core/chain/nft';
-import { NFTActivity } from '../../../../../types/core/chain/nft/NFTActivity';
+import { MomentBase } from 'enevti-types/chain/moment';
+import { NFT } from 'enevti-types/chain/nft';
+import { NFTActivity } from 'enevti-types/chain/nft/NFTActivity';
 import { NFT_ACTIVITY_INITIAL_LENGTH, NFT_MOMENT_INITIAL_LENGTH } from '../../constant/limit';
 import {
   invokeGetLiked,

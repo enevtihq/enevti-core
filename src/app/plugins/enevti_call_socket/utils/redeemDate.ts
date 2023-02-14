@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import * as moment from 'moment';
-import { NFT } from '../../../../types/core/chain/nft';
+import { NFT } from 'enevti-types/chain/nft';
 
 type RedeemTimeOffset = {
   year?: number;

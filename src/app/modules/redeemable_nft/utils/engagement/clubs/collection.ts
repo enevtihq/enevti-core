@@ -1,9 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import {
-  CommentClubsAtAsset,
-  CommentClubsAsset,
-} from '../../../../../../types/core/chain/engagement';
+import { CommentClubsAtAsset, CommentClubsAsset } from 'enevti-types/chain/engagement';
 import { CHAIN_STATE_COMMENT_CLUBS } from '../../../constants/codec';
 import { commentClubsAtSchema } from '../../../schemas/chain/engagement';
 import { getCommentClubsById, setCommentClubsById } from './clubs';

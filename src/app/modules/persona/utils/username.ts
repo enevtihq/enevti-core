@@ -1,5 +1,5 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { RegisteredUsernameAsset } from '../../../../types/core/chain/registrar';
+import { RegisteredUsernameAsset } from 'enevti-types/chain/registrar';
 import { CHAIN_STATE_REGISTRAR_USERNAME } from '../constant/codec';
 import { registeredUsernameSchema } from '../schema/chain/registrar';
 

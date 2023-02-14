@@ -1,4 +1,4 @@
-import { NFTType } from '../../../../types/core/chain/nft/NFTType';
+import { NFTType } from 'enevti-types/chain/nft/NFTType';
 
 export const NFTTYPE: Record<string, NFTType> = {
   ONEKIND: 'onekind',

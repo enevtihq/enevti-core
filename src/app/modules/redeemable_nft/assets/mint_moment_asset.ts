@@ -1,12 +1,9 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import {
-  RedeemableNFTAccountProps,
-  ProfileActivityChainItems,
-} from '../../../../types/core/account/profile';
-import { MintMomentProps } from '../../../../types/core/asset/redeemable_nft/mint_moment_asset';
-import { CollectionActivityChainItems } from '../../../../types/core/chain/collection';
-import { MomentAsset, MomentActivityChainItems } from '../../../../types/core/chain/moment';
-import { NFTActivityChainItems } from '../../../../types/core/chain/nft/NFTActivity';
+import { RedeemableNFTAccountProps, ProfileActivityChainItems } from 'enevti-types/account/profile';
+import { MintMomentProps } from 'enevti-types/asset/redeemable_nft/mint_moment_asset';
+import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
+import { MomentAsset, MomentActivityChainItems } from 'enevti-types/chain/moment';
+import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
 import { ACTIVITY } from '../constants/activity';
 import { COIN_NAME } from '../constants/chain';
 import { VALIDATION } from '../constants/validation';

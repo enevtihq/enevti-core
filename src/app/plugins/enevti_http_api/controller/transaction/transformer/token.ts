@@ -1,8 +1,5 @@
-import {
-  TransferTokenUI,
-  TransferTokenProps,
-} from '../../../../../../types/core/asset/token/transfer_asset';
-import { AppTransaction } from '../../../../../../types/core/service/transaction';
+import { TransferTokenUI, TransferTokenProps } from 'enevti-types/asset/token/transfer_asset';
+import { AppTransaction } from 'enevti-types/service/transaction';
 
 export function transferToken(
   payload: AppTransaction<TransferTokenUI>,

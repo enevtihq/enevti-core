@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Collection, CollectionActivity } from '../../../../../types/core/chain/collection';
+import { Collection, CollectionActivity } from 'enevti-types/chain/collection';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityCollection from '../../utils/transformer/idBufferToActivityCollection';
 

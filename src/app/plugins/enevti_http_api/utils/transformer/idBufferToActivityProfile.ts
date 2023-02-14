@@ -3,7 +3,7 @@ import { apiClient } from 'lisk-sdk';
 import addressBufferToPersona from './addressBufferToPersona';
 import { invokeGetActivityProfile } from '../invoker/redeemable_nft_module';
 import chainDateToUI from './chainDateToUI';
-import { ProfileActivity } from '../../../../../types/core/account/profile';
+import { ProfileActivity } from 'enevti-types/account/profile';
 import idBufferToNFT from './idBufferToNFT';
 import idBufferToCollection from './idBufferToCollection';
 import { invokeGetTransactionById } from '../invoker/app';

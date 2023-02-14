@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { Collection } from '../../../../../types/core/chain/collection';
+import { Collection } from 'enevti-types/chain/collection';
 import { invokeGetCollection } from '../../utils/invoker/redeemable_nft_module';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { NFTBase } from 'enevti-types/chain/nft';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import createPagination from '../../utils/misc/createPagination';
 import { minimizeNFT } from '../../utils/transformer/minimizeToBase';

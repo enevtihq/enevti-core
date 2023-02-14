@@ -1,6 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import { LikeAtAsset } from '../../../../../../types/core/chain/engagement';
+import { LikeAtAsset } from 'enevti-types/chain/engagement';
 import { CHAIN_STATE_LIKE } from '../../../constants/codec';
 import { likeAtSchema } from '../../../schemas/chain/engagement';
 import { setLiked, getLiked } from './liked';

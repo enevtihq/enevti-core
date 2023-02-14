@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFTActivity } from '../../../../../types/core/chain/nft/NFTActivity';
+import { NFTActivity } from 'enevti-types/chain/nft/NFTActivity';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
 

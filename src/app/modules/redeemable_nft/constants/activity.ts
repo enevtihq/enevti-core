@@ -1,10 +1,7 @@
-import {
-  EngagementActivityName,
-  ProfileActivityName,
-} from '../../../../types/core/account/profile';
-import { CollectionActivityName } from '../../../../types/core/chain/collection';
-import { MomentActivityName } from '../../../../types/core/chain/moment';
-import { NFTActivityName } from '../../../../types/core/chain/nft/NFTActivity';
+import { EngagementActivityName, ProfileActivityName } from 'enevti-types/account/profile';
+import { CollectionActivityName } from 'enevti-types/chain/collection';
+import { MomentActivityName } from 'enevti-types/chain/moment';
+import { NFTActivityName } from 'enevti-types/chain/nft/NFTActivity';
 
 export const ACTIVITY: {
   NFT: Record<Uppercase<NFTActivityName>, NFTActivityName>;

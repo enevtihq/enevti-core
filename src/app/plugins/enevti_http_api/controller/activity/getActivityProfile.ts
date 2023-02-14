@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
-import { ProfileActivity } from '../../../../../types/core/account/profile';
+import { ProfileActivity } from 'enevti-types/account/profile';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityProfile from '../../utils/transformer/idBufferToActivityProfile';
 

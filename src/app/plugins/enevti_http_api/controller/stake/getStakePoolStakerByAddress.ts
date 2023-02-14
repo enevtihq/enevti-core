@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { StakerItem } from '../../../../../types/core/chain/stake';
+import { StakerItem } from 'enevti-types/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module.ts';
 import { validateAddress } from '../../utils/validation/address';

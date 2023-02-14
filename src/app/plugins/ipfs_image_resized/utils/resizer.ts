@@ -1,6 +1,6 @@
 import * as sharp from 'sharp';
 import * as fs from 'fs';
-import { SizeCode } from '../../../../types/core/service/api';
+import { SizeCode } from 'enevti-types/service/api';
 
 export const widthMap = {
   xxs: 32,

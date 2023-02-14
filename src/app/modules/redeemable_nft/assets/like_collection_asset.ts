@@ -1,7 +1,7 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { LikeCollectionProps } from '../../../../types/core/asset/redeemable_nft/like_collection_asset';
-import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { LikeCollectionProps } from 'enevti-types/asset/redeemable_nft/like_collection_asset';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { ACTIVITY } from '../constants/activity';
 import { VALIDATION } from '../constants/validation';
 import { likeCollectionAssetSchema } from '../schemas/asset/like_collection_asset';

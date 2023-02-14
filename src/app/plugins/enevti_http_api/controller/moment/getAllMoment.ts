@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { MomentBase } from '../../../../../types/core/chain/moment';
+import { MomentBase } from 'enevti-types/chain/moment';
 import { invokeGetAllMoment, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';

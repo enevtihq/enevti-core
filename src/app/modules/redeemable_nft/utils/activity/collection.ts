@@ -3,7 +3,7 @@ import { codec } from 'lisk-sdk';
 import {
   CollectionActivityChain,
   CollectionActivityChainItems,
-} from '../../../../../types/core/chain/collection';
+} from 'enevti-types/chain/collection';
 import { CHAIN_STATE_ACTIVITY_COLLECTION } from '../../constants/codec';
 import { activityCollectionSchema } from '../../schemas/chain/activity';
 

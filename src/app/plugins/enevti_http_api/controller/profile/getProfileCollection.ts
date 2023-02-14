@@ -3,7 +3,7 @@ import { BaseChannel } from 'lisk-framework';
 
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import { validateAddress } from '../../utils/validation/address';
-import { CollectionBase } from '../../../../../types/core/chain/collection';
+import { CollectionBase } from 'enevti-types/chain/collection';
 import idBufferToCollection from '../../utils/transformer/idBufferToCollection';
 import { minimizeCollection } from '../../utils/transformer/minimizeToBase';
 import createPagination from '../../utils/misc/createPagination';

@@ -14,7 +14,7 @@ import {
   StateStore,
   // GenesisConfig
 } from 'lisk-sdk';
-import { CreaFiAccountProps } from '../../../types/core/account/profile';
+import { CreaFiAccountProps } from 'enevti-types/account/profile';
 import { creafiAccountSchema } from './schema/account';
 import {
   accessStakerByAddress,

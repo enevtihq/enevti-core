@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { WalletStaked } from '../../../../../types/core/service/wallet';
+import { WalletStaked } from 'enevti-types/service/wallet';
 
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';

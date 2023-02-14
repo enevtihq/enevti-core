@@ -1,6 +1,6 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { LikeMomentProps } from '../../../../types/core/asset/redeemable_nft/like_moment_asset';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { LikeMomentProps } from 'enevti-types/asset/redeemable_nft/like_moment_asset';
 import { ACTIVITY } from '../constants/activity';
 import { VALIDATION } from '../constants/validation';
 import { likeMomentAssetSchema } from '../schemas/asset/like_moment_asset';

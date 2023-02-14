@@ -3,7 +3,7 @@ import { codec } from 'lisk-sdk';
 import {
   EngagementActivityChain,
   EngagementActivityChainItems,
-} from '../../../../../types/core/account/profile';
+} from 'enevti-types/account/profile';
 import { CHAIN_STATE_ACTIVITY_ENGAGEMENT } from '../../constants/codec';
 import { activityEngagementSchema } from '../../schemas/chain/activity';
 

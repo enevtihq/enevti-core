@@ -1,6 +1,6 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { PersonaAccountProps } from '../../../../types/core/account/persona';
-import { ChangePhotoProps } from '../../../../types/core/asset/persona/change_photo_asset';
+import { PersonaAccountProps } from 'enevti-types/account/persona';
+import { ChangePhotoProps } from 'enevti-types/asset/persona/change_photo_asset';
 import { VALIDATION } from '../constant/validation';
 import { changePhotoAssetSchema } from '../schema/asset/change_photo_asset';
 

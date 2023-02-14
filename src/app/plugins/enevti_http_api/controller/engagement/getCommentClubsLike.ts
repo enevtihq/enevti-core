@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { LikeAt } from '../../../../../types/core/chain/engagement';
-import { ResponseVersioned } from '../../../../../types/core/service/api';
+import { LikeAt } from 'enevti-types/chain/engagement';
+import { ResponseVersioned } from 'enevti-types/service/api';
 import { invokeGetCommentClubsLike } from '../../utils/invoker/redeemable_nft_module';
 import createPagination from '../../utils/misc/createPagination';
 

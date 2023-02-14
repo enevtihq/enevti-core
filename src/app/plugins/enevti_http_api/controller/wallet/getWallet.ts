@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { apiClient } from 'lisk-sdk';
-import { ProfileActivity } from '../../../../../types/core/account/profile';
+import { ProfileActivity } from 'enevti-types/account/profile';
 
-import { WalletView } from '../../../../../types/core/service/wallet';
+import { WalletView } from 'enevti-types/service/wallet';
 import { WALLET_HISTORY_INITIAL_LENGTH } from '../../constant/limit';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import idBufferToActivityProfile from '../../utils/transformer/idBufferToActivityProfile';

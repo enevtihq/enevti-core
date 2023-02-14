@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFT } from '../../../../../types/core/chain/nft';
-import { FeedItem, Feeds } from '../../../../../types/core/service/feed';
+import { NFT } from 'enevti-types/chain/nft';
+import { FeedItem, Feeds } from 'enevti-types/service/feed';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import {

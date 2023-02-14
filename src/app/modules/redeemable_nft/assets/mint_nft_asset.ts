@@ -1,6 +1,6 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
-import { MintNFTProps } from '../../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import { MintNFTProps } from 'enevti-types/asset/redeemable_nft/mint_nft_asset';
 import { getCollectionById } from '../utils/collection';
 import { mintNFT } from '../utils/mint';
 import { VALIDATION } from '../constants/validation';

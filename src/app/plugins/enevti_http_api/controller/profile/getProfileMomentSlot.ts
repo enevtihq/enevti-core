@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFTBase } from '../../../../../types/core/chain/nft';
+import { NFTBase } from 'enevti-types/chain/nft';
 import { invokeGetAccountStats } from '../../utils/invoker/redeemable_nft_module';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';

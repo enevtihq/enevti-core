@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { NFTActivity } from '../../../../../types/core/chain/nft/NFTActivity';
+import { NFTActivity } from 'enevti-types/chain/nft/NFTActivity';
 import addressBufferToPersona from './addressBufferToPersona';
 import { invokeGetActivityNFT } from '../invoker/redeemable_nft_module';
 import chainDateToUI from './chainDateToUI';

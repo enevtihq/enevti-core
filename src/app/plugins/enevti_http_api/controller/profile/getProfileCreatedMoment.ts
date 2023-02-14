@@ -4,7 +4,7 @@ import { BaseChannel } from 'lisk-framework';
 import { invokeGetAccount } from '../../utils/invoker/persona_module';
 import { validateAddress } from '../../utils/validation/address';
 import createPagination from '../../utils/misc/createPagination';
-import { MomentBase } from '../../../../../types/core/chain/moment';
+import { MomentBase } from 'enevti-types/chain/moment';
 import idBufferToMoment from '../../utils/transformer/idBufferToMoment';
 
 type ProfileCreatedMomentResponse = { checkpoint: number; version: number; data: MomentBase[] };

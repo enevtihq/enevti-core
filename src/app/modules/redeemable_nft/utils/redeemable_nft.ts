@@ -1,7 +1,7 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
+import { AllNFT, NFTAsset } from 'enevti-types/chain/nft';
 import { allRedeemableNFTSchema, redeemableNFTSchema } from '../schemas/chain/redeemable_nft';
 import { CHAIN_STATE_ALL_NFT, CHAIN_STATE_NFT } from '../constants/codec';
-import { AllNFT, NFTAsset } from '../../../../types/core/chain/nft';
 import { createPagination } from './transaction';
 
 export const accessAllNFT = async (

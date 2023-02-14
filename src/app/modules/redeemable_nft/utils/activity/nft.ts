@@ -1,9 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import {
-  NFTActivityChain,
-  NFTActivityChainItems,
-} from '../../../../../types/core/chain/nft/NFTActivity';
+import { NFTActivityChain, NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
 import { CHAIN_STATE_ACTIVITY_NFT } from '../../constants/codec';
 import { activityNFTSchema } from '../../schemas/chain/activity';
 

@@ -1,9 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import {
-  MomentActivityChain,
-  MomentActivityChainItems,
-} from '../../../../../types/core/chain/moment';
+import { MomentActivityChain, MomentActivityChainItems } from 'enevti-types/chain/moment';
 import { CHAIN_STATE_ACTIVITY_MOMENT } from '../../constants/codec';
 import { activityMomentSchema } from '../../schemas/chain/activity';
 

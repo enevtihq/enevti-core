@@ -1,5 +1,5 @@
 import { AfterBlockApplyContext } from 'lisk-framework';
-import { CollectionAsset } from '../../../../../types/core/chain/collection';
+import { CollectionAsset } from 'enevti-types/chain/collection';
 import {
   getAllCollection,
   getCollectionById,

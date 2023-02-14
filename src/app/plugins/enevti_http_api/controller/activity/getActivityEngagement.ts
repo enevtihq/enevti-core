@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { EngagementActivity } from '../../../../../types/core/account/profile';
+import { EngagementActivity } from 'enevti-types/account/profile';
 import createPagination from '../../utils/misc/createPagination';
 import idBufferToActivityEngagement from '../../utils/transformer/idBufferToActivityEngagement';
 

@@ -1,5 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
-import { Collection } from '../../../../../types/core/chain/collection';
+import { Collection } from 'enevti-types/chain/collection';
 import collectionChainToUI from './collectionChainToUI';
 import { invokeGetCollection, invokeGetLiked } from '../invoker/redeemable_nft_module';
 import idBufferToActivityCollection from './idBufferToActivityCollection';

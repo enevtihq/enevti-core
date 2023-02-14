@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFT } from 'enevti-types/chain/nft';
 import { invokeGetAllNFT, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 

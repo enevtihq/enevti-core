@@ -1,9 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import {
-  ProfileActivityChain,
-  ProfileActivityChainItems,
-} from '../../../../../types/core/account/profile';
+import { ProfileActivityChain, ProfileActivityChainItems } from 'enevti-types/account/profile';
 import { CHAIN_STATE_ACTIVITY_PROFILE } from '../../constants/codec';
 import { activityProfileSchema } from '../../schemas/chain/activity';
 

@@ -9,7 +9,7 @@ import {
   CHAIN_STATE_ALL_UNAVAILABLE_COLLECTION,
   CHAIN_STATE_COLLECTION,
 } from '../constants/codec';
-import { AllCollection, CollectionAsset } from '../../../../types/core/chain/collection';
+import { AllCollection, CollectionAsset } from 'enevti-types/chain/collection';
 import { createPagination } from './transaction';
 
 export const accessAllCollection = async (

@@ -3,9 +3,9 @@ import {
   RedeemableNFTAccountStatsChain,
   ProfileActivityChain,
   EngagementActivityChain,
-} from '../../../../types/core/account/profile';
-import { CollectionAsset, CollectionActivityChain } from '../../../../types/core/chain/collection';
-import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+} from 'enevti-types/account/profile';
+import { CollectionAsset, CollectionActivityChain } from 'enevti-types/chain/collection';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import {
   LikeAtAsset,
   CommentAsset,
@@ -14,17 +14,13 @@ import {
   ReplyAtAsset,
   CommentClubsAsset,
   CommentClubsAtAsset,
-} from '../../../../types/core/chain/engagement';
-import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../types/core/chain/id';
-import {
-  MomentActivityChain,
-  MomentAsset,
-  MomentAtAsset,
-} from '../../../../types/core/chain/moment';
-import { NFTAsset } from '../../../../types/core/chain/nft';
-import { NFTActivityChain } from '../../../../types/core/chain/nft/NFTActivity';
-import { NFTTemplateAsset } from '../../../../types/core/chain/nft/NFTTemplate';
-import { SocialRaffleRecord, SocialRaffleChain } from '../../../../types/core/chain/socialRaffle';
+} from 'enevti-types/chain/engagement';
+import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
+import { MomentActivityChain, MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { NFTAsset } from 'enevti-types/chain/nft';
+import { NFTActivityChain } from 'enevti-types/chain/nft/NFTActivity';
+import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
+import { SocialRaffleRecord, SocialRaffleChain } from 'enevti-types/chain/socialRaffle';
 import { collectionSchema } from '../schemas/chain/collection';
 import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';

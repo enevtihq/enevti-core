@@ -3,7 +3,7 @@ import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asse
 import {
   MintNFTByQR,
   MintNFTByQRProps,
-} from '../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
+} from 'enevti-types/asset/redeemable_nft/mint_nft_type_qr_asset';
 import { getCollectionById } from '../utils/collection';
 import { mintNFT } from '../utils/mint';
 import { VALIDATION } from '../constants/validation';

@@ -3,12 +3,9 @@ import {
   EngagementActivityChain,
   ProfileActivityChain,
   RedeemableNFTAccountStatsChain,
-} from '../../../../../types/core/account/profile';
-import {
-  CollectionActivityChain,
-  CollectionAsset,
-} from '../../../../../types/core/chain/collection';
-import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
+} from 'enevti-types/account/profile';
+import { CollectionActivityChain, CollectionAsset } from 'enevti-types/chain/collection';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import {
   CommentAsset,
   CommentAtAsset,
@@ -17,20 +14,13 @@ import {
   LikeAtAsset,
   ReplyAsset,
   ReplyAtAsset,
-} from '../../../../../types/core/chain/engagement';
-import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from '../../../../../types/core/chain/id';
-import {
-  MomentActivityChain,
-  MomentAsset,
-  MomentAtAsset,
-} from '../../../../../types/core/chain/moment';
-import { NFTAsset } from '../../../../../types/core/chain/nft';
-import { NFTActivityChain } from '../../../../../types/core/chain/nft/NFTActivity';
-import { NFTTemplateAsset } from '../../../../../types/core/chain/nft/NFTTemplate';
-import {
-  SocialRaffleChain,
-  SocialRaffleRecord,
-} from '../../../../../types/core/chain/socialRaffle';
+} from 'enevti-types/chain/engagement';
+import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
+import { MomentActivityChain, MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { NFTAsset } from 'enevti-types/chain/nft';
+import { NFTActivityChain } from 'enevti-types/chain/nft/NFTActivity';
+import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
+import { SocialRaffleChain, SocialRaffleRecord } from 'enevti-types/chain/socialRaffle';
 
 export const invokeGetCollectionIdFromName = async (
   channel: BaseChannel,

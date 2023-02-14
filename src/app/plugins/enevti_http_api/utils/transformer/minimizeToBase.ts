@@ -1,6 +1,6 @@
-import { Collection, CollectionBase } from '../../../../../types/core/chain/collection';
-import { Moment, MomentBase } from '../../../../../types/core/chain/moment';
-import { NFT, NFTBase } from '../../../../../types/core/chain/nft';
+import { Collection, CollectionBase } from 'enevti-types/chain/collection';
+import { Moment, MomentBase } from 'enevti-types/chain/moment';
+import { NFT, NFTBase } from 'enevti-types/chain/nft';
 
 export const minimizeNFT = (nft: NFT): NFTBase => {
   const {

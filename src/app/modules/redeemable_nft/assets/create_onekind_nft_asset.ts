@@ -5,31 +5,22 @@ import {
   transactions,
   cryptography,
 } from 'lisk-sdk';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { CreateOneKindNFTProps } from 'enevti-types/asset/redeemable_nft/create_onekind_nft_asset';
+import { CollectionActivityChainItems, CollectionAsset } from 'enevti-types/chain/collection';
+import { NFTIdAsset } from 'enevti-types/chain/id';
+import { NFTAsset } from 'enevti-types/chain/nft';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
 import { RECURRING } from '../constants/recurring';
 import { UTILITY, UTILITY_WITH_SECRET } from '../constants/utility';
 import { VALIDATION } from '../constants/validation';
 import { createOnekindNftAssetSchema } from '../schemas/asset/create_onekind_nft_asset';
-import { RedeemableNFTAccountProps } from '../../../../types/core/account/profile';
-import { CreateOneKindNFTProps } from '../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
-import {
-  CollectionActivityChainItems,
-  CollectionAsset,
-} from '../../../../types/core/chain/collection';
-import { NFTIdAsset } from '../../../../types/core/chain/id';
-import { NFTAsset } from '../../../../types/core/chain/nft';
 import { addActivityCollection, addActivityProfile } from '../utils/activity';
 import { getAllCollection, setAllCollection, setCollectionById } from '../utils/collection';
 import { getAllNFTTemplate } from '../utils/nft_template';
 import { getAllNFT, setAllNFT, setNFTById } from '../utils/redeemable_nft';
-import {
-  getRegisteredName,
-  getRegisteredSymbol,
-  setRegisteredName,
-  setRegisteredSerial,
-  setRegisteredSymbol,
-} from '../utils/registrar';
 import {
   asyncForEach,
   generateID,
@@ -37,7 +28,6 @@ import {
   getNetworkIdentifier,
 } from '../utils/transaction';
 import { isCollectionEligibleForRaffle } from '../utils/social_raffle';
-import { SocialRaffleGenesisConfig } from '../../../../types/core/chain/config/SocialRaffleGenesisConfig';
 
 export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public name = 'createOnekindNft';

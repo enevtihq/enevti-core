@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { BaseChannel } from 'lisk-framework';
-import { NFT } from '../../../../../types/core/chain/nft';
+import { NFT } from 'enevti-types/chain/nft';
 import { invokeGetLiked, invokeGetNFT } from '../invoker/redeemable_nft_module';
 import idBufferToActivityNFT from './idBufferToActivityNFT';
 import { idBufferToMomentAt } from './idBufferToMomentAt';

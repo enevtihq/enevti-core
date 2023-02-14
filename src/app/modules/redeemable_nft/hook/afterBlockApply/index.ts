@@ -3,15 +3,15 @@ import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { codec, cryptography } from 'lisk-sdk';
 import { VoteTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
 import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
-import { RedeemableNFTAccountProps } from '../../../../../types/core/account/profile';
-import { DeliverSecretProps } from '../../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
-import { LikeCollectionProps } from '../../../../../types/core/asset/redeemable_nft/like_collection_asset';
-import { LikeNFTProps } from '../../../../../types/core/asset/redeemable_nft/like_nft_asset';
-import { MintNFTProps } from '../../../../../types/core/asset/redeemable_nft/mint_nft_asset';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { DeliverSecretProps } from 'enevti-types/asset/redeemable_nft/deliver_secret_asset';
+import { LikeCollectionProps } from 'enevti-types/asset/redeemable_nft/like_collection_asset';
+import { LikeNFTProps } from 'enevti-types/asset/redeemable_nft/like_nft_asset';
+import { MintNFTProps } from 'enevti-types/asset/redeemable_nft/mint_nft_asset';
 import {
   MintNFTByQRProps,
   MintNFTByQR,
-} from '../../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
+} from 'enevti-types/asset/redeemable_nft/mint_nft_type_qr_asset';
 import { ACTIVITY } from '../../constants/activity';
 import { COIN_NAME } from '../../constants/chain';
 import { addActivityProfile } from '../../utils/activity';
@@ -20,9 +20,9 @@ import { collectionMintingAvailabilityMonitor } from './collectionMintingAvailab
 import { socialRaffleMonitor } from './socialRaffleMonitor';
 import { getNFTById } from '../../utils/redeemable_nft';
 import { asyncForEach, addInObject } from '../../utils/transaction';
-import { SocialRaffleGenesisConfig } from '../../../../../types/core/chain/config/SocialRaffleGenesisConfig';
-import { CommentNFTProps } from '../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
-import { CommentCollectionProps } from '../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
+import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
+import { CommentNFTProps } from 'enevti-types/asset/redeemable_nft/comment_nft_asset';
+import { CommentCollectionProps } from 'enevti-types/asset/redeemable_nft/comment_collection_asset';
 import { mintNftAssetSchema } from '../../schemas/asset/mint_nft_asset';
 import { deliverSecretAssetSchema } from '../../schemas/asset/deliver_secret_asset';
 import { mintNftTypeQrAssetSchema } from '../../schemas/asset/mint_nft_type_qr_asset';
@@ -30,9 +30,9 @@ import { likeNftAssetSchema } from '../../schemas/asset/like_nft_asset';
 import { likeCollectionAssetSchema } from '../../schemas/asset/like_collection_asset';
 import { commentNftAssetSchema } from '../../schemas/asset/comment_nft_asset';
 import { commentCollectionAssetSchema } from '../../schemas/asset/comment_collection_asset';
-import { SetVideoCallRejectedProps } from '../../../../../types/core/asset/redeemable_nft/set_video_call_rejected_asset';
+import { SetVideoCallRejectedProps } from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
 import { setVideoCallRejectedAssetSchema } from '../../schemas/asset/set_video_call_rejected_asset';
-import { SetVideoCallAnsweredProps } from '../../../../../types/core/asset/redeemable_nft/set_video_call_answered_asset';
+import { SetVideoCallAnsweredProps } from 'enevti-types/asset/redeemable_nft/set_video_call_answered_asset';
 import { setVideoCallAnsweredAssetSchema } from '../../schemas/asset/set_video_call_answered_asset';
 
 export default async function redeemableNftAfterBlockApply(

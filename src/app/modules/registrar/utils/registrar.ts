@@ -1,23 +1,10 @@
 import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import {
-  CHAIN_STATE_REGISTRAR_NAME,
-  CHAIN_STATE_REGISTRAR_SERIAL,
-  CHAIN_STATE_REGISTRAR_SYMBOL,
-} from '../constants/codec';
-import {
-  registeredNameSchema,
-  registeredSerialSchema,
-  registeredSymbolSchema,
-} from '../schemas/chain/registrar';
-import {
-  RegisteredNameAsset,
-  RegisteredSerialAsset,
-  RegisteredSymbolAsset,
-} from '../../../../types/core/chain/registrar';
+import { RegisteredNameAsset } from 'enevti-types/chain/registrar';
 
-export const accessRegisteredName = async (
+export const accessRegistrar = async (
   dataAccess: BaseModuleDataAccess,
-  name: string,
+  identifier: string,
+  value: string,
 ): Promise<RegisteredNameAsset | undefined> => {
   const registeredNameBuffer = await dataAccess.getChainState(
     `${CHAIN_STATE_REGISTRAR_NAME}:${name}`,

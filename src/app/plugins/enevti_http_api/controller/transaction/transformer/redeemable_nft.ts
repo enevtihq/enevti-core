@@ -1,92 +1,74 @@
 import {
   CommentCollectionUI,
   CommentCollectionProps,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_collection_asset';
+} from 'enevti-types/asset/redeemable_nft/comment_collection_asset';
 import {
   CommentCollectionClubsProps,
   CommentCollectionClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_collection_clubs_asset';
+} from 'enevti-types/asset/redeemable_nft/comment_collection_clubs_asset';
 import {
   CommentMomentProps,
   CommentMomentUI,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_moment_asset';
+} from 'enevti-types/asset/redeemable_nft/comment_moment_asset';
 import {
   CommentMomentClubsProps,
   CommentMomentClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_moment_clubs_asset';
-import {
-  CommentNFTUI,
-  CommentNFTProps,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_nft_asset';
+} from 'enevti-types/asset/redeemable_nft/comment_moment_clubs_asset';
+import { CommentNFTUI, CommentNFTProps } from 'enevti-types/asset/redeemable_nft/comment_nft_asset';
 import {
   CommentNFTClubsProps,
   CommentNFTClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/comment_nft_clubs_asset';
+} from 'enevti-types/asset/redeemable_nft/comment_nft_clubs_asset';
 import {
   CreateOneKindNFTUI,
   CreateOneKindNFTProps,
-} from '../../../../../../types/core/asset/redeemable_nft/create_onekind_nft_asset';
+} from 'enevti-types/asset/redeemable_nft/create_onekind_nft_asset';
 import {
   DeliverSecretUI,
   DeliverSecretProps,
-} from '../../../../../../types/core/asset/redeemable_nft/deliver_secret_asset';
+} from 'enevti-types/asset/redeemable_nft/deliver_secret_asset';
 import {
   LikeCollectionUI,
   LikeCollectionProps,
-} from '../../../../../../types/core/asset/redeemable_nft/like_collection_asset';
+} from 'enevti-types/asset/redeemable_nft/like_collection_asset';
 import {
   LikeCommentUI,
   LikeCommentProps,
-} from '../../../../../../types/core/asset/redeemable_nft/like_comment_asset';
+} from 'enevti-types/asset/redeemable_nft/like_comment_asset';
 import {
   LikeCommentClubsProps,
   LikeCommentClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/like_comment_clubs_asset';
-import {
-  LikeMomentProps,
-  LikeMomentUI,
-} from '../../../../../../types/core/asset/redeemable_nft/like_moment_asset';
-import {
-  LikeNFTUI,
-  LikeNFTProps,
-} from '../../../../../../types/core/asset/redeemable_nft/like_nft_asset';
-import {
-  LikeReplyUI,
-  LikeReplyProps,
-} from '../../../../../../types/core/asset/redeemable_nft/like_reply_asset';
+} from 'enevti-types/asset/redeemable_nft/like_comment_clubs_asset';
+import { LikeMomentProps, LikeMomentUI } from 'enevti-types/asset/redeemable_nft/like_moment_asset';
+import { LikeNFTUI, LikeNFTProps } from 'enevti-types/asset/redeemable_nft/like_nft_asset';
+import { LikeReplyUI, LikeReplyProps } from 'enevti-types/asset/redeemable_nft/like_reply_asset';
 import {
   LikeReplyClubsProps,
   LikeReplyClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/like_reply_clubs_asset';
-import {
-  MintMomentUI,
-  MintMomentProps,
-} from '../../../../../../types/core/asset/redeemable_nft/mint_moment_asset';
-import {
-  MintNFTUI,
-  MintNFTProps,
-} from '../../../../../../types/core/asset/redeemable_nft/mint_nft_asset';
+} from 'enevti-types/asset/redeemable_nft/like_reply_clubs_asset';
+import { MintMomentUI, MintMomentProps } from 'enevti-types/asset/redeemable_nft/mint_moment_asset';
+import { MintNFTUI, MintNFTProps } from 'enevti-types/asset/redeemable_nft/mint_nft_asset';
 import {
   MintNFTByQRUI,
   MintNFTByQRProps,
-} from '../../../../../../types/core/asset/redeemable_nft/mint_nft_type_qr_asset';
+} from 'enevti-types/asset/redeemable_nft/mint_nft_type_qr_asset';
 import {
   ReplyCommentUI,
   ReplyCommentProps,
-} from '../../../../../../types/core/asset/redeemable_nft/reply_comment_asset';
+} from 'enevti-types/asset/redeemable_nft/reply_comment_asset';
 import {
   ReplyCommentClubsProps,
   ReplyCommentClubsUI,
-} from '../../../../../../types/core/asset/redeemable_nft/reply_comment_clubs_asset';
+} from 'enevti-types/asset/redeemable_nft/reply_comment_clubs_asset';
 import {
   SetVideoCallAnsweredProps,
   SetVideoCallAnsweredUI,
-} from '../../../../../../types/core/asset/redeemable_nft/set_video_call_answered_asset';
+} from 'enevti-types/asset/redeemable_nft/set_video_call_answered_asset';
 import {
   SetVideoCallRejectedProps,
   SetVideoCallRejectedUI,
-} from '../../../../../../types/core/asset/redeemable_nft/set_video_call_rejected_asset';
-import { AppTransaction } from '../../../../../../types/core/service/transaction';
+} from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
+import { AppTransaction } from 'enevti-types/service/transaction';
 
 export function createOneKindNFT(
   payload: AppTransaction<CreateOneKindNFTUI>,

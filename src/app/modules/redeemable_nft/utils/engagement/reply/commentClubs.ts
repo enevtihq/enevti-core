@@ -1,6 +1,6 @@
 import { BaseModuleDataAccess, StateStore } from 'lisk-framework';
 import { codec } from 'lisk-sdk';
-import { ReplyAtAsset, ReplyAsset } from '../../../../../../types/core/chain/engagement';
+import { ReplyAtAsset, ReplyAsset } from 'enevti-types/chain/engagement';
 import { CHAIN_STATE_REPLY_CLUBS } from '../../../constants/codec';
 import { replyAtSchema } from '../../../schemas/chain/engagement';
 import { getReplyClubsById, setReplyClubsById } from './clubs';
