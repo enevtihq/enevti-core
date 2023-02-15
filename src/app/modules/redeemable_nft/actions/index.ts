@@ -67,11 +67,6 @@ import {
   accessAllNFTTemplateGenesis,
 } from '../utils/nft_template';
 import { accessAllNFT, accessNFTById } from '../utils/redeemable_nft';
-import {
-  accessRegisteredName,
-  accessRegisteredSymbol,
-  accessRegisteredSerial,
-} from '../utils/registrar';
 import { accessSocialRaffleRecord, accessSocialRaffleState } from '../utils/social_raffle';
 
 export function redeemableNftActions(this: BaseModule) {
