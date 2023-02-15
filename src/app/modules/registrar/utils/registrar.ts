@@ -9,7 +9,7 @@ export const accessRegistrar = async (
   value: string,
 ): Promise<RegistrarAsset | undefined> => {
   const registrarBuffer = await dataAccess.getChainState(
-    `${REGISTRAR_PREFIX}:${identifier}:${value}`,
+    `${REGISTRAR_PREFIX}:${identifier}:${value.toLowerCase()}`,
   );
   if (!registrarBuffer) {
     return undefined;
@@ -22,7 +22,9 @@ export const getRegistrar = async (
   identifier: string,
   value: string,
 ): Promise<RegistrarAsset | undefined> => {
-  const registrarBuffer = await stateStore.chain.get(`${REGISTRAR_PREFIX}:${identifier}:${value}`);
+  const registrarBuffer = await stateStore.chain.get(
+    `${REGISTRAR_PREFIX}:${identifier}:${value.toLowerCase()}`,
+  );
   if (!registrarBuffer) {
     return undefined;
   }
@@ -36,7 +38,7 @@ export const setRegistrar = async (
   registrar: RegistrarAsset,
 ) => {
   await stateStore.chain.set(
-    `${REGISTRAR_PREFIX}:${identifier}:${value}`,
+    `${REGISTRAR_PREFIX}:${identifier}:${value.toLowerCase()}`,
     codec.encode(registrarSchema, registrar),
   );
 };

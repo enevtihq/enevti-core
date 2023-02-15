@@ -32,8 +32,7 @@ export function registrarReducers(this: BaseModule) {
           id: Buffer;
         };
         await setRegistrar(stateStore, identifier, value, { id });
-        // TODO: check if block here is current block, if not add 1
-        const blockHeight = stateStore.chain.lastBlockHeaders[0].height;
+        const blockHeight = stateStore.chain.lastBlockHeaders[0].height + 1;
         let blockRegistrar = await getBlockRegistrar(stateStore, blockHeight);
         if (!blockRegistrar) {
           blockRegistrar = { items: [] };

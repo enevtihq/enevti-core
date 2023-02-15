@@ -10,6 +10,7 @@ import {
 } from 'lisk-sdk';
 import { registrarActions } from './actions';
 import { REGISTRAR_PREFIX } from './constants/codec';
+import { REGISTRAR_MODULE_ID } from './constants/id';
 import registrarAfterBlockApply from './hook/afterBlockApply';
 import { registrarReducers } from './reducers';
 
@@ -19,7 +20,7 @@ export class RegistrarModule extends BaseModule {
   public name = REGISTRAR_PREFIX;
   public transactionAssets = [];
   public events = ['newRegistrar'];
-  public id = 1004;
+  public id = REGISTRAR_MODULE_ID;
 
   // public constructor(genesisConfig: GenesisConfig) {
   //     super(genesisConfig);

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MintNftAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/redeemableNft/mintNftAsset",
+  "properties": Object {
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+    "quantity": Object {
+      "dataType": "uint32",
+      "fieldNumber": 2,
+    },
+  },
+  "required": Array [
+    "id",
+    "quantity",
+  ],
+  "title": "MintNftAsset transaction asset for redeemableNft module",
+  "type": "object",
+}
+`;

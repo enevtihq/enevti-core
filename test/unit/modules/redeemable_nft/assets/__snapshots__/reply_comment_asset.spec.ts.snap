@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReplyCommentAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/redeemableNft/replyCommentAsset",
+  "properties": Object {
+    "cid": Object {
+      "dataType": "string",
+      "fieldNumber": 2,
+    },
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+  },
+  "required": Array [
+    "id",
+    "cid",
+  ],
+  "title": "replyCommentAsset transaction asset for redeemableNft module",
+  "type": "object",
+}
+`;

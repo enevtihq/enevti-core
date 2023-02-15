@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LikeCollectionAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/redeemableNft/likeCollectionAsset",
+  "properties": Object {
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+  },
+  "required": Array [
+    "id",
+  ],
+  "title": "likeCollectionAsset transaction asset for redeemableNft module",
+  "type": "object",
+}
+`;

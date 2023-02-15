@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LikeMomentAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/redeemableMoment/likeMomentAsset",
+  "properties": Object {
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+  },
+  "required": Array [
+    "id",
+  ],
+  "title": "likeMomentAsset transaction asset for redeemableMoment module",
+  "type": "object",
+}
+`;

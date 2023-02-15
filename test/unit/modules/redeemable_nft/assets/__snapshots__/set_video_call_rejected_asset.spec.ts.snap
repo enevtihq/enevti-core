@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SetVideoCallRejectedAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/redeemableNft/setVideoCallRejectedAsset",
+  "properties": Object {
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+    "publicKey": Object {
+      "dataType": "string",
+      "fieldNumber": 3,
+    },
+    "signature": Object {
+      "dataType": "string",
+      "fieldNumber": 2,
+    },
+  },
+  "required": Array [
+    "id",
+    "signature",
+    "publicKey",
+  ],
+  "title": "setVideoCallRejectedAsset transaction asset for redeemableNft module",
+  "type": "object",
+}
+`;

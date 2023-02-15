@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChangeTwitterAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/persona/changeTwitterAsset",
+  "properties": Object {
+    "twitter": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+  },
+  "required": Array [
+    "twitter",
+  ],
+  "title": "ChangeTwitterAsset transaction asset for persona module",
+  "type": "object",
+}
+`;
