@@ -2,20 +2,20 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Persona } from 'enevti-types/account/persona';
 import { NFTBase } from 'enevti-types/chain/nft';
-import { invokeGetNFTIdFromSerial } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { minimizeNFT } from '../../utils/transformer/minimizeToBase';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { q } = req.query as Record<string, string>;
-    const nftId = await invokeGetNFTIdFromSerial(channel, decodeURIComponent(q));
-    if (!nftId) {
+    const serialRegistrar = await invokeGetRegistrar(channel, 'serial', decodeURIComponent(q));
+    if (!serialRegistrar) {
       res.status(200).json({ data: [], meta: req.query });
       return;
     }
 
-    const nft = await idBufferToNFT(channel, nftId);
+    const nft = await idBufferToNFT(channel, serialRegistrar.id);
     if (!nft) {
       res.status(200).json({ data: [], meta: req.query });
       return;

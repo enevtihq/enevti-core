@@ -16,13 +16,3 @@ export const invokeGetAccount = async (
     RedeemableNFTAccountProps &
     TokenAccount & { sequence: { nonce: bigint } }
 > => channel.invoke('persona:getAccount', { address });
-
-export const invokeGetAddressByUsername = async (
-  channel: BaseChannel,
-  username: string,
-): Promise<Buffer | undefined> => channel.invoke('persona:getAddressByUsername', { username });
-
-export const invokeIsUsernameExists = async (
-  channel: BaseChannel,
-  username: string,
-): Promise<boolean> => channel.invoke('persona:isUsernameExists', { username });

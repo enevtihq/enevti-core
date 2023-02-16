@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeIsSerialExists } from '../../utils/invoker/redeemable_nft_module';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { serial } = req.params;
-    const isSerialExists = await invokeIsSerialExists(channel, serial);
+    const serialRegistrar = await invokeGetRegistrar(channel, 'serial', decodeURIComponent(serial));
+    const isSerialExists = !!serialRegistrar;
 
     res.status(200).json({ data: isSerialExists, meta: req.params });
   } catch (err: unknown) {

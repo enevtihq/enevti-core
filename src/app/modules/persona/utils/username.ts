@@ -1,39 +1,39 @@
-import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
-import { RegisteredUsernameAsset } from 'enevti-types/chain/registrar';
-import { CHAIN_STATE_REGISTRAR_USERNAME } from '../constant/codec';
-import { registeredUsernameSchema } from '../schema/chain/registrar';
+// import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
+// import { RegisteredUsernameAsset } from 'enevti-types/chain/registrar';
+// import { CHAIN_STATE_REGISTRAR_USERNAME } from '../constant/codec';
+// import { registeredUsernameSchema } from '../schema/chain/registrar';
 
-export const accessRegisteredUsername = async (
-  dataAccess: BaseModuleDataAccess,
-  username: string,
-): Promise<RegisteredUsernameAsset | undefined> => {
-  const addressChain = await dataAccess.getChainState(
-    `${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`,
-  );
-  if (!addressChain) {
-    return undefined;
-  }
-  return codec.decode<RegisteredUsernameAsset>(registeredUsernameSchema, addressChain);
-};
+// export const accessRegisteredUsername = async (
+//   dataAccess: BaseModuleDataAccess,
+//   username: string,
+// ): Promise<RegisteredUsernameAsset | undefined> => {
+//   const addressChain = await dataAccess.getChainState(
+//     `${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`,
+//   );
+//   if (!addressChain) {
+//     return undefined;
+//   }
+//   return codec.decode<RegisteredUsernameAsset>(registeredUsernameSchema, addressChain);
+// };
 
-export const getRegisteredUsername = async (
-  stateStore: StateStore,
-  username: string,
-): Promise<RegisteredUsernameAsset | undefined> => {
-  const addressChain = await stateStore.chain.get(`${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`);
-  if (!addressChain) {
-    return undefined;
-  }
-  return codec.decode<RegisteredUsernameAsset>(registeredUsernameSchema, addressChain);
-};
+// export const getRegisteredUsername = async (
+//   stateStore: StateStore,
+//   username: string,
+// ): Promise<RegisteredUsernameAsset | undefined> => {
+//   const addressChain = await stateStore.chain.get(`${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`);
+//   if (!addressChain) {
+//     return undefined;
+//   }
+//   return codec.decode<RegisteredUsernameAsset>(registeredUsernameSchema, addressChain);
+// };
 
-export const setRegisteredUsername = async (
-  stateStore: StateStore,
-  username: string,
-  address: string,
-) => {
-  await stateStore.chain.set(
-    `${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`,
-    codec.encode(registeredUsernameSchema, { address: Buffer.from(address, 'hex') }),
-  );
-};
+// export const setRegisteredUsername = async (
+//   stateStore: StateStore,
+//   username: string,
+//   address: string,
+// ) => {
+//   await stateStore.chain.set(
+//     `${CHAIN_STATE_REGISTRAR_USERNAME}:${username}`,
+//     codec.encode(registeredUsernameSchema, { address: Buffer.from(address, 'hex') }),
+//   );
+// };

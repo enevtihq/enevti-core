@@ -171,10 +171,16 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (allNFTTemplate.items.includes(asset.template))
       throw new Error('template not exist on chain!');
 
-    const nameRegistrar = await getRegisteredName(stateStore, asset.name);
+    const nameRegistrar = await reducerHandler.invoke('registrar:getRegistrar', {
+      identifier: 'name',
+      value: asset.name,
+    });
     if (nameRegistrar) throw new Error('name already exist on chain!');
 
-    const symbolRegistrar = await getRegisteredSymbol(stateStore, asset.symbol);
+    const symbolRegistrar = await reducerHandler.invoke('registrar:getRegistrar', {
+      identifier: 'symbol',
+      value: asset.symbol,
+    });
     if (symbolRegistrar) throw new Error('symbol already exist on chain!');
 
     const totalStake = await reducerHandler.invoke('creatorFinance:getTotalStake', {
@@ -351,14 +357,22 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     await setAllCollection(stateStore, allCollection);
 
     await setCollectionById(stateStore, collection.id.toString('hex'), collection);
-    await setRegisteredName(stateStore, collection.name, collection.id.toString('hex'));
-    await setRegisteredSymbol(stateStore, collection.symbol, collection.id.toString('hex'));
+    await reducerHandler.invoke('registrar:setRegistrar', {
+      identifier: 'name',
+      value: collection.name,
+      id: collection.id,
+    });
+    await reducerHandler.invoke('registrar:setRegistrar', {
+      identifier: 'symbol',
+      value: collection.symbol,
+      id: collection.id,
+    });
     await asyncForEach(nftsInThisCollection, async item => {
-      await setRegisteredSerial(
-        stateStore,
-        `${item.symbol}#${item.serial}`,
-        item.id.toString('hex'),
-      );
+      await reducerHandler.invoke('registrar:setRegistrar', {
+        identifier: 'symbol',
+        value: `${item.symbol}#${item.serial}`,
+        id: item.id,
+      });
     });
 
     const activity: CollectionActivityChainItems = {

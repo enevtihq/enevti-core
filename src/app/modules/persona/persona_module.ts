@@ -11,13 +11,12 @@ import {
 } from 'lisk-sdk';
 import { RegisterTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
 import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
+import { PersonaAccountProps } from 'enevti-types/account/persona';
+import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
 import { getDefaultAccount } from './utils/account';
-import { accessRegisteredUsername, setRegisteredUsername } from './utils/username';
-import { PersonaAccountProps } from 'enevti-types/account/persona';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 
 export class PersonaModule extends BaseModule {
   public actions = {
@@ -31,15 +30,6 @@ export class PersonaModule extends BaseModule {
       } catch {
         return getDefaultAccount(address);
       }
-    },
-    getAddressByUsername: async params => {
-      const { username } = params as Record<string, string>;
-      return (await accessRegisteredUsername(this._dataAccess, username))?.address;
-    },
-    isUsernameExists: async params => {
-      const { username } = params as Record<string, string>;
-      const usernameRegistrar = await accessRegisteredUsername(this._dataAccess, username);
-      return !!usernameRegistrar;
     },
   };
   public reducers = {};
@@ -100,11 +90,11 @@ export class PersonaModule extends BaseModule {
       );
       senderAccount.persona.username = registerAsset.username as string;
       await _input.stateStore.account.set(_input.transaction.senderAddress, senderAccount);
-      await setRegisteredUsername(
-        _input.stateStore,
-        registerAsset.username as string,
-        _input.transaction.senderAddress.toString('hex'),
-      );
+      await _input.reducerHandler.invoke('registrar:setRegistrar', {
+        identifier: 'username',
+        value: registerAsset.username as string,
+        id: _input.transaction.senderAddress,
+      });
     }
   }
 

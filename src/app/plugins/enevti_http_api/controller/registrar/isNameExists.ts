@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
-import { invokeIsNameExists } from '../../utils/invoker/redeemable_nft_module';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
-    const isNameExists = await invokeIsNameExists(channel, name);
+    const nameRegistrar = await invokeGetRegistrar(channel, 'name', name);
+    const isNameExists = !!nameRegistrar;
 
     res.status(200).json({ data: isNameExists, meta: req.params });
   } catch (err: unknown) {

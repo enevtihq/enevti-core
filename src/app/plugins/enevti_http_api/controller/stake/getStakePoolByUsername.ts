@@ -3,20 +3,23 @@ import { BaseChannel } from 'lisk-framework';
 import { StakePoolData, StakerItem } from 'enevti-types/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
 import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module.ts';
-import { invokeGetAddressByUsername } from '../../utils/invoker/persona_module';
 import { STAKER_INITIAL_LENGTH } from '../../constant/limit';
 import { isNumeric } from '../../utils/validation/number';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
     const { staker } = req.query as Record<string, string>;
-    const usernameRegistrar = await invokeGetAddressByUsername(channel, username);
+    const usernameRegistrar = await invokeGetRegistrar(channel, 'username', username);
     if (!usernameRegistrar) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
     }
-    const stakerChain = await invokeGetStakerByAddress(channel, usernameRegistrar.toString('hex'));
+    const stakerChain = await invokeGetStakerByAddress(
+      channel,
+      usernameRegistrar.id.toString('hex'),
+    );
     if (!stakerChain) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
@@ -43,7 +46,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
         : [];
 
     const stake: StakePoolData = {
-      owner: await addressBufferToPersona(channel, usernameRegistrar),
+      owner: await addressBufferToPersona(channel, usernameRegistrar.id),
       staker: stakerData,
     };
 

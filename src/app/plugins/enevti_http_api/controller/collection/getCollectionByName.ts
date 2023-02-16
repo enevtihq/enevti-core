@@ -1,13 +1,9 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection, CollectionActivity } from 'enevti-types/chain/collection';
-import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
-import {
-  invokeGetCollection,
-  invokeGetCollectionIdFromName,
-  invokeGetLiked,
-} from '../../utils/invoker/redeemable_nft_module';
 import { NFTBase } from 'enevti-types/chain/nft';
+import collectionChainToUI from '../../utils/transformer/collectionChainToUI';
+import { invokeGetCollection, invokeGetLiked } from '../../utils/invoker/redeemable_nft_module';
 import {
   COLLECTION_ACTIVITY_INITIAL_LENGTH,
   COLLECTION_MINTED_INITIAL_LENGTH,
@@ -18,17 +14,18 @@ import idBufferToNFT from '../../utils/transformer/idBufferToNFT';
 import { isNumeric } from '../../utils/validation/number';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 import { minimizeMoment, minimizeNFT } from '../../utils/transformer/minimizeToBase';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
     const { activity, minted, viewer, moment } = req.query as Record<string, string>;
-    const id = await invokeGetCollectionIdFromName(channel, name);
-    if (!id) {
+    const nameRegistrar = await invokeGetRegistrar(channel, 'name', name);
+    if (!nameRegistrar) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
     }
-    const collection = await invokeGetCollection(channel, id.toString('hex'));
+    const collection = await invokeGetCollection(channel, nameRegistrar.id.toString('hex'));
     if (!collection) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
@@ -42,7 +39,11 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let activityVersion = 0;
     let activityData: CollectionActivity[] = [];
     if (activity && isNumeric(activity)) {
-      const collectionActivity = await idBufferToActivityCollection(channel, id, viewer);
+      const collectionActivity = await idBufferToActivityCollection(
+        channel,
+        nameRegistrar.id,
+        viewer,
+      );
       activityData = collectionActivity.slice(
         0,
         activity === '0' ? COLLECTION_ACTIVITY_INITIAL_LENGTH : parseInt(activity, 10),
@@ -70,9 +71,9 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentVersion = 0;
     let momentData: Collection['moment'] = [];
     if (moment && isNumeric(moment)) {
-      const collectionMoment = (await idBufferToMomentAt(channel, id, viewer)).map(momentItem =>
-        minimizeMoment(momentItem),
-      );
+      const collectionMoment = (
+        await idBufferToMomentAt(channel, nameRegistrar.id, viewer)
+      ).map(momentItem => minimizeMoment(momentItem));
       momentData = collectionMoment.slice(
         0,
         moment === '0' ? COLLECTION_MOMENT_INITIAL_LENGTH : parseInt(moment, 10),

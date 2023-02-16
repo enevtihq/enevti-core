@@ -1,21 +1,19 @@
 import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { Collection } from 'enevti-types/chain/collection';
-import {
-  invokeGetCollection,
-  invokeGetCollectionIdFromName,
-} from '../../utils/invoker/redeemable_nft_module';
+import { invokeGetCollection } from '../../utils/invoker/redeemable_nft_module';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { q } = req.query as Record<string, string>;
-    const collectionId = await invokeGetCollectionIdFromName(channel, q);
-    if (!collectionId) {
+    const nameRegistrar = await invokeGetRegistrar(channel, 'name', q);
+    if (!nameRegistrar) {
       res.status(200).json({ data: [], meta: req.query });
       return;
     }
-    const collection = await invokeGetCollection(channel, collectionId.toString('hex'));
+    const collection = await invokeGetCollection(channel, nameRegistrar.id.toString('hex'));
     if (!collection) {
       res.status(200).json({ data: [], meta: req.query });
       return;

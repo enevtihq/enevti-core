@@ -4,26 +4,23 @@ import { MomentBase } from 'enevti-types/chain/moment';
 import { NFT } from 'enevti-types/chain/nft';
 import { NFTActivity } from 'enevti-types/chain/nft/NFTActivity';
 import { NFT_ACTIVITY_INITIAL_LENGTH, NFT_MOMENT_INITIAL_LENGTH } from '../../constant/limit';
-import {
-  invokeGetLiked,
-  invokeGetNFT,
-  invokeGetNFTIdFromSerial,
-} from '../../utils/invoker/redeemable_nft_module';
+import { invokeGetLiked, invokeGetNFT } from '../../utils/invoker/redeemable_nft_module';
 import idBufferToActivityNFT from '../../utils/transformer/idBufferToActivityNFT';
 import { idBufferToMomentAt } from '../../utils/transformer/idBufferToMomentAt';
 import nftChainToUI from '../../utils/transformer/nftChainToUI';
 import { isNumeric } from '../../utils/validation/number';
+import { invokeGetRegistrar } from '../../utils/invoker/registrar';
 
 export default (channel: BaseChannel) => async (req: Request, res: Response) => {
   try {
     const { serial } = req.params;
     const { activity, moment, viewer } = req.query as Record<string, string>;
-    const id = await invokeGetNFTIdFromSerial(channel, decodeURIComponent(serial));
-    if (!id) {
+    const serialRegistrar = await invokeGetRegistrar(channel, 'serial', decodeURIComponent(serial));
+    if (!serialRegistrar) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
     }
-    const nft = await invokeGetNFT(channel, id.toString('hex'));
+    const nft = await invokeGetNFT(channel, serialRegistrar.id.toString('hex'));
     if (!nft) {
       res.status(404).json({ data: { message: 'Not Found' }, version: {}, meta: req.params });
       return;
@@ -37,7 +34,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let activityVersion = 0;
     let activityData: NFTActivity[] = [];
     if (activity && isNumeric(activity)) {
-      const collectionActivity = await idBufferToActivityNFT(channel, id);
+      const collectionActivity = await idBufferToActivityNFT(channel, serialRegistrar.id);
       activityData = collectionActivity.slice(
         0,
         activity === '0' ? NFT_ACTIVITY_INITIAL_LENGTH : parseInt(activity, 10),
@@ -48,7 +45,7 @@ export default (channel: BaseChannel) => async (req: Request, res: Response) => 
     let momentVersion = 0;
     let momentData: MomentBase[] = [];
     if (moment && isNumeric(moment)) {
-      const nftMoments = await idBufferToMomentAt(channel, id, viewer);
+      const nftMoments = await idBufferToMomentAt(channel, serialRegistrar.id, viewer);
       momentData = nftMoments.slice(
         0,
         moment === '0' ? NFT_MOMENT_INITIAL_LENGTH : parseInt(moment, 10),

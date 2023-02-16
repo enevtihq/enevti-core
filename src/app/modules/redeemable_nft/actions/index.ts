@@ -171,21 +171,6 @@ export function redeemableNftActions(this: BaseModule) {
       const commentReply = await accessCommentClubsReplyById(this._dataAccess, id);
       return commentReply;
     },
-    getCollectionIdFromName: async (params): Promise<CollectionIdAsset | undefined> => {
-      const { name } = params as Record<string, string>;
-      const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
-      return nameRegistrar ? nameRegistrar.id : undefined;
-    },
-    getCollectionIdFromSymbol: async (params): Promise<CollectionIdAsset | undefined> => {
-      const { symbol } = params as Record<string, string>;
-      const symbolRegistrar = await accessRegisteredSymbol(this._dataAccess, symbol);
-      return symbolRegistrar ? symbolRegistrar.id : undefined;
-    },
-    getNFTIdFromSerial: async (params): Promise<NFTIdAsset | undefined> => {
-      const { serial } = params as Record<string, string>;
-      const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
-      return serialRegistrar ? serialRegistrar.id : undefined;
-    },
     getAllCollectionId: async (params): Promise<CollectionIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
@@ -374,21 +359,6 @@ export function redeemableNftActions(this: BaseModule) {
       const { address } = params as Record<string, string>;
       const activity = await accessActivityEngagement(this._dataAccess, address);
       return activity;
-    },
-    isNameExists: async (params): Promise<boolean> => {
-      const { name } = params as Record<string, string>;
-      const nameRegistrar = await accessRegisteredName(this._dataAccess, name);
-      return !!nameRegistrar;
-    },
-    isSymbolExists: async (params): Promise<boolean> => {
-      const { symbol } = params as Record<string, string>;
-      const symbolRegistrar = await accessRegisteredSymbol(this._dataAccess, symbol);
-      return !!symbolRegistrar;
-    },
-    isSerialExists: async (params): Promise<boolean> => {
-      const { serial } = params as Record<string, string>;
-      const serialRegistrar = await accessRegisteredSerial(this._dataAccess, serial);
-      return !!serialRegistrar;
     },
     getSocialRaffleRecord: async (params): Promise<SocialRaffleRecord> => {
       const { height } = params as { height: number };

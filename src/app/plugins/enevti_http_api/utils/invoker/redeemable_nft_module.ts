@@ -22,24 +22,6 @@ import { NFTActivityChain } from 'enevti-types/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
 import { SocialRaffleChain, SocialRaffleRecord } from 'enevti-types/chain/socialRaffle';
 
-export const invokeGetCollectionIdFromName = async (
-  channel: BaseChannel,
-  name: string,
-): Promise<CollectionIdAsset | undefined> =>
-  channel.invoke('redeemableNft:getCollectionIdFromName', { name });
-
-export const invokeGetCollectionIdFromSymbol = async (
-  channel: BaseChannel,
-  symbol: string,
-): Promise<CollectionIdAsset | undefined> =>
-  channel.invoke('redeemableNft:getCollectionIdFromSymbol', { symbol });
-
-export const invokeGetNFTIdFromSerial = async (
-  channel: BaseChannel,
-  serial: string,
-): Promise<NFTIdAsset | undefined> =>
-  channel.invoke('redeemableNft:getNFTIdFromSerial', { serial });
-
 export const invokeGetAllCollectionId = async (
   channel: BaseChannel,
   offset: number,
@@ -263,19 +245,6 @@ export const invokeGetAccountStats = async (
   address: string,
 ): Promise<RedeemableNFTAccountStatsChain> =>
   channel.invoke('redeemableNft:getAccountStats', { address });
-
-export const invokeIsNameExists = async (channel: BaseChannel, name: string): Promise<boolean> =>
-  channel.invoke('redeemableNft:isNameExists', { name });
-
-export const invokeIsSymbolExists = async (
-  channel: BaseChannel,
-  symbol: string,
-): Promise<boolean> => channel.invoke('redeemableNft:isSymbolExists', { symbol });
-
-export const invokeIsSerialExists = async (
-  channel: BaseChannel,
-  serial: string,
-): Promise<boolean> => channel.invoke('redeemableNft:isSerialExists', { serial });
 
 export const invokeGetSocialRaffleRecord = async (
   channel: BaseChannel,
