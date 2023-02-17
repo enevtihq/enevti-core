@@ -1,6 +1,9 @@
-import { BlockRegisrarAsset, RegistrarAsset } from 'enevti-types/chain/registrar';
+import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
 import { codec, StateStore, testing } from 'lisk-sdk';
-import { REGISTRAR_PREFIX } from '../../../../src/app/modules/registrar/constants/codec';
+import {
+  BLOCK_REGISTRAR_PREFIX,
+  REGISTRAR_PREFIX,
+} from '../../../../src/app/modules/registrar/constants/codec';
 import { REGISTRAR_MODULE_ID } from '../../../../src/app/modules/registrar/constants/id';
 import { RegistrarModule } from '../../../../src/app/modules/registrar/registrar_module';
 import { blockRegistrarSchema } from '../../../../src/app/modules/registrar/schema/block';
@@ -16,14 +19,14 @@ describe('RegistrarModule', () => {
   const channel = testing.mocks.channelMock;
 
   const testBuffer = Buffer.from('testSymbol', 'utf8');
-  const registrarAssetState: RegistrarAsset = {
+  const RegistrarChainState: RegistrarChain = {
     id: testBuffer,
   };
-  const blockRegistrarAssetState: BlockRegisrarAsset = {
+  const blockRegistrarChainState: BlockRegisrarChain = {
     items: [{ name: 'symbol', payload: 'test' }],
   };
-  const registrarStateValue = codec.encode(registrarSchema, registrarAssetState);
-  const blockRegistrarStateValue = codec.encode(blockRegistrarSchema, blockRegistrarAssetState);
+  const registrarStateValue = codec.encode(registrarSchema, RegistrarChainState);
+  const blockRegistrarStateValue = codec.encode(blockRegistrarSchema, blockRegistrarChainState);
 
   registrarModule.init({
     channel,
@@ -36,7 +39,7 @@ describe('RegistrarModule', () => {
       lastBlockHeaders: [{ height: 2 }],
       chain: {
         [`${REGISTRAR_PREFIX}:symbol:test`]: registrarStateValue,
-        [`${REGISTRAR_PREFIX}:block:3`]: blockRegistrarStateValue,
+        [`${REGISTRAR_PREFIX}:${BLOCK_REGISTRAR_PREFIX}:3`]: blockRegistrarStateValue,
       },
     });
 
@@ -49,7 +52,7 @@ describe('RegistrarModule', () => {
         if (key === `${REGISTRAR_PREFIX}:symbol:test`) {
           res(registrarStateValue);
         }
-        if (key === `${REGISTRAR_PREFIX}:block:3`) {
+        if (key === `${REGISTRAR_PREFIX}:${BLOCK_REGISTRAR_PREFIX}:3`) {
           res(blockRegistrarStateValue);
         }
         res(undefined);
@@ -225,7 +228,7 @@ describe('RegistrarModule', () => {
         const identifier = 'collection';
         const value = 'value';
         const id = testBuffer;
-        const expected: BlockRegisrarAsset = { items: [{ name: identifier, payload: value }] };
+        const expected: BlockRegisrarChain = { items: [{ name: identifier, payload: value }] };
 
         await registrarModule.reducers.setRegistrar({ identifier, value, id }, stateStore);
         const chainState = await registrarModule.reducers.getBlockRegistrar(
@@ -241,8 +244,8 @@ describe('RegistrarModule', () => {
         const value = 'value';
         const lastBlockHeight = 2;
         const id = testBuffer;
-        const expected: BlockRegisrarAsset = {
-          items: [{ name: identifier, payload: value }, blockRegistrarAssetState.items[0]],
+        const expected: BlockRegisrarChain = {
+          items: [{ name: identifier, payload: value }, blockRegistrarChainState.items[0]],
         };
 
         await registrarModule.reducers.setRegistrar({ identifier, value, id }, stateStore);

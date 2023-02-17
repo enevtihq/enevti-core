@@ -119,6 +119,7 @@
     "fs-extra": "9.1.0",
     "i18n": "^0.15.1",
     "inquirer": "7.3.2",
+    "just-diff": "^5.2.0",
     "lisk-commander": "^5.1.10",
     "lisk-framework": "^0.9.1",
     "lisk-sdk": "^5.2.2",
@@ -133,7 +134,8 @@
     "tar": "6.0.2",
     "tslib": "1.13.0",
     "twilio": "^3.81.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "variable-diff": "^2.0.2"
   },
   "devDependencies": {
     "@oclif/config": "1.18.3",

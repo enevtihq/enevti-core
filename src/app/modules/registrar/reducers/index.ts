@@ -1,5 +1,5 @@
 import { StateStore, BaseModule } from 'lisk-framework';
-import { BlockRegisrarAsset, RegistrarAsset } from 'enevti-types/chain/registrar';
+import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
 import { getRegistrar, setRegistrar } from '../utils/registrar';
 import { getBlockRegistrar, setBlockRegistrar } from '../utils/block';
 
@@ -8,7 +8,7 @@ export function registrarReducers(this: BaseModule) {
     getRegistrar: async (
       params: Record<string, unknown>,
       stateStore: StateStore,
-    ): Promise<RegistrarAsset | undefined> => {
+    ): Promise<RegistrarChain | undefined> => {
       const { identifier, value } = params as Record<string, string>;
       const registrar = await getRegistrar(stateStore, identifier, value);
       return registrar;
@@ -16,7 +16,7 @@ export function registrarReducers(this: BaseModule) {
     getBlockRegistrar: async (
       params: Record<string, unknown>,
       stateStore: StateStore,
-    ): Promise<BlockRegisrarAsset | undefined> => {
+    ): Promise<BlockRegisrarChain | undefined> => {
       const { height } = params as Record<string, number>;
       const blockRegistrar = await getBlockRegistrar(stateStore, height);
       return blockRegistrar;

@@ -1,8 +1,8 @@
-import { RegistrarAsset } from 'enevti-types/chain/registrar';
+import { RegistrarChain } from 'enevti-types/chain/registrar';
 import { StateSchemaFromType } from 'enevti-types/utils/schema';
 import { REGISTRAR_PREFIX } from '../constants/codec';
 
-export const registrarSchema: StateSchemaFromType<RegistrarAsset> = {
+export const registrarSchema: StateSchemaFromType<RegistrarChain> = {
   $id: `enevti/${REGISTRAR_PREFIX}`,
   type: 'object',
   required: ['id'],
