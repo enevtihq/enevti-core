@@ -1,8 +1,13 @@
 import { StateStore, BaseModule } from 'lisk-framework';
-import { ActivityItemChain, ActivityListChain } from 'enevti-types/chain/activity';
+import {
+  ActivityGenesisChain,
+  ActivityItemChain,
+  ActivityListChain,
+} from 'enevti-types/chain/activity';
 import { getActivity } from '../utils/item';
 import { getActivities } from '../utils/list';
 import { addActivity, AddActivityPayload } from '../utils/add';
+import { getActivityGenesis } from '../utils/genesis';
 
 export function activityReducers(this: BaseModule) {
   return {
@@ -31,6 +36,20 @@ export function activityReducers(this: BaseModule) {
       const activities = await getActivities(stateStore, identifier, key);
       return activities;
     },
+    getActivityGenesis: async (
+      params: Record<string, unknown>,
+      stateStore: StateStore,
+    ): Promise<ActivityGenesisChain | undefined> => {
+      const { identifier, key } = params as Record<string, string>;
+      if (typeof identifier !== 'string') {
+        throw new Error('identifier must be a string');
+      }
+      if (typeof key !== 'string') {
+        throw new Error('key must be a string');
+      }
+      const activitiyGenesis = await getActivityGenesis(stateStore, identifier, key);
+      return activitiyGenesis;
+    },
     addActivity: async (
       params: Record<string, unknown>,
       stateStore: StateStore,
@@ -46,6 +65,9 @@ export function activityReducers(this: BaseModule) {
         }
         if (typeof newState !== 'object') {
           throw new Error('newState must be an object');
+        }
+        if (typeof payload !== 'object') {
+          throw new Error('payload must be an object');
         }
         if (typeof payload.key !== 'string') {
           throw new Error('payload.key must be a string');

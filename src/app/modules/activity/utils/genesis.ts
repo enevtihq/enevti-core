@@ -1,7 +1,21 @@
 import { ActivityGenesisChain } from 'enevti-types/chain/activity';
-import { codec, StateStore } from 'lisk-sdk';
+import { BaseModuleDataAccess, codec, StateStore } from 'lisk-sdk';
 import { ACTIVITY_PREFIX, GENESIS_ACTIVITY_PREFIX } from '../constants/codec';
 import { activityGenesisSchema } from '../schema/genesis';
+
+export const accessActivityGenesis = async (
+  dataAccess: BaseModuleDataAccess,
+  identifier: string,
+  key: string,
+): Promise<ActivityGenesisChain | undefined> => {
+  const activityGenesisBuffer = await dataAccess.getChainState(
+    `${ACTIVITY_PREFIX}:${identifier}:${key}:${GENESIS_ACTIVITY_PREFIX}`,
+  );
+  if (!activityGenesisBuffer) {
+    return undefined;
+  }
+  return codec.decode<ActivityGenesisChain>(activityGenesisSchema, activityGenesisBuffer);
+};
 
 export const getActivityGenesis = async (
   stateStore: StateStore,
