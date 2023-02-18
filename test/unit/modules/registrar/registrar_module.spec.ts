@@ -104,6 +104,18 @@ describe('RegistrarModule', () => {
         const registrar = await registrarModule.actions.getRegistrar({ identifier, value });
         expect(registrar).toBeUndefined();
       });
+
+      it('should throw an error if identifier is not string', () => {
+        const registrar = () =>
+          registrarModule.actions.getRegistrar({ identifier: 3, value: 'value' });
+        expect(registrar).toThrow();
+      });
+
+      it('should throw an error if value is not string', () => {
+        const registrar = () =>
+          registrarModule.actions.getRegistrar({ identifier: 'identifier', value: 3 });
+        expect(registrar).toThrow();
+      });
     });
 
     describe('getBlockRegistrar', () => {
@@ -119,6 +131,12 @@ describe('RegistrarModule', () => {
         const height = -1;
         const blockRegistrar = await registrarModule.actions.getBlockRegistrar({ height });
         expect(blockRegistrar).toBeUndefined();
+      });
+
+      it('should throw an error if height is not number', () => {
+        const blockRegistrar = () =>
+          registrarModule.actions.getBlockRegistrar({ height: 'height' });
+        expect(blockRegistrar).toThrow();
       });
     });
   });
@@ -154,6 +172,18 @@ describe('RegistrarModule', () => {
         );
         expect(registrar).toBeUndefined();
       });
+
+      it('should throw an error if identifier is not string', () => {
+        const registrar = () =>
+          registrarModule.reducers.getRegistrar({ identifier: 3, value: 'value' }, stateStore);
+        expect(registrar).toThrow();
+      });
+
+      it('should throw an error if value is not string', () => {
+        const registrar = () =>
+          registrarModule.reducers.getRegistrar({ identifier: 'identifier', value: 3 }, stateStore);
+        expect(registrar).toThrow();
+      });
     });
 
     describe('getBlockRegistrar', () => {
@@ -175,6 +205,12 @@ describe('RegistrarModule', () => {
           stateStore,
         );
         expect(blockRegistrar).toBeUndefined();
+      });
+
+      it('should throw an error if height is not number', () => {
+        const blockRegistrar = () =>
+          registrarModule.reducers.getBlockRegistrar({ height: 'height' }, stateStore);
+        expect(blockRegistrar).toThrow();
       });
     });
 
@@ -255,6 +291,33 @@ describe('RegistrarModule', () => {
         );
 
         expect(chainState).toEqual(expected);
+      });
+
+      it('should throw an error if identifier is not string', () => {
+        const registrar = () =>
+          registrarModule.reducers.setRegistrar(
+            { identifier: 3, value: 'value', id: testBuffer },
+            stateStore,
+          );
+        expect(registrar).toThrow();
+      });
+
+      it('should throw an error if value is not string', () => {
+        const registrar = () =>
+          registrarModule.reducers.setRegistrar(
+            { identifier: 'identifier', value: 3, id: testBuffer },
+            stateStore,
+          );
+        expect(registrar).toThrow();
+      });
+
+      it('should throw an error if id is not buffer', () => {
+        const registrar = () =>
+          registrarModule.reducers.setRegistrar(
+            { identifier: 'identifier', value: 'value', id: 'testBuffer' },
+            stateStore,
+          );
+        expect(registrar).toThrow();
       });
     });
   });
