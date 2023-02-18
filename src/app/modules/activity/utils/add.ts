@@ -13,7 +13,7 @@ export type AddActivityPayload = Omit<
   ActivityItemChain,
   'previousActivityId' | 'diff' | 'patch' | 'transaction' | 'height'
 > & { transaction?: Buffer };
-const diffOptions = { color: false };
+export const diffOptions = { color: false };
 
 export const addActivity = async (
   stateStore: StateStore,
