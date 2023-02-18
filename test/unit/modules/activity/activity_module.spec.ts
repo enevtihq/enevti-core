@@ -154,9 +154,16 @@ describe('ActivityModule', () => {
         expect(activity).toBeUndefined();
       });
 
-      it('should throw an error if id is not buffer', () => {
-        const activity = () => activityModule.actions.getActivity({ id: 3 });
-        expect(activity).toThrow();
+      it('should throw an error if id is not buffer', async () => {
+        const activity = async () => {
+          try {
+            await activityModule.actions.getActivity({ id: {} });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
       });
     });
 
@@ -174,14 +181,28 @@ describe('ActivityModule', () => {
         expect(activities).toBeUndefined();
       });
 
-      it('should throw an error if identifier is not string', () => {
-        const activities = () => activityModule.actions.getActivities({ identifier: 3, key });
-        expect(activities).toThrow();
+      it('should throw an error if identifier is not string', async () => {
+        const activities = async () => {
+          try {
+            await activityModule.actions.getActivities({ identifier: 3, key });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activities()).toBe(false);
       });
 
-      it('should throw an error if key is not string', () => {
-        const activities = () => activityModule.actions.getActivities({ identifier, key: 3 });
-        expect(activities).toThrow();
+      it('should throw an error if key is not string', async () => {
+        const activities = async () => {
+          try {
+            await activityModule.actions.getActivities({ identifier, key: 3 });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activities()).toBe(false);
       });
     });
   });

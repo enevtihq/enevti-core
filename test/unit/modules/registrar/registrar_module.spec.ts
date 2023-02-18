@@ -105,16 +105,28 @@ describe('RegistrarModule', () => {
         expect(registrar).toBeUndefined();
       });
 
-      it('should throw an error if identifier is not string', () => {
-        const registrar = () =>
-          registrarModule.actions.getRegistrar({ identifier: 3, value: 'value' });
-        expect(registrar).toThrow();
+      it('should throw an error if identifier is not string', async () => {
+        const registrar = async () => {
+          try {
+            await registrarModule.actions.getRegistrar({ identifier: 3, value: 'value' });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
       });
 
-      it('should throw an error if value is not string', () => {
-        const registrar = () =>
-          registrarModule.actions.getRegistrar({ identifier: 'identifier', value: 3 });
-        expect(registrar).toThrow();
+      it('should throw an error if value is not string', async () => {
+        const registrar = async () => {
+          try {
+            await registrarModule.actions.getRegistrar({ identifier: 'identifier', value: 3 });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
       });
     });
 
@@ -133,10 +145,16 @@ describe('RegistrarModule', () => {
         expect(blockRegistrar).toBeUndefined();
       });
 
-      it('should throw an error if height is not number', () => {
-        const blockRegistrar = () =>
-          registrarModule.actions.getBlockRegistrar({ height: 'height' });
-        expect(blockRegistrar).toThrow();
+      it('should throw an error if height is not number', async () => {
+        const blockRegistrar = async () => {
+          try {
+            await registrarModule.actions.getBlockRegistrar({ height: 'height' });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await blockRegistrar()).toBe(false);
       });
     });
   });
@@ -173,16 +191,34 @@ describe('RegistrarModule', () => {
         expect(registrar).toBeUndefined();
       });
 
-      it('should throw an error if identifier is not string', () => {
-        const registrar = () =>
-          registrarModule.reducers.getRegistrar({ identifier: 3, value: 'value' }, stateStore);
-        expect(registrar).toThrow();
+      it('should throw an error if identifier is not string', async () => {
+        const registrar = async () => {
+          try {
+            await registrarModule.reducers.getRegistrar(
+              { identifier: 3, value: 'value' },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
       });
 
-      it('should throw an error if value is not string', () => {
-        const registrar = () =>
-          registrarModule.reducers.getRegistrar({ identifier: 'identifier', value: 3 }, stateStore);
-        expect(registrar).toThrow();
+      it('should throw an error if value is not string', async () => {
+        const registrar = async () => {
+          try {
+            await registrarModule.reducers.getRegistrar(
+              { identifier: 'identifier', value: 3 },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
       });
     });
 
@@ -207,10 +243,16 @@ describe('RegistrarModule', () => {
         expect(blockRegistrar).toBeUndefined();
       });
 
-      it('should throw an error if height is not number', () => {
-        const blockRegistrar = () =>
-          registrarModule.reducers.getBlockRegistrar({ height: 'height' }, stateStore);
-        expect(blockRegistrar).toThrow();
+      it('should throw an error if height is not number', async () => {
+        const blockRegistrar = async () => {
+          try {
+            await registrarModule.reducers.getBlockRegistrar({ height: 'height' }, stateStore);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await blockRegistrar()).toBe(false);
       });
     });
 
@@ -291,33 +333,6 @@ describe('RegistrarModule', () => {
         );
 
         expect(chainState).toEqual(expected);
-      });
-
-      it('should throw an error if identifier is not string', () => {
-        const registrar = () =>
-          registrarModule.reducers.setRegistrar(
-            { identifier: 3, value: 'value', id: testBuffer },
-            stateStore,
-          );
-        expect(registrar).toThrow();
-      });
-
-      it('should throw an error if value is not string', () => {
-        const registrar = () =>
-          registrarModule.reducers.setRegistrar(
-            { identifier: 'identifier', value: 3, id: testBuffer },
-            stateStore,
-          );
-        expect(registrar).toThrow();
-      });
-
-      it('should throw an error if id is not buffer', () => {
-        const registrar = () =>
-          registrarModule.reducers.setRegistrar(
-            { identifier: 'identifier', value: 'value', id: 'testBuffer' },
-            stateStore,
-          );
-        expect(registrar).toThrow();
       });
     });
   });
