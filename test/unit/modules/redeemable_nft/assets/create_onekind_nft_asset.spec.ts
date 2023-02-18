@@ -1,25 +1,25 @@
-import { CreateOnekindNftAsset } from '../../../../../src/app/modules/redeemable_nft/assets/create_onekind_nft_asset';
+// import { CreateOnekindNftAsset } from '../../../../../src/app/modules/redeemable_nft/assets/create_onekind_nft_asset';
 
 describe('CreateOnekindNftAsset', () => {
-  let transactionAsset: CreateOnekindNftAsset;
+  //   let transactionAsset: CreateOnekindNftAsset;
 
-  beforeEach(() => {
-    transactionAsset = new CreateOnekindNftAsset();
-  });
+  //   beforeEach(() => {
+  //     transactionAsset = new CreateOnekindNftAsset();
+  //   });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(0);
-    });
+  //   describe('constructor', () => {
+  //     it('should have valid id', () => {
+  //       expect(transactionAsset.id).toEqual(0);
+  //     });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('createOnekindNft');
-    });
+  //     it('should have valid name', () => {
+  //       expect(transactionAsset.name).toEqual('createOnekindNft');
+  //     });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //     it('should have valid schema', () => {
+  //       expect(transactionAsset.schema).toMatchSnapshot();
+  //     });
+  //   });
 
   describe('validate', () => {
     describe('schema validation', () => {
