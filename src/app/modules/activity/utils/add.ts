@@ -11,8 +11,8 @@ import variableDiff = require('variable-diff');
 
 export type AddActivityPayload = Omit<
   ActivityItemChain,
-  'previousActivityId' | 'diff' | 'patch' | 'transaction' | 'height'
-> & { transaction?: Buffer };
+  'previousActivityId' | 'diff' | 'patch' | 'transaction' | 'height' | 'payload'
+> & { transaction?: Buffer; payload?: Buffer };
 export const diffOptions = { color: false };
 
 export const addActivity = async (
@@ -24,6 +24,7 @@ export const addActivity = async (
   const identifier = addActivityPayload.key.split(':')[0];
   const key = addActivityPayload.key.split(':')[1];
   const transaction = addActivityPayload.transaction ?? Buffer.alloc(0);
+  const payload = addActivityPayload.payload ?? Buffer.alloc(0);
 
   let previousActivityId: Buffer = Buffer.alloc(0);
   const activities = (await getActivities(stateStore, identifier, key)) ?? { items: [] };
@@ -44,6 +45,7 @@ export const addActivity = async (
     patch: activityPatch,
     height: stateStore.chain.lastBlockHeaders[0].height + 1,
     transaction,
+    payload,
   };
   const id = cryptography.hash(codec.encode(activityItemSchema, compiledActivity));
   activities.items.unshift(id);

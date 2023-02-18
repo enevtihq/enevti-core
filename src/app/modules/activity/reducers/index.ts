@@ -11,6 +11,9 @@ export function activityReducers(this: BaseModule) {
       stateStore: StateStore,
     ): Promise<ActivityItemChain | undefined> => {
       const { id } = params as { id: Buffer };
+      if (!Buffer.isBuffer(id)) {
+        throw new Error('id must be a buffer');
+      }
       const activity = await getActivity(stateStore, id);
       return activity;
     },
@@ -19,6 +22,12 @@ export function activityReducers(this: BaseModule) {
       stateStore: StateStore,
     ): Promise<ActivityListChain | undefined> => {
       const { identifier, key } = params as Record<string, string>;
+      if (typeof identifier !== 'string') {
+        throw new Error('identifier must be a string');
+      }
+      if (typeof key !== 'string') {
+        throw new Error('key must be a string');
+      }
       const activities = await getActivities(stateStore, identifier, key);
       return activities;
     },
@@ -32,6 +41,18 @@ export function activityReducers(this: BaseModule) {
           newState: Record<string, unknown>;
           payload: AddActivityPayload;
         };
+        if (typeof oldState !== 'object') {
+          throw new Error('oldState must be an object');
+        }
+        if (typeof newState !== 'object') {
+          throw new Error('newState must be an object');
+        }
+        if (typeof payload.key !== 'string') {
+          throw new Error('payload.key must be a string');
+        }
+        if (typeof payload.type !== 'string') {
+          throw new Error('payload.type must be a string');
+        }
         await addActivity(stateStore, oldState, newState, payload);
         return true;
       } catch {

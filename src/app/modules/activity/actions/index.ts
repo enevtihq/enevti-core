@@ -7,11 +7,20 @@ export function activityActions(this: BaseModule) {
   return {
     getActivity: async (params): Promise<ActivityItemChain | undefined> => {
       const { id } = params as { id: Buffer };
+      if (!Buffer.isBuffer(id)) {
+        throw new Error('id must be a buffer');
+      }
       const activity = await accessActivity(this._dataAccess, id);
       return activity;
     },
     getActivities: async (params): Promise<ActivityListChain | undefined> => {
       const { identifier, key } = params as Record<string, string>;
+      if (typeof identifier !== 'string') {
+        throw new Error('identifier must be a string');
+      }
+      if (typeof key !== 'string') {
+        throw new Error('key must be a string');
+      }
       const activities = await accessActivities(this._dataAccess, identifier, key);
       return activities;
     },
