@@ -270,7 +270,33 @@ describe('RegistrarModule', () => {
         expect(res).toBe(true);
       });
 
-      it('should return false for failed operation', async () => {
+      it('should return false if identifier is not a string', async () => {
+        const identifier = 3;
+        const value = 'value';
+        const id = Buffer.alloc(0);
+
+        const res = await registrarModule.reducers.setRegistrar(
+          { identifier, value, id },
+          stateStore,
+        );
+
+        expect(res).toBe(false);
+      });
+
+      it('should return false if value is not a string', async () => {
+        const identifier = 'collection';
+        const value = 3;
+        const id = Buffer.alloc(0);
+
+        const res = await registrarModule.reducers.setRegistrar(
+          { identifier, value, id },
+          stateStore,
+        );
+
+        expect(res).toBe(false);
+      });
+
+      it('should return false if id is not a buffer', async () => {
         const identifier = 'collection';
         const value = 'value';
         const id = 'invalidBuffer';
