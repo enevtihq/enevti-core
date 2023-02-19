@@ -608,6 +608,16 @@ describe('ActivityModule', () => {
         expect(activity.patch).toEqual(activity2.patch);
       });
 
+      it('should include previousActivityId if exist', async () => {
+        await activityModule.reducers.addActivity(
+          { oldState: state2, newState: state3, payload: addActivityPayload },
+          stateStore,
+        );
+        const activity = await activityModule.reducers.getActivity({ id: activity2Id }, stateStore);
+
+        expect(activity.previousActivityId).toEqual(activity1Id);
+      });
+
       it('should include an empty buffer if transaction is not provided to payload', async () => {
         await activityModule.reducers.addActivity(
           {
