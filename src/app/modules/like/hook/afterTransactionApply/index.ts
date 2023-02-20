@@ -1,0 +1,22 @@
+import { TransactionApplyContext } from 'lisk-framework';
+import { AddLikeProps } from 'enevti-types/asset/like/add_like_asset';
+import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
+import { codec } from 'lisk-sdk';
+import { LIKE_PREFIX } from '../../constants/codec';
+import { ADD_LIKE_ASSET_ID, LIKE_MODULE_ID } from '../../constants/id';
+import { addLikeSchema } from '../../schema/assets/add_like_assets';
+
+export default function activityAfterTransactionApply(
+  input: TransactionApplyContext,
+  channel: BaseModuleChannel,
+) {
+  const { senderAddress, moduleID, assetID } = input.transaction;
+  if (moduleID === LIKE_MODULE_ID && assetID === ADD_LIKE_ASSET_ID) {
+    const { identifier, id } = codec.decode<AddLikeProps>(addLikeSchema, input.transaction.asset);
+    channel.publish(`${LIKE_PREFIX}:newLike`, {
+      identifier,
+      id,
+      senderAddress,
+    });
+  }
+}

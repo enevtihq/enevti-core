@@ -2,6 +2,7 @@ import { StateStore, BaseModule } from 'lisk-framework';
 import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
 import { getRegistrar, setRegistrar } from '../utils/registrar';
 import { getBlockRegistrar, setBlockRegistrar } from '../utils/block';
+import { IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH, VALUE_MAX_LENGTH } from '../constants/limit';
 
 export function registrarReducers(this: BaseModule) {
   return {
@@ -13,8 +14,14 @@ export function registrarReducers(this: BaseModule) {
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
+      if (identifier.length > IDENTIFIER_MAX_LENGTH) {
+        throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+      }
       if (typeof value !== 'string') {
         throw new Error('value must be a string');
+      }
+      if (value.length > VALUE_MAX_LENGTH) {
+        throw new Error(`maximum value length is ${VALUE_MAX_LENGTH}`);
       }
       const registrar = await getRegistrar(stateStore, identifier, value);
       return registrar;
@@ -43,11 +50,20 @@ export function registrarReducers(this: BaseModule) {
         if (typeof identifier !== 'string') {
           throw new Error('identifier must be a string');
         }
+        if (identifier.length > IDENTIFIER_MAX_LENGTH) {
+          throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+        }
         if (typeof value !== 'string') {
           throw new Error('value must be a string');
         }
+        if (value.length > VALUE_MAX_LENGTH) {
+          throw new Error(`maximum value length is ${VALUE_MAX_LENGTH}`);
+        }
         if (!Buffer.isBuffer(id)) {
           throw new Error('id must be a buffer');
+        }
+        if (id.length > ID_MAX_LENGTH) {
+          throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
         }
         await setRegistrar(stateStore, identifier, value, { id });
         const blockHeight = stateStore.chain.lastBlockHeaders[0].height + 1;
