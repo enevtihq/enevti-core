@@ -5,6 +5,11 @@ import {
   REGISTRAR_PREFIX,
 } from '../../../../src/app/modules/registrar/constants/codec';
 import { REGISTRAR_MODULE_ID } from '../../../../src/app/modules/registrar/constants/id';
+import {
+  IDENTIFIER_MAX_LENGTH,
+  ID_MAX_LENGTH,
+  VALUE_MAX_LENGTH,
+} from '../../../../src/app/modules/registrar/constants/limit';
 import { RegistrarModule } from '../../../../src/app/modules/registrar/registrar_module';
 import { blockRegistrarSchema } from '../../../../src/app/modules/registrar/schema/block';
 import { registrarSchema } from '../../../../src/app/modules/registrar/schema/registrar';
@@ -128,6 +133,32 @@ describe('RegistrarModule', () => {
         };
         expect(await registrar()).toBe(false);
       });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const registrar = async () => {
+          try {
+            const exceeding = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await registrarModule.actions.getRegistrar({ identifier: exceeding, value: 'test' });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
+      });
+
+      it('should throw an error if value length is exceeding limit', async () => {
+        const registrar = async () => {
+          try {
+            const exceeding = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+            await registrarModule.actions.getRegistrar({ identifier: 'test', value: exceeding });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
+      });
     });
 
     describe('getBlockRegistrar', () => {
@@ -220,6 +251,38 @@ describe('RegistrarModule', () => {
         };
         expect(await registrar()).toBe(false);
       });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const registrar = async () => {
+          try {
+            const exceeding = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await registrarModule.reducers.getRegistrar(
+              { identifier: exceeding, value: 'test' },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
+      });
+
+      it('should throw an error if value length is exceeding limit', async () => {
+        const registrar = async () => {
+          try {
+            const exceeding = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+            await registrarModule.reducers.getRegistrar(
+              { identifier: 'test', value: exceeding },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await registrar()).toBe(false);
+      });
     });
 
     describe('getBlockRegistrar', () => {
@@ -268,6 +331,45 @@ describe('RegistrarModule', () => {
         );
 
         expect(res).toBe(true);
+      });
+
+      it('should return false if identifier length is exceeding limit', async () => {
+        const identifier = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+        const value = 'test';
+        const id = Buffer.alloc(0);
+
+        const res = await registrarModule.reducers.setRegistrar(
+          { identifier, value, id },
+          stateStore,
+        );
+
+        expect(res).toBe(false);
+      });
+
+      it('should return false if value length is exceeding limit', async () => {
+        const identifier = 'test';
+        const value = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+        const id = Buffer.alloc(0);
+
+        const res = await registrarModule.reducers.setRegistrar(
+          { identifier, value, id },
+          stateStore,
+        );
+
+        expect(res).toBe(false);
+      });
+
+      it('should return false if id length is exceeding limit', async () => {
+        const identifier = 'test';
+        const value = 'test';
+        const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+
+        const res = await registrarModule.reducers.setRegistrar(
+          { identifier, value, id },
+          stateStore,
+        );
+
+        expect(res).toBe(false);
       });
 
       it('should return false if identifier is not a string', async () => {
