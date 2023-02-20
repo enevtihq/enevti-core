@@ -1,12 +1,15 @@
 import { StateStore, BaseModule, ReducerHandler } from 'lisk-framework';
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
+import { ModuleInfo } from 'enevti-types/utils/moduleInfo';
 import { getLike } from '../utils/like';
 import { addLike } from '../utils/add';
 import { getLiked } from '../utils/liked';
 import { ADDRESS_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
+import { likeModuleInfo } from '../constants/info';
 
 export function likeReducers(this: BaseModule) {
   return {
+    getInfo: (): ModuleInfo => likeModuleInfo,
     getLike: async (
       params: Record<string, unknown>,
       stateStore: StateStore,

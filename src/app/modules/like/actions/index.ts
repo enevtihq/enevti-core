@@ -1,11 +1,14 @@
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
+import { ModuleInfo } from 'enevti-types/utils/moduleInfo';
 import { BaseModule } from 'lisk-framework';
+import { likeModuleInfo } from '../constants/info';
 import { ADDRESS_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { accessLike } from '../utils/like';
 import { accessLiked } from '../utils/liked';
 
 export function likeActions(this: BaseModule) {
   return {
+    getInfo: (): ModuleInfo => likeModuleInfo,
     getLike: async (params): Promise<LikeChain | undefined> => {
       const { identifier, target } = params as Record<string, string>;
       if (typeof identifier !== 'string') {
