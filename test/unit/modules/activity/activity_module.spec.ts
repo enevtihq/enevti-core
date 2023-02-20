@@ -15,6 +15,12 @@ import { activityItemSchema } from '../../../../src/app/modules/activity/schema/
 import { activityListSchema } from '../../../../src/app/modules/activity/schema/list';
 import { AddActivityPayload, diffOptions } from '../../../../src/app/modules/activity/utils/add';
 import { ACTIVITY_MODULE_ID } from '../../../../src/app/modules/activity/constants/id';
+import {
+  IDENTIFIER_MAX_LENGTH,
+  ID_MAX_LENGTH,
+  KEY_MAX_LENGTH,
+  TYPE_MAX_LENGTH,
+} from '../../../../src/app/modules/activity/constants/limit';
 
 // eslint-disable-next-line import/order
 import variableDiff = require('variable-diff');
@@ -194,6 +200,19 @@ describe('ActivityModule', () => {
         };
         expect(await activity()).toBe(false);
       });
+
+      it('should throw an error if id length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+            await activityModule.actions.getActivity({ id });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
     });
 
     describe('getActivities', () => {
@@ -232,6 +251,32 @@ describe('ActivityModule', () => {
           }
         };
         expect(await activities()).toBe(false);
+      });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await activityModule.actions.getActivities({ identifier: exceeded, key });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
+
+      it('should throw an error if key length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            await activityModule.actions.getActivities({ identifier, key: exceeded });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
       });
     });
 
@@ -272,6 +317,32 @@ describe('ActivityModule', () => {
         };
         expect(await activities()).toBe(false);
       });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await activityModule.actions.getActivityGenesis({ identifier: exceeded, key });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
+
+      it('should throw an error if key length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            await activityModule.actions.getActivityGenesis({ identifier, key: exceeded });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
     });
   });
 
@@ -292,6 +363,19 @@ describe('ActivityModule', () => {
         const activity = async () => {
           try {
             await activityModule.reducers.getActivity({ id: {} }, stateStore);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
+
+      it('should throw an error if id length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+            await activityModule.reducers.getActivity({ id }, stateStore);
             return true;
           } catch {
             return false;
@@ -344,6 +428,32 @@ describe('ActivityModule', () => {
         };
         expect(await activities()).toBe(false);
       });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await activityModule.reducers.getActivities({ identifier: exceeded, key }, stateStore);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
+
+      it('should throw an error if key length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            await activityModule.reducers.getActivities({ identifier, key: exceeded }, stateStore);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
     });
 
     describe('getActivityGenesis', () => {
@@ -389,9 +499,71 @@ describe('ActivityModule', () => {
         };
         expect(await activities()).toBe(false);
       });
+
+      it('should throw an error if identifier length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            await activityModule.reducers.getActivityGenesis(
+              { identifier: exceeded, key },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
+
+      it('should throw an error if key length is exceeding limit', async () => {
+        const activity = async () => {
+          try {
+            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            await activityModule.reducers.getActivityGenesis(
+              { identifier, key: exceeded },
+              stateStore,
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        };
+        expect(await activity()).toBe(false);
+      });
     });
 
     describe('addActivity', () => {
+      it('should return false if payload.key length is exceeding limit', async () => {
+        const activities = await activityModule.reducers.addActivity(
+          {
+            oldState: state2,
+            newState: state3,
+            payload: {
+              ...addActivityPayload,
+              key: 'a'.repeat(IDENTIFIER_MAX_LENGTH + KEY_MAX_LENGTH + 1 + 1),
+            },
+          },
+          stateStore,
+        );
+        expect(activities).toBe(false);
+      });
+
+      it('should return false if payload.type length is exceeding limit', async () => {
+        const activities = await activityModule.reducers.addActivity(
+          {
+            oldState: state2,
+            newState: state3,
+            payload: {
+              ...addActivityPayload,
+              type: 'a'.repeat(TYPE_MAX_LENGTH + 1),
+            },
+          },
+          stateStore,
+        );
+        expect(activities).toBe(false);
+      });
+
       it('should return false if oldState is not an object', async () => {
         const activities = await activityModule.reducers.addActivity(
           { oldState: 3, newState: state3, payload: addActivityPayload },

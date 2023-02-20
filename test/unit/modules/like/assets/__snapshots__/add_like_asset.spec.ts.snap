@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddLikeAsset constructor should have valid schema 1`] = `
+Object {
+  "$id": "enevti/like/addLike",
+  "properties": Object {
+    "id": Object {
+      "dataType": "string",
+      "fieldNumber": 2,
+    },
+    "identifier": Object {
+      "dataType": "string",
+      "fieldNumber": 1,
+    },
+  },
+  "required": Array [
+    "identifier",
+    "id",
+  ],
+  "title": "addLikeAsset transaction asset for like module",
+  "type": "object",
+}
+`;
