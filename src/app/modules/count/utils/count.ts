@@ -5,11 +5,11 @@ import { countSchema } from '../schema/count';
 
 export const accessCount = async (
   dataAccess: BaseModuleDataAccess,
-  identifier: string,
+  module: string,
   address: Buffer,
 ): Promise<CountChain | undefined> => {
   const countBuffer = await dataAccess.getChainState(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}`,
+    `${COUNT_PREFIX}:${module}:${address.toString('hex')}`,
   );
   if (!countBuffer) {
     return undefined;
@@ -19,11 +19,11 @@ export const accessCount = async (
 
 export const getCount = async (
   stateStore: StateStore,
-  identifier: string,
+  module: string,
   address: Buffer,
 ): Promise<CountChain | undefined> => {
   const countBuffer = await stateStore.chain.get(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}`,
+    `${COUNT_PREFIX}:${module}:${address.toString('hex')}`,
   );
   if (!countBuffer) {
     return undefined;
@@ -33,12 +33,12 @@ export const getCount = async (
 
 export const setCount = async (
   stateStore: StateStore,
-  identifier: string,
+  module: string,
   address: Buffer,
   count: CountChain,
 ) => {
   await stateStore.chain.set(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}`,
+    `${COUNT_PREFIX}:${module}:${address.toString('hex')}`,
     codec.encode(countSchema, count),
   );
 };

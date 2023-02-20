@@ -21,7 +21,8 @@ export const addLike = async (
   await setLike(stateStore, identifier, target, like);
 
   await reducerHandler.invoke('count:addCount', {
-    identifier: `${LIKE_MODULE_PREFIX}:${identifier}`,
+    module: LIKE_MODULE_PREFIX,
+    key: identifier,
     address: senderAddress,
     item: target,
   });

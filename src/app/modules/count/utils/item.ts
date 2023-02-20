@@ -5,11 +5,12 @@ import { countItemSchema } from '../schema/item';
 
 export const accessCountItem = async (
   dataAccess: BaseModuleDataAccess,
-  identifier: string,
+  module: string,
+  key: string,
   address: Buffer,
 ): Promise<CountItemChain | undefined> => {
   const countItemBuffer = await dataAccess.getChainState(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
+    `${COUNT_PREFIX}:${module}:${key}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
   );
   if (!countItemBuffer) {
     return undefined;
@@ -19,11 +20,12 @@ export const accessCountItem = async (
 
 export const getCountItem = async (
   stateStore: StateStore,
-  identifier: string,
+  module: string,
+  key: string,
   address: Buffer,
 ): Promise<CountItemChain | undefined> => {
   const countItemBuffer = await stateStore.chain.get(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
+    `${COUNT_PREFIX}:${module}:${key}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
   );
   if (!countItemBuffer) {
     return undefined;
@@ -33,12 +35,13 @@ export const getCountItem = async (
 
 export const setCountItem = async (
   stateStore: StateStore,
-  identifier: string,
+  module: string,
+  key: string,
   address: Buffer,
   countItem: CountItemChain,
 ) => {
   await stateStore.chain.set(
-    `${COUNT_PREFIX}:${identifier}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
+    `${COUNT_PREFIX}:${module}:${key}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`,
     codec.encode(countItemSchema, countItem),
   );
 };
