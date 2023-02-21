@@ -66,6 +66,12 @@ export function countReducers(this: BaseModule) {
           address: Buffer;
           item: Buffer;
         };
+        if (typeof module !== 'string') {
+          throw new Error('module must be a string');
+        }
+        if (module.length > MODULE_MAX_LENGTH) {
+          throw new Error(`maximum module length is ${MODULE_MAX_LENGTH}`);
+        }
         if (typeof key !== 'string') {
           throw new Error('key must be a string');
         }
