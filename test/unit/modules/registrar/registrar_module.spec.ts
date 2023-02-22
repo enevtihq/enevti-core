@@ -40,12 +40,14 @@ describe('RegistrarModule', () => {
   });
 
   beforeEach(() => {
+    const chain = {
+      [`${REGISTRAR_PREFIX}:symbol:test`]: registrarStateValue,
+      [`${REGISTRAR_PREFIX}:${BLOCK_REGISTRAR_PREFIX}:3`]: blockRegistrarStateValue,
+    };
+
     stateStore = new testing.mocks.StateStoreMock({
       lastBlockHeaders: [{ height: 2 }],
-      chain: {
-        [`${REGISTRAR_PREFIX}:symbol:test`]: registrarStateValue,
-        [`${REGISTRAR_PREFIX}:${BLOCK_REGISTRAR_PREFIX}:3`]: blockRegistrarStateValue,
-      },
+      chain,
     });
 
     jest.spyOn(channel, 'publish');
@@ -54,13 +56,7 @@ describe('RegistrarModule', () => {
 
     jest.spyOn(registrarModule['_dataAccess'], 'getChainState').mockImplementation(async key => {
       return new Promise(res => {
-        if (key === `${REGISTRAR_PREFIX}:symbol:test`) {
-          res(registrarStateValue);
-        }
-        if (key === `${REGISTRAR_PREFIX}:${BLOCK_REGISTRAR_PREFIX}:3`) {
-          res(blockRegistrarStateValue);
-        }
-        res(undefined);
+        res(chain[key]);
       });
     });
   });

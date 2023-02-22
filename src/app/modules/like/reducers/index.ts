@@ -58,7 +58,7 @@ export function likeReducers(this: BaseModule) {
           target: string;
           senderAddress: Buffer;
         };
-        if (reducerHandler.invoke === undefined) {
+        if (!reducerHandler || reducerHandler.invoke === undefined) {
           throw new Error('reducerHandler is invalid');
         }
         if (typeof identifier !== 'string') {

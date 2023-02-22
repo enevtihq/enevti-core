@@ -15,8 +15,8 @@ import activityAfterTransactionApply from './hook/afterTransactionApply';
 import { likeReducers } from './reducers';
 
 export class LikeModule extends BaseModule {
-  public actions = likeActions.bind(this);
-  public reducers = likeReducers.bind(this);
+  public actions = likeActions.bind(this)();
+  public reducers = likeReducers.bind(this)();
   public name = LIKE_MODULE_PREFIX;
   public transactionAssets = [new AddLikeAsset()];
   public events = ['newLike'];

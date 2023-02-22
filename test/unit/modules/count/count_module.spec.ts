@@ -37,13 +37,15 @@ describe('CountModule', () => {
   });
 
   beforeEach(() => {
+    const chain = {
+      [`${COUNT_PREFIX}:${module}:${address.toString('hex')}`]: countValue,
+      [`${COUNT_PREFIX}:${module}:${key}:${address.toString(
+        'hex',
+      )}:${COUNT_ITEM_PREFIX}`]: countItemValue,
+    };
+
     stateStore = new testing.mocks.StateStoreMock({
-      chain: {
-        [`${COUNT_PREFIX}:${module}:${address.toString('hex')}`]: countValue,
-        [`${COUNT_PREFIX}:${module}:${key}:${address.toString(
-          'hex',
-        )}:${COUNT_ITEM_PREFIX}`]: countItemValue,
-      },
+      chain,
     });
 
     jest.spyOn(stateStore.chain, 'get');
@@ -51,15 +53,7 @@ describe('CountModule', () => {
 
     jest.spyOn(countModule['_dataAccess'], 'getChainState').mockImplementation(async arg => {
       return new Promise(res => {
-        if (arg === `${COUNT_PREFIX}:${module}:${address.toString('hex')}`) {
-          res(countValue);
-        }
-        if (
-          arg === `${COUNT_PREFIX}:${module}:${key}:${address.toString('hex')}:${COUNT_ITEM_PREFIX}`
-        ) {
-          res(countItemValue);
-        }
-        res(undefined);
+        res(chain[arg]);
       });
     });
   });

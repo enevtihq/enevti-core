@@ -110,15 +110,17 @@ describe('ActivityModule', () => {
   });
 
   beforeEach(() => {
+    const chain = {
+      [`${ACTIVITY_PREFIX}:${activity1Id.toString('hex')}`]: activity1Value,
+      [`${ACTIVITY_PREFIX}:${identifier}:${key}`]: activityListValue,
+      [`${ACTIVITY_PREFIX}:block:${blockHeight}`]: activityListValue,
+      [`${ACTIVITY_PREFIX}:transaction:${transactionId1.toString('hex')}`]: activityListValue,
+      [`${ACTIVITY_PREFIX}:${identifier}:${key}:${GENESIS_ACTIVITY_PREFIX}`]: activityGenesisValue,
+    };
+
     stateStore = new testing.mocks.StateStoreMock({
       lastBlockHeaders: [{ height: blockHeight }],
-      chain: {
-        [`${ACTIVITY_PREFIX}:${activity1Id.toString('hex')}`]: activity1Value,
-        [`${ACTIVITY_PREFIX}:${identifier}:${key}`]: activityListValue,
-        [`${ACTIVITY_PREFIX}:block:${blockHeight}`]: activityListValue,
-        [`${ACTIVITY_PREFIX}:transaction:${transactionId1.toString('hex')}`]: activityListValue,
-        [`${ACTIVITY_PREFIX}:${identifier}:${key}:${GENESIS_ACTIVITY_PREFIX}`]: activityGenesisValue,
-      },
+      chain,
     });
 
     jest.spyOn(channel, 'publish');
@@ -127,16 +129,7 @@ describe('ActivityModule', () => {
 
     jest.spyOn(activityModule['_dataAccess'], 'getChainState').mockImplementation(async arg => {
       return new Promise(res => {
-        if (arg === `${ACTIVITY_PREFIX}:${activity1Id.toString('hex')}`) {
-          res(activity1Value);
-        }
-        if (arg === `${ACTIVITY_PREFIX}:${identifier}:${key}`) {
-          res(activityListValue);
-        }
-        if (arg === `${ACTIVITY_PREFIX}:${identifier}:${key}:${GENESIS_ACTIVITY_PREFIX}`) {
-          res(activityGenesisValue);
-        }
-        res(undefined);
+        res(chain[arg]);
       });
     });
   });
