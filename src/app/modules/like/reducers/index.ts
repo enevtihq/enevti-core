@@ -62,13 +62,13 @@ export function likeReducers(this: BaseModule) {
           throw new Error('reducerHandler is invalid');
         }
         if (typeof identifier !== 'string') {
-          throw new Error('payload.key must be a string');
+          throw new Error('identifier must be a string');
         }
         if (identifier.length > IDENTIFIER_MAX_LENGTH) {
           throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
         }
         if (typeof target !== 'string') {
-          throw new Error('payload.type must be a string');
+          throw new Error('target must be a string');
         }
         if (target.length > ID_MAX_LENGTH) {
           throw new Error(`maximum target length is ${ID_MAX_LENGTH}`);

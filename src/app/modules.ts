@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Application } from 'lisk-sdk';
 import { ActivityModule } from "./modules/activity/activity_module";
+import { CommentModule } from "./modules/comment/comment_module";
 import { CountModule } from "./modules/count/count_module";
 import { CreatorFinanceModule } from './modules/creator_finance/creator_finance_module';
 import { DynamicBaseFeeModule } from "./modules/dynamic_base_fee/dynamic_base_fee_module";
@@ -18,4 +19,5 @@ export const registerModules = (app: Application): void => {
     app.registerModule(ActivityModule);
     app.registerModule(LikeModule);
     app.registerModule(CountModule);
+    app.registerModule(CommentModule);
 };

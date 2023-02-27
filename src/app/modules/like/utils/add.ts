@@ -24,6 +24,6 @@ export const addLike = async (
     module: LIKE_MODULE_PREFIX,
     key: identifier,
     address: senderAddress,
-    item: target,
+    item: Buffer.from(target, 'hex'),
   });
 };
