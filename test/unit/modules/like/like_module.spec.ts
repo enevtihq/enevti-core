@@ -490,7 +490,7 @@ describe('LikeModule', () => {
           module: LIKE_MODULE_PREFIX,
           key: 'newIdentifier',
           address,
-          item: 'newIdentifier',
+          item: Buffer.from('newIdentifier', 'hex'),
         });
       });
 

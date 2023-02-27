@@ -195,7 +195,7 @@ describe('AddLikeAsset', () => {
         module: LIKE_MODULE_PREFIX,
         key: 'newIdentifier',
         address,
-        item: 'newTarget',
+        item: Buffer.from('newTarget', 'hex'),
       });
     });
   });
