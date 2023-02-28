@@ -1,4 +1,6 @@
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
+import { AddCountParam } from 'enevti-types/param/count';
+import { NewLikeEvent } from 'enevti-types/param/like';
 import { codec, StateStore, testing } from 'lisk-sdk';
 import { COUNT_PREFIX } from '../../../../src/app/modules/count/constants/codec';
 import { AddLikeAsset } from '../../../../src/app/modules/like/assets/add_like_asset';
@@ -96,11 +98,12 @@ describe('LikeModule', () => {
         }),
       });
       await likeModule.afterTransactionApply(context);
-      expect(channel.publish).toHaveBeenCalledWith(`${LIKE_PREFIX}:newLike`, {
+      const eventPayload: NewLikeEvent = {
         identifier,
         id,
         senderAddress: address,
-      });
+      };
+      expect(channel.publish).toHaveBeenCalledWith(`${LIKE_PREFIX}:newLike`, eventPayload);
     });
   });
 
@@ -486,12 +489,13 @@ describe('LikeModule', () => {
           },
           stateStore,
         );
-        expect(reducerHandler.invoke).toHaveBeenCalledWith(`${COUNT_PREFIX}:addCount`, {
+        const payload: AddCountParam = {
           module: LIKE_MODULE_PREFIX,
           key: 'newIdentifier',
           address,
           item: Buffer.from('newIdentifier', 'hex'),
-        });
+        };
+        expect(reducerHandler.invoke).toHaveBeenCalledWith(`${COUNT_PREFIX}:addCount`, payload);
       });
 
       it('should return false if reducerHandler is undefined', async () => {

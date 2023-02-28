@@ -1,4 +1,5 @@
 import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
+import { GetBlockRegistrarParam, GetRegistrarParam } from 'enevti-types/param/registrar';
 import { BaseModule } from 'lisk-framework';
 import { IDENTIFIER_MAX_LENGTH, VALUE_MAX_LENGTH } from '../constants/limit';
 import { accessBlockRegistrar } from '../utils/block';
@@ -7,7 +8,7 @@ import { accessRegistrar } from '../utils/registrar';
 export function registrarActions(this: BaseModule) {
   return {
     getRegistrar: async (params): Promise<RegistrarChain | undefined> => {
-      const { identifier, value } = params as Record<string, string>;
+      const { identifier, value } = params as GetRegistrarParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -24,7 +25,7 @@ export function registrarActions(this: BaseModule) {
       return registrar;
     },
     getBlockRegistrar: async (params): Promise<BlockRegisrarChain | undefined> => {
-      const { height } = params as Record<string, number>;
+      const { height } = params as GetBlockRegistrarParam;
       if (typeof height !== 'number') {
         throw new Error('height must be a number');
       }

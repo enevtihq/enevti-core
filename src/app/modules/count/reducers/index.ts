@@ -1,5 +1,6 @@
 import { StateStore, BaseModule } from 'lisk-framework';
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
+import { AddCountParam, GetCountItemParam, GetCountParam } from 'enevti-types/param/count';
 import { getCountItem } from '../utils/item';
 import { getCount } from '../utils/count';
 import { addCount } from '../utils/add';
@@ -16,7 +17,7 @@ export function countReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<CountChain | undefined> => {
-      const { module, address } = params as { module: string; address: Buffer };
+      const { module, address } = params as GetCountParam;
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }
@@ -36,7 +37,7 @@ export function countReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<CountItemChain | undefined> => {
-      const { module, key, address } = params as { module: string; key: string; address: Buffer };
+      const { module, key, address } = params as GetCountItemParam;
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }
@@ -60,12 +61,7 @@ export function countReducers(this: BaseModule) {
     },
     addCount: async (params: Record<string, unknown>, stateStore: StateStore): Promise<boolean> => {
       try {
-        const { module, key, address, item } = params as {
-          module: string;
-          key: string;
-          address: Buffer;
-          item: Buffer;
-        };
+        const { module, key, address, item } = params as AddCountParam;
         if (typeof module !== 'string') {
           throw new Error('module must be a string');
         }

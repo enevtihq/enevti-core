@@ -1,5 +1,6 @@
-import { StateStore, BaseModule, ReducerHandler } from 'lisk-framework';
+import { StateStore, BaseModule } from 'lisk-framework';
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
+import { AddLikeParam, GetLikedParam, GetLikeParam } from 'enevti-types/param/like';
 import { ModuleInfo } from 'enevti-types/utils/moduleInfo';
 import { getLike } from '../utils/like';
 import { addLike } from '../utils/add';
@@ -14,7 +15,7 @@ export function likeReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<LikeChain | undefined> => {
-      const { identifier, target } = params as Record<string, string>;
+      const { identifier, target } = params as GetLikeParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -34,7 +35,7 @@ export function likeReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<LikedChain | undefined> => {
-      const { target, address } = params as Record<string, string>;
+      const { target, address } = params as GetLikedParam;
       if (typeof target !== 'string') {
         throw new Error('target must be a string');
       }
@@ -52,12 +53,7 @@ export function likeReducers(this: BaseModule) {
     },
     addLike: async (params: Record<string, unknown>, stateStore: StateStore): Promise<boolean> => {
       try {
-        const { reducerHandler, identifier, target, senderAddress } = params as {
-          reducerHandler: ReducerHandler;
-          identifier: string;
-          target: string;
-          senderAddress: Buffer;
-        };
+        const { reducerHandler, identifier, target, senderAddress } = params as AddLikeParam;
         if (!reducerHandler || reducerHandler.invoke === undefined) {
           throw new Error('reducerHandler is invalid');
         }

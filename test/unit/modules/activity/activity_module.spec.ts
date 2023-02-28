@@ -3,6 +3,11 @@ import {
   ActivityItemChain,
   ActivityListChain,
 } from 'enevti-types/chain/activity';
+import {
+  AddActivityPayload,
+  BlockWithNewActivityEvent,
+  NewActivityEvent,
+} from 'enevti-types/param/activity';
 import { codec, cryptography, StateStore, testing, Transaction } from 'lisk-sdk';
 import { diff, jsonPatchPathConverter } from 'just-diff';
 import { ActivityModule } from '../../../../src/app/modules/activity/activity_module';
@@ -13,7 +18,7 @@ import {
 import { activityGenesisSchema } from '../../../../src/app/modules/activity/schema/genesis';
 import { activityItemSchema } from '../../../../src/app/modules/activity/schema/item';
 import { activityListSchema } from '../../../../src/app/modules/activity/schema/list';
-import { AddActivityPayload, diffOptions } from '../../../../src/app/modules/activity/utils/add';
+import { diffOptions } from '../../../../src/app/modules/activity/utils/add';
 import { ACTIVITY_MODULE_ID } from '../../../../src/app/modules/activity/constants/id';
 import {
   IDENTIFIER_MAX_LENGTH,
@@ -156,16 +161,17 @@ describe('ActivityModule', () => {
 
     it('should publish blockWithNewActivity event', async () => {
       await activityModule.afterBlockApply(context);
-      expect(channel.publish).toHaveBeenCalledWith(`${ACTIVITY_PREFIX}:blockWithNewActivity`, {
-        height: blockHeight,
-      });
+      const eventPayload: BlockWithNewActivityEvent = { height: blockHeight };
+      expect(channel.publish).toHaveBeenCalledWith(
+        `${ACTIVITY_PREFIX}:blockWithNewActivity`,
+        eventPayload,
+      );
     });
 
     it('should publish newActivity event', async () => {
       await activityModule.afterBlockApply(context);
-      expect(channel.publish).toHaveBeenCalledWith(`${ACTIVITY_PREFIX}:newActivity`, {
-        id: activity1Id,
-      });
+      const eventPayload: NewActivityEvent = { id: activity1Id };
+      expect(channel.publish).toHaveBeenCalledWith(`${ACTIVITY_PREFIX}:newActivity`, eventPayload);
     });
   });
 

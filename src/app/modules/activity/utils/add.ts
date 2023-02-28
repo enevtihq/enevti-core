@@ -1,4 +1,4 @@
-import { ActivityItemChain } from 'enevti-types/chain/activity';
+import { AddActivityPayload } from 'enevti-types/param/activity';
 import { cryptography, codec, StateStore } from 'lisk-sdk';
 import { diff, jsonPatchPathConverter } from 'just-diff';
 import { activityItemSchema } from '../schema/item';
@@ -9,10 +9,6 @@ import { getActivities, setActivities } from './list';
 // eslint-disable-next-line import/order
 import variableDiff = require('variable-diff');
 
-export type AddActivityPayload = Omit<
-  ActivityItemChain,
-  'previousActivityId' | 'diff' | 'patch' | 'transaction' | 'height' | 'payload'
-> & { transaction?: Buffer; payload?: Buffer };
 export const diffOptions = { color: false };
 
 export const addActivity = async (

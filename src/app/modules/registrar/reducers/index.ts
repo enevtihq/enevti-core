@@ -1,5 +1,10 @@
 import { StateStore, BaseModule } from 'lisk-framework';
 import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
+import {
+  GetBlockRegistrarParam,
+  GetRegistrarParam,
+  SetRegistrarParam,
+} from 'enevti-types/param/registrar';
 import { getRegistrar, setRegistrar } from '../utils/registrar';
 import { getBlockRegistrar, setBlockRegistrar } from '../utils/block';
 import { IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH, VALUE_MAX_LENGTH } from '../constants/limit';
@@ -10,7 +15,7 @@ export function registrarReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<RegistrarChain | undefined> => {
-      const { identifier, value } = params as Record<string, string>;
+      const { identifier, value } = params as GetRegistrarParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -30,7 +35,7 @@ export function registrarReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<BlockRegisrarChain | undefined> => {
-      const { height } = params as Record<string, number>;
+      const { height } = params as GetBlockRegistrarParam;
       if (typeof height !== 'number') {
         throw new Error('height must be a number');
       }
@@ -42,11 +47,7 @@ export function registrarReducers(this: BaseModule) {
       stateStore: StateStore,
     ): Promise<boolean> => {
       try {
-        const { identifier, value, id } = params as {
-          identifier: string;
-          value: string;
-          id: Buffer;
-        };
+        const { identifier, value, id } = params as SetRegistrarParam;
         if (typeof identifier !== 'string') {
           throw new Error('identifier must be a string');
         }

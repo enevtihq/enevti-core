@@ -1,8 +1,9 @@
-import { StateStore, BaseModule, ReducerHandler } from 'lisk-framework';
+import { StateStore, BaseModule } from 'lisk-framework';
 import { CommentItemChain, CommentListChain } from 'enevti-types/chain/comment';
+import { AddCommentParam, GetCommentParam, GetCommentsParam } from 'enevti-types/param/comment';
 import { getComment } from '../utils/item';
 import { getComments } from '../utils/list';
-import { addComment, AddCommentPayload } from '../utils/add';
+import { addComment } from '../utils/add';
 import {
   ADDRESS_MAX_LENGTH,
   CID_MAX_LENGTH,
@@ -18,7 +19,7 @@ export function commentReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<CommentItemChain | undefined> => {
-      const { id } = params as { id: Buffer };
+      const { id } = params as GetCommentParam;
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
@@ -32,7 +33,7 @@ export function commentReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<CommentListChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetCommentsParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -48,15 +49,12 @@ export function commentReducers(this: BaseModule) {
       const comments = await getComments(stateStore, identifier, key);
       return comments;
     },
-    addActivity: async (
+    addComment: async (
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<boolean> => {
       try {
-        const { reducerHandler, payload } = params as {
-          reducerHandler: ReducerHandler;
-          payload: AddCommentPayload;
-        };
+        const { reducerHandler, payload } = params as AddCommentParam;
         if (!reducerHandler || reducerHandler.invoke === undefined) {
           throw new Error('reducerHandler is invalid');
         }

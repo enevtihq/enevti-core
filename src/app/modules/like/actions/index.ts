@@ -1,4 +1,5 @@
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
+import { GetLikedParam, GetLikeParam } from 'enevti-types/param/like';
 import { ModuleInfo } from 'enevti-types/utils/moduleInfo';
 import { BaseModule } from 'lisk-framework';
 import { likeModuleInfo } from '../constants/info';
@@ -10,7 +11,7 @@ export function likeActions(this: BaseModule) {
   return {
     getInfo: (): ModuleInfo => likeModuleInfo,
     getLike: async (params): Promise<LikeChain | undefined> => {
-      const { identifier, target } = params as Record<string, string>;
+      const { identifier, target } = params as GetLikeParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -27,7 +28,7 @@ export function likeActions(this: BaseModule) {
       return like;
     },
     getLiked: async (params): Promise<LikedChain | undefined> => {
-      const { target, address } = params as Record<string, string>;
+      const { target, address } = params as GetLikedParam;
       if (typeof target !== 'string') {
         throw new Error('target must be a string');
       }

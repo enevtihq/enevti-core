@@ -1,10 +1,11 @@
 import { AddCommentProps } from 'enevti-types/asset/comment/add_comment_asset';
+import { AddCommentPayload } from 'enevti-types/param/comment';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { ADD_COMMENT_ASSET_NAME } from '../constants/codec';
 import { ADD_COMMENT_ASSET_ID } from '../constants/id';
 import { CID_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { addCommentSchema } from '../schema/assets/add_comment_assets';
-import { addComment, AddCommentPayload } from '../utils/add';
+import { addComment } from '../utils/add';
 
 export class AddCommentAsset extends BaseAsset {
   public name = ADD_COMMENT_ASSET_NAME;

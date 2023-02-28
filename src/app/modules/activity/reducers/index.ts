@@ -4,9 +4,15 @@ import {
   ActivityItemChain,
   ActivityListChain,
 } from 'enevti-types/chain/activity';
+import {
+  AddActivityParam,
+  GetActivitiesParam,
+  GetActivityGenesisParam,
+  GetActivityParam,
+} from 'enevti-types/param/activity';
 import { getActivity } from '../utils/item';
 import { getActivities } from '../utils/list';
-import { addActivity, AddActivityPayload } from '../utils/add';
+import { addActivity } from '../utils/add';
 import { getActivityGenesis } from '../utils/genesis';
 import {
   IDENTIFIER_MAX_LENGTH,
@@ -21,7 +27,7 @@ export function activityReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<ActivityItemChain | undefined> => {
-      const { id } = params as { id: Buffer };
+      const { id } = params as GetActivityParam;
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
@@ -35,7 +41,7 @@ export function activityReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<ActivityListChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetActivitiesParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -55,7 +61,7 @@ export function activityReducers(this: BaseModule) {
       params: Record<string, unknown>,
       stateStore: StateStore,
     ): Promise<ActivityGenesisChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetActivityGenesisParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -76,11 +82,7 @@ export function activityReducers(this: BaseModule) {
       stateStore: StateStore,
     ): Promise<boolean> => {
       try {
-        const { oldState, newState, payload } = params as {
-          oldState: Record<string, unknown>;
-          newState: Record<string, unknown>;
-          payload: AddActivityPayload;
-        };
+        const { oldState, newState, payload } = params as AddActivityParam;
         if (typeof oldState !== 'object') {
           throw new Error('oldState must be an object');
         }

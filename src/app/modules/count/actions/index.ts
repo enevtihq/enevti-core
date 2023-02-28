@@ -1,4 +1,5 @@
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
+import { GetCountItemParam, GetCountParam } from 'enevti-types/param/count';
 import { BaseModule } from 'lisk-framework';
 import { ADDRESS_MAX_LENGTH, KEY_MAX_LENGTH, MODULE_MAX_LENGTH } from '../constants/limit';
 import { accessCount } from '../utils/count';
@@ -7,7 +8,7 @@ import { accessCountItem } from '../utils/item';
 export function countActions(this: BaseModule) {
   return {
     getCount: async (params): Promise<CountChain | undefined> => {
-      const { module, address } = params as { module: string; address: Buffer };
+      const { module, address } = params as GetCountParam;
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }
@@ -24,7 +25,7 @@ export function countActions(this: BaseModule) {
       return count;
     },
     getCountItem: async (params): Promise<CountItemChain | undefined> => {
-      const { module, key, address } = params as { module: string; key: string; address: Buffer };
+      const { module, key, address } = params as GetCountItemParam;
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }

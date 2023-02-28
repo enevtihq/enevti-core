@@ -3,6 +3,11 @@ import {
   ActivityItemChain,
   ActivityListChain,
 } from 'enevti-types/chain/activity';
+import {
+  GetActivitiesParam,
+  GetActivityGenesisParam,
+  GetActivityParam,
+} from 'enevti-types/param/activity';
 import { BaseModule } from 'lisk-framework';
 import { IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH, KEY_MAX_LENGTH } from '../constants/limit';
 import { accessActivityGenesis } from '../utils/genesis';
@@ -12,7 +17,7 @@ import { accessActivities } from '../utils/list';
 export function activityActions(this: BaseModule) {
   return {
     getActivity: async (params): Promise<ActivityItemChain | undefined> => {
-      const { id } = params as { id: Buffer };
+      const { id } = params as GetActivityParam;
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
@@ -23,7 +28,7 @@ export function activityActions(this: BaseModule) {
       return activity;
     },
     getActivities: async (params): Promise<ActivityListChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetActivitiesParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
@@ -40,7 +45,7 @@ export function activityActions(this: BaseModule) {
       return activities;
     },
     getActivityGenesis: async (params): Promise<ActivityGenesisChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetActivityGenesisParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }

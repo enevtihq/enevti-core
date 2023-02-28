@@ -1,4 +1,5 @@
 import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
+import { NewRegistrarEvent } from 'enevti-types/param/registrar';
 import { codec, StateStore, testing } from 'lisk-sdk';
 import {
   BLOCK_REGISTRAR_PREFIX,
@@ -77,9 +78,13 @@ describe('RegistrarModule', () => {
         block: { header: testing.createFakeBlockHeader({ height: 3 }), payload: [] },
       });
       await registrarModule.afterBlockApply(context);
-      expect(channel.publish).toHaveBeenCalledWith(`${REGISTRAR_PREFIX}:newRegistrar`, {
+      const eventPayload: NewRegistrarEvent = {
         payload: 'symbol:test',
-      });
+      };
+      expect(channel.publish).toHaveBeenCalledWith(
+        `${REGISTRAR_PREFIX}:newRegistrar`,
+        eventPayload,
+      );
     });
   });
 

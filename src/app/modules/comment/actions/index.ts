@@ -1,4 +1,5 @@
 import { CommentItemChain, CommentListChain } from 'enevti-types/chain/comment';
+import { GetCommentParam, GetCommentsParam } from 'enevti-types/param/comment';
 import { BaseModule } from 'lisk-framework';
 import { ID_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, KEY_MAX_LENGTH } from '../constants/limit';
 import { accessComment } from '../utils/item';
@@ -7,7 +8,7 @@ import { accessComments } from '../utils/list';
 export function commentActions(this: BaseModule) {
   return {
     getComment: async (params): Promise<CommentItemChain | undefined> => {
-      const { id } = params as { id: Buffer };
+      const { id } = params as GetCommentParam;
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
@@ -18,7 +19,7 @@ export function commentActions(this: BaseModule) {
       return comment;
     },
     getComments: async (params): Promise<CommentListChain | undefined> => {
-      const { identifier, key } = params as Record<string, string>;
+      const { identifier, key } = params as GetCommentsParam;
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }

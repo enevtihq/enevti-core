@@ -1,3 +1,4 @@
+import { BlockWithNewActivityEvent, NewActivityEvent } from 'enevti-types/param/activity';
 import { AfterBlockApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { ACTIVITY_PREFIX } from '../../constants/codec';
@@ -13,9 +14,8 @@ export default async function activityAfterBlockApply(
     input.block.header.height.toString(),
   );
   if (blockActivities && blockActivities.items.length > 0) {
-    channel.publish(`${ACTIVITY_PREFIX}:blockWithNewActivity`, {
-      height: input.block.header.height,
-    });
+    const eventPayload: BlockWithNewActivityEvent = { height: input.block.header.height };
+    channel.publish(`${ACTIVITY_PREFIX}:blockWithNewActivity`, eventPayload);
   }
 
   for (const payload of input.block.payload) {
@@ -26,7 +26,8 @@ export default async function activityAfterBlockApply(
     );
     if (transactionActivities && transactionActivities.items.length > 0) {
       for (const id of transactionActivities.items) {
-        channel.publish(`${ACTIVITY_PREFIX}:newActivity`, { id });
+        const eventPayload: NewActivityEvent = { id };
+        channel.publish(`${ACTIVITY_PREFIX}:newActivity`, eventPayload);
       }
     }
   }

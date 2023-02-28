@@ -1,3 +1,4 @@
+import { NewCommentEvent } from 'enevti-types/param/comment';
 import { TransactionApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { COMMENT_PREFIX } from '../../constants/codec';
@@ -9,8 +10,7 @@ export default function commentAfterTransactionApply(
 ) {
   const { moduleID, assetID, id } = input.transaction;
   if (moduleID === COMMENT_MODULE_ID && assetID === ADD_COMMENT_ASSET_ID) {
-    channel.publish(`${COMMENT_PREFIX}:newComment`, {
-      id,
-    });
+    const eventPayload: NewCommentEvent = { id };
+    channel.publish(`${COMMENT_PREFIX}:newComment`, eventPayload);
   }
 }

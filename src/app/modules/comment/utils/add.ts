@@ -1,13 +1,9 @@
-import { CommentItemChain } from 'enevti-types/chain/comment';
-import { AddCommentProps } from 'enevti-types/asset/comment/add_comment_asset';
 import { ReducerHandler, StateStore } from 'lisk-sdk';
+import { AddCommentPayload } from 'enevti-types/param/comment';
 import { getComment, setComment } from './item';
 import { getComments, setComments } from './list';
 import { COMMENT_PREFIX } from '../constants/codec';
 import { getBlockTimestamp } from './timestamp';
-
-export type AddCommentPayload = Omit<CommentItemChain, 'date'> &
-  Omit<AddCommentProps, 'id'> & { id: Buffer };
 
 export const addComment = async (
   stateStore: StateStore,
