@@ -35,6 +35,6 @@ export const addComment = async (
     module: COMMENT_PREFIX,
     key: identifier,
     address: addCommentPayload.creator,
-    item: comment.target,
+    item: id,
   });
 };

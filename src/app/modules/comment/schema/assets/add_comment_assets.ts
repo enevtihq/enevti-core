@@ -18,7 +18,7 @@ export const addCommentSchema: AssetSchemaFromType<AddCommentProps> = {
     },
     cid: {
       dataType: 'string',
-      fieldNumber: 2,
+      fieldNumber: 3,
     },
   },
 };
