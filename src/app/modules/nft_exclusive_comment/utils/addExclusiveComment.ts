@@ -62,7 +62,7 @@ export const addExclusiveComment = async (
 
   const exclusiveComment = {
     ...exclusiveCommentPayload,
-    date: getBlockTimestamp(stateStore),
+    date: BigInt(getBlockTimestamp(stateStore)),
   };
   await setExclusiveComment(stateStore, id, exclusiveComment);
 

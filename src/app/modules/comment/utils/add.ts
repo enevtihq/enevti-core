@@ -19,7 +19,7 @@ export const addComment = async (
 
   const comment = {
     ...commentPayload,
-    date: getBlockTimestamp(stateStore),
+    date: BigInt(getBlockTimestamp(stateStore)),
   };
   await setComment(stateStore, id, comment);
 

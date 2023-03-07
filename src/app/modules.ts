@@ -10,6 +10,7 @@ import { NftExclusiveCommentModule } from "./modules/nft_exclusive_comment/nft_e
 import { PersonaModule } from './modules/persona/persona_module';
 import { RedeemableNftModule } from './modules/redeemable_nft/redeemable_nft_module';
 import { RegistrarModule } from "./modules/registrar/registrar_module";
+import { SocialRaffleModule } from "./modules/social_raffle/social_raffle_module";
 
 export const registerModules = (app: Application): void => {
     app.registerModule(RedeemableNftModule);
@@ -22,4 +23,5 @@ export const registerModules = (app: Application): void => {
     app.registerModule(CountModule);
     app.registerModule(CommentModule);
     app.registerModule(NftExclusiveCommentModule);
+    app.registerModule(SocialRaffleModule);
 };

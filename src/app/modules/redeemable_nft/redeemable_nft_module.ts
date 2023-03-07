@@ -3,10 +3,8 @@ import {
   AfterGenesisBlockApplyContext,
   BaseModule,
   BeforeBlockApplyContext,
-  GenesisConfig,
   TransactionApplyContext,
 } from 'lisk-sdk';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { redeemableNftActions } from './actions';
 import { CommentCollectionAsset } from './assets/comment_collection_asset';
 import { CommentCollectionClubsAsset } from './assets/comment_collection_clubs_asset';
@@ -113,8 +111,6 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterGenesisBlockApply(_input: AfterGenesisBlockApplyContext) {
-    if ((this.config as GenesisConfig & SocialRaffleGenesisConfig).socialRaffle.blockInterval < 2)
-      throw new Error('config.socialRaffle.blockInterval must be 2 or higher');
     await redeemableNftAfterGenesisBlockApply(_input);
   }
 }

@@ -34,6 +34,7 @@ export const socialRaffleMonitor = async (
   await debitBlockReward(input, rafflePoolAmount);
   await addSocialRafflePool(input.stateStore, rafflePoolAmount);
 
+  // TODO: put this logic to off-chain
   const socialRaffleRecordPrevBlock = await getSocialRaffleRecord(
     input.stateStore,
     input.block.header.height - 1,

@@ -44,6 +44,7 @@ export async function mintNFT({
   const timestamp = getBlockTimestamp(stateStore);
   const rng = seedrandom(stateStore.chain.lastBlockHeaders[0].id.toString('hex'));
 
+  // TODO: should be in separate module, nft_minting module
   if (!isMintingAvailable(collection, timestamp)) {
     throw new Error('minting unavailable');
   }

@@ -64,7 +64,7 @@ export const addExclusiveReply = async (
 
   const reply = {
     ...replyPayload,
-    date: getBlockTimestamp(stateStore),
+    date: BigInt(getBlockTimestamp(stateStore)),
   };
   await setExclusiveReply(stateStore, id, reply);
 
