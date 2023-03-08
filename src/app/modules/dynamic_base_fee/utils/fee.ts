@@ -1,6 +1,6 @@
 import { Transaction, GenesisConfig } from 'lisk-sdk';
 import { Block } from '@liskhq/lisk-chain';
-import { DynamicBaseFeeGenesisConfig } from 'enevti-types/chain/config/DynamicBaseFeeGenesisConfig';
+import { DynamicBaseFeeGenesisConfig } from 'enevti-types/chain/dynamic_base_fee/config';
 
 export function getBaseFee(config: GenesisConfig, tx: { moduleID: number; assetID: number }) {
   let ret = '0';
