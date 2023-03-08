@@ -1,6 +1,5 @@
 import { BaseModule } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
@@ -23,7 +22,7 @@ import { accessAllNFT, accessNFTById } from '../utils/redeemable_nft';
 
 export function redeemableNftActions(this: BaseModule) {
   return {
-    getAllCollectionId: async (params): Promise<CollectionIdAsset[]> => {
+    getAllCollectionId: async (params): Promise<Buffer[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
@@ -85,7 +84,7 @@ export function redeemableNftActions(this: BaseModule) {
       const collection = await accessCollectionById(this._dataAccess, id);
       return collection ?? undefined;
     },
-    getAllNFTId: async (params): Promise<NFTIdAsset[]> => {
+    getAllNFTId: async (params): Promise<Buffer[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
@@ -131,7 +130,7 @@ export function redeemableNftActions(this: BaseModule) {
       const nft = await accessNFTById(this._dataAccess, id);
       return nft ?? undefined;
     },
-    getAllNFTTemplateId: async (params): Promise<TemplateIdAsset[]> => {
+    getAllNFTTemplateId: async (params): Promise<string[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;
@@ -149,7 +148,7 @@ export function redeemableNftActions(this: BaseModule) {
         ),
       );
     },
-    getAllNFTTemplateGenesisId: async (params): Promise<TemplateIdAsset[]> => {
+    getAllNFTTemplateGenesisId: async (params): Promise<string[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;
       const o = offset ?? 0;

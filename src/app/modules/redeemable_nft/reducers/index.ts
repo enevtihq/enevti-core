@@ -1,7 +1,7 @@
 import { StateStore, GenesisConfig, BaseModule } from 'lisk-framework';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { CollectionAsset } from 'enevti-types/chain/collection';
+import { SocialRaffleConfig } from 'enevti-types/chain/social_raffle/config';
 import { MintNFTUtilsFunctionProps, mintNFT } from '../utils/mint';
 import { getNFTById } from '../utils/redeemable_nft';
 import { getCollectionById } from '../utils/collection';
@@ -12,8 +12,8 @@ export function redeemableNftReducers(this: BaseModule) {
       _params: Record<string, unknown>,
       _stateStore: StateStore,
       // eslint-disable-next-line @typescript-eslint/require-await
-    ): Promise<SocialRaffleGenesisConfig['socialRaffle']> => {
-      const { socialRaffle } = this.config as GenesisConfig & SocialRaffleGenesisConfig;
+    ): Promise<SocialRaffleConfig['socialRaffle']> => {
+      const { socialRaffle } = this.config as GenesisConfig & SocialRaffleConfig;
       return socialRaffle;
     },
     mintNFT: async (params: Record<string, unknown>, stateStore: StateStore): Promise<Buffer[]> => {
