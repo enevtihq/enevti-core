@@ -1,43 +1,4 @@
-import clubs from './clubs';
-import comment from './comment';
 import like from './like';
-import reply from './reply';
-
-export const {
-  accessCollectionCommentClubsById,
-  accessCommentClubsById,
-  accessNftCommentClubsById,
-  addCollectionCommentClubsById,
-  addNftCommentClubsById,
-  getCollectionCommentClubsById,
-  getCommentClubsById,
-  getNftCommentClubsById,
-  setCollectionCommentClubsById,
-  setCommentClubsById,
-  setNftCommentClubsById,
-  accessMomentCommentClubsById,
-  addMomentCommentClubsById,
-  getMomentCommentClubsById,
-  setMomentCommentClubsById,
-} = clubs;
-
-export const {
-  accessCollectionCommentById,
-  accessCommentById,
-  accessNFTCommentById,
-  addCollectionCommentById,
-  addNFTCommentById,
-  getCollectionCommentById,
-  getCommentById,
-  getNFTCommentById,
-  setCollectionCommentById,
-  setCommentById,
-  setNFTCommentById,
-  accessMomentCommentById,
-  addMomentCommentById,
-  getMomentCommentById,
-  setMomentCommentById,
-} = comment;
 
 export const {
   accessCollectionLikeById,
@@ -68,20 +29,3 @@ export const {
   setReplyClubsLikeById,
   setReplyLikeById,
 } = like;
-
-export const {
-  accessCommentClubsReplyById,
-  accessCommentReplyById,
-  accessReplyById,
-  accessReplyClubsById,
-  addCommentClubsReplyById,
-  addCommentReplyById,
-  getCommentClubsReplyById,
-  getCommentReplyById,
-  getReplyById,
-  getReplyClubsById,
-  setCommentClubsReplyById,
-  setCommentReplyById,
-  setReplyById,
-  setReplyClubsById,
-} = reply;

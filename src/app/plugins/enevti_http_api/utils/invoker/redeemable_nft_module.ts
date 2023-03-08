@@ -2,15 +2,7 @@ import { BaseChannel } from 'lisk-framework';
 import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
-import {
-  CommentAsset,
-  CommentAtAsset,
-  CommentClubsAsset,
-  CommentClubsAtAsset,
-  LikeAtAsset,
-  ReplyAsset,
-  ReplyAtAsset,
-} from 'enevti-types/chain/engagement';
+import { LikeAtAsset } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
@@ -87,67 +79,6 @@ export const invokeGetReplyClubsLike = async (
   channel: BaseChannel,
   id: string,
 ): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getReplyClubsLike', { id });
-
-export const invokeGetCommentClubs = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentClubsAsset> => channel.invoke('redeemableNft:getCommentClubs', { id });
-
-export const invokeGetComment = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentAsset | undefined> => channel.invoke('redeemableNft:getComment', { id });
-
-export const invokeGetNFTComment = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentAtAsset> => channel.invoke('redeemableNft:getNFTComment', { id });
-
-export const invokeGetNFTCommentClubs = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentClubsAtAsset> => channel.invoke('redeemableNft:getNFTCommentClubs', { id });
-
-export const invokeGetCollectionComment = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentAtAsset> => channel.invoke('redeemableNft:getCollectionComment', { id });
-
-export const invokeGetCollectionCommentClubs = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentClubsAtAsset> =>
-  channel.invoke('redeemableNft:getCollectionCommentClubs', { id });
-
-export const invokeGetMomentComment = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentAtAsset> => channel.invoke('redeemableNft:getMomentComment', { id });
-
-export const invokeGetMomentCommentClubs = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CommentClubsAtAsset> => channel.invoke('redeemableNft:getMomentCommentClubs', { id });
-
-export const invokeGetReply = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<ReplyAsset | undefined> => channel.invoke('redeemableNft:getReply', { id });
-
-export const invokeGetReplyClubs = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<ReplyAsset | undefined> => channel.invoke('redeemableNft:getReplyClubs', { id });
-
-export const invokeGetCommentReply = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<ReplyAtAsset> => channel.invoke('redeemableNft:getCommentReply', { id });
-
-export const invokeGetCommentClubsReply = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<ReplyAtAsset> => channel.invoke('redeemableNft:getCommentClubsReply', { id });
 
 export const invokeGetAllNFTId = async (
   channel: BaseChannel,

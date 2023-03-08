@@ -2,15 +2,7 @@ import { BaseModule, GenesisConfig } from 'lisk-framework';
 import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
-import {
-  LikeAtAsset,
-  CommentAsset,
-  CommentAtAsset,
-  ReplyAsset,
-  ReplyAtAsset,
-  CommentClubsAsset,
-  CommentClubsAtAsset,
-} from 'enevti-types/chain/engagement';
+import { LikeAtAsset } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
@@ -32,20 +24,8 @@ import {
   accessCollectionLikeById,
   accessCommentLikeById,
   accessReplyLikeById,
-  accessCommentById,
-  accessNFTCommentById,
-  accessCollectionCommentById,
-  accessReplyById,
-  accessCommentReplyById,
   accessCommentClubsLikeById,
   accessReplyClubsLikeById,
-  accessCommentClubsById,
-  accessCollectionCommentClubsById,
-  accessNftCommentClubsById,
-  accessReplyClubsById,
-  accessCommentClubsReplyById,
-  accessMomentCommentById,
-  accessMomentCommentClubsById,
 } from '../utils/engagement';
 import { accessMomentLikeById } from '../utils/engagement/like/moment';
 import { accessAllMoment, accessMomentAt, accessMomentById } from '../utils/moment';
@@ -98,66 +78,6 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const likeReplyClubs = await accessReplyClubsLikeById(this._dataAccess, id);
       return likeReplyClubs;
-    },
-    getComment: async (params): Promise<CommentAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const comment = await accessCommentById(this._dataAccess, id);
-      return comment ?? undefined;
-    },
-    getCommentClubs: async (params): Promise<CommentClubsAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const comment = await accessCommentClubsById(this._dataAccess, id);
-      return comment ?? undefined;
-    },
-    getNFTComment: async (params): Promise<CommentAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentNft = await accessNFTCommentById(this._dataAccess, id);
-      return commentNft;
-    },
-    getNFTCommentClubs: async (params): Promise<CommentClubsAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentNft = await accessNftCommentClubsById(this._dataAccess, id);
-      return commentNft;
-    },
-    getCollectionComment: async (params): Promise<CommentAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentCollection = await accessCollectionCommentById(this._dataAccess, id);
-      return commentCollection;
-    },
-    getCollectionCommentClubs: async (params): Promise<CommentClubsAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentCollection = await accessCollectionCommentClubsById(this._dataAccess, id);
-      return commentCollection;
-    },
-    getMomentComment: async (params): Promise<CommentAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentMoment = await accessMomentCommentById(this._dataAccess, id);
-      return commentMoment;
-    },
-    getMomentCommentClubs: async (params): Promise<CommentClubsAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentMoment = await accessMomentCommentClubsById(this._dataAccess, id);
-      return commentMoment;
-    },
-    getReply: async (params): Promise<ReplyAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const reply = await accessReplyById(this._dataAccess, id);
-      return reply ?? undefined;
-    },
-    getReplyClubs: async (params): Promise<ReplyAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const reply = await accessReplyClubsById(this._dataAccess, id);
-      return reply ?? undefined;
-    },
-    getCommentReply: async (params): Promise<ReplyAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentReply = await accessCommentReplyById(this._dataAccess, id);
-      return commentReply;
-    },
-    getCommentClubsReply: async (params): Promise<ReplyAtAsset | undefined> => {
-      const { id } = params as Record<string, string>;
-      const commentReply = await accessCommentClubsReplyById(this._dataAccess, id);
-      return commentReply;
     },
     getAllCollectionId: async (params): Promise<CollectionIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
