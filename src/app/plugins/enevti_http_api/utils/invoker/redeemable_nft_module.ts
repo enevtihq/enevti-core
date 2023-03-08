@@ -1,11 +1,9 @@
 import { BaseChannel } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
-import { SocialRaffleChain, SocialRaffleBlockRecord } from 'enevti-types/chain/social_raffle';
 
 export const invokeGetAllCollectionId = async (
   channel: BaseChannel,
@@ -101,17 +99,3 @@ export const invokeGetMoment = async (
 
 export const invokeGetMomentAt = async (channel: BaseChannel, id: string): Promise<MomentAtAsset> =>
   channel.invoke('redeemableNft:getMomentAt', { id });
-
-export const invokeGetSocialRaffleRecord = async (
-  channel: BaseChannel,
-  height: number,
-): Promise<SocialRaffleRecord> => channel.invoke('redeemableNft:getSocialRaffleRecord', { height });
-
-export const invokeGetSocialRaffleState = async (
-  channel: BaseChannel,
-): Promise<SocialRaffleChain> => channel.invoke('redeemableNft:getSocialRaffleState');
-
-export const invokeGetSocialRaffleConfig = async (
-  channel: BaseChannel,
-): Promise<SocialRaffleGenesisConfig['socialRaffle']> =>
-  channel.invoke('redeemableNft:getSocialRaffleConfig');

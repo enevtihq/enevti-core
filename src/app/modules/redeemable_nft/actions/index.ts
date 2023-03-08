@@ -1,11 +1,9 @@
-import { BaseModule, GenesisConfig } from 'lisk-framework';
+import { BaseModule } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
-import { SocialRaffleRecord, SocialRaffleChain } from 'enevti-types/chain/social_raffle';
 import { collectionSchema } from '../schemas/chain/collection';
 import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';
@@ -22,7 +20,6 @@ import {
   accessAllNFTTemplateGenesis,
 } from '../utils/nft_template';
 import { accessAllNFT, accessNFTById } from '../utils/redeemable_nft';
-import { accessSocialRaffleRecord, accessSocialRaffleState } from '../utils/social_raffle';
 
 export function redeemableNftActions(this: BaseModule) {
   return {
@@ -184,20 +181,6 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const momentAt = await accessMomentAt(this._dataAccess, id);
       return momentAt;
-    },
-    getSocialRaffleRecord: async (params): Promise<SocialRaffleRecord> => {
-      const { height } = params as { height: number };
-      const raffleRecord = await accessSocialRaffleRecord(this._dataAccess, height);
-      return raffleRecord ?? { items: [] };
-    },
-    getSocialRaffleState: async (): Promise<SocialRaffleChain> => {
-      const raffleState = await accessSocialRaffleState(this._dataAccess);
-      return raffleState;
-    },
-    // eslint-disable-next-line @typescript-eslint/require-await
-    getSocialRaffleConfig: async (): Promise<SocialRaffleGenesisConfig['socialRaffle']> => {
-      const { socialRaffle } = this.config as GenesisConfig & SocialRaffleGenesisConfig;
-      return socialRaffle;
     },
   };
 }
