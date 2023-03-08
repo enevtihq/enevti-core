@@ -1,5 +1,4 @@
 import { BaseModule, GenesisConfig } from 'lisk-framework';
-import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { LikeAtAsset } from 'enevti-types/chain/engagement';
@@ -12,7 +11,6 @@ import { collectionSchema } from '../schemas/chain/collection';
 import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';
 import { redeemableNFTSchema } from '../schemas/chain/redeemable_nft';
-import { accessAccountStats } from '../utils/account_stats';
 import {
   accessAllCollection,
   accessCollectionById,
@@ -237,11 +235,6 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const momentAt = await accessMomentAt(this._dataAccess, id);
       return momentAt;
-    },
-    getAccountStats: async (params): Promise<RedeemableNFTAccountStatsChain> => {
-      const { address } = params as Record<string, string>;
-      const accountStats = await accessAccountStats(this._dataAccess, address);
-      return accountStats;
     },
     getSocialRaffleRecord: async (params): Promise<SocialRaffleRecord> => {
       const { height } = params as { height: number };

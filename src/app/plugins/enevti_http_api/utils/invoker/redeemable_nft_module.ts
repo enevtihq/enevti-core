@@ -1,5 +1,4 @@
 import { BaseChannel } from 'lisk-framework';
-import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import { LikeAtAsset } from 'enevti-types/chain/engagement';
@@ -138,12 +137,6 @@ export const invokeGetMoment = async (
 
 export const invokeGetMomentAt = async (channel: BaseChannel, id: string): Promise<MomentAtAsset> =>
   channel.invoke('redeemableNft:getMomentAt', { id });
-
-export const invokeGetAccountStats = async (
-  channel: BaseChannel,
-  address: string,
-): Promise<RedeemableNFTAccountStatsChain> =>
-  channel.invoke('redeemableNft:getAccountStats', { address });
 
 export const invokeGetSocialRaffleRecord = async (
   channel: BaseChannel,
