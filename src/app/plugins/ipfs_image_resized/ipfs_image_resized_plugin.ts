@@ -1,5 +1,6 @@
 import { BasePlugin, PluginInfo } from 'lisk-sdk';
 import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
+import { SizeCode } from 'enevti-types/utils/api';
 import {
   getIpfsResizedDirName,
   getIpfsResizedUri,
@@ -8,7 +9,6 @@ import {
 } from './utils/actions';
 import { isValidSize } from './utils/resizer';
 import { initPluginDirectory } from './utils/dir';
-import { SizeCode } from 'enevti-types/service/api';
 
 /* eslint-disable class-methods-use-this */
 /* eslint-disable  @typescript-eslint/no-empty-function */

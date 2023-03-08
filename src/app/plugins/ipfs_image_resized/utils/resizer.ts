@@ -1,13 +1,14 @@
 import * as sharp from 'sharp';
 import * as fs from 'fs';
-import { SizeCode } from 'enevti-types/service/api';
+import { SizeCode } from 'enevti-types/utils/api';
 
-export const widthMap = {
+export const widthMap: Record<SizeCode, number> = {
   xxs: 32,
   xs: 64,
   s: 128,
   m: 256,
   l: 512,
+  og: 0,
 };
 
 export function isValidSize(size: string) {
