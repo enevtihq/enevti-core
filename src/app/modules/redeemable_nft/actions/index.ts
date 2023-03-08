@@ -1,7 +1,6 @@
 import { BaseModule, GenesisConfig } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
-import { LikeAtAsset } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
@@ -16,16 +15,6 @@ import {
   accessCollectionById,
   accessAllUnavailableCollection,
 } from '../utils/collection';
-import {
-  accessLiked,
-  accessNFTLikeById,
-  accessCollectionLikeById,
-  accessCommentLikeById,
-  accessReplyLikeById,
-  accessCommentClubsLikeById,
-  accessReplyClubsLikeById,
-} from '../utils/engagement';
-import { accessMomentLikeById } from '../utils/engagement/like/moment';
 import { accessAllMoment, accessMomentAt, accessMomentById } from '../utils/moment';
 import {
   accessAllNFTTemplate,
@@ -37,46 +26,6 @@ import { accessSocialRaffleRecord, accessSocialRaffleState } from '../utils/soci
 
 export function redeemableNftActions(this: BaseModule) {
   return {
-    getLiked: async (params): Promise<0 | 1> => {
-      const { id, address } = params as Record<string, string>;
-      const liked = await accessLiked(this._dataAccess, id, address);
-      return liked;
-    },
-    getNFTLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeNft = await accessNFTLikeById(this._dataAccess, id);
-      return likeNft;
-    },
-    getMomentLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeNft = await accessMomentLikeById(this._dataAccess, id);
-      return likeNft;
-    },
-    getCollectionLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeCollection = await accessCollectionLikeById(this._dataAccess, id);
-      return likeCollection;
-    },
-    getCommentLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeComment = await accessCommentLikeById(this._dataAccess, id);
-      return likeComment;
-    },
-    getReplyLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeReply = await accessReplyLikeById(this._dataAccess, id);
-      return likeReply;
-    },
-    getCommentClubsLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeCommentClubs = await accessCommentClubsLikeById(this._dataAccess, id);
-      return likeCommentClubs;
-    },
-    getReplyClubsLike: async (params): Promise<LikeAtAsset> => {
-      const { id } = params as Record<string, string>;
-      const likeReplyClubs = await accessReplyClubsLikeById(this._dataAccess, id);
-      return likeReplyClubs;
-    },
     getAllCollectionId: async (params): Promise<CollectionIdAsset[]> => {
       const { offset, limit } = params as { limit?: number; offset?: number };
       const l = limit ?? 10;

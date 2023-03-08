@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseChannel } from 'lisk-framework';
 import { StakePoolData, StakerItem } from 'enevti-types/chain/stake';
 import addressBufferToPersona from '../../utils/transformer/addressBufferToPersona';
-import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module.ts';
+import { invokeGetStakerByAddress } from '../../utils/invoker/creator_finance_module';
 import { STAKER_INITIAL_LENGTH } from '../../constant/limit';
 import { isNumeric } from '../../utils/validation/number';
 import { invokeGetRegistrar } from '../../utils/invoker/registrar';

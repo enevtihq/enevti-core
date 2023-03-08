@@ -1,7 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
-import { LikeAtAsset } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
@@ -43,41 +42,6 @@ export const invokeGetCollection = async (
   channel: BaseChannel,
   id: string,
 ): Promise<CollectionAsset | undefined> => channel.invoke('redeemableNft:getCollection', { id });
-
-export const invokeGetLiked = async (
-  channel: BaseChannel,
-  id: string,
-  address: string,
-): Promise<0 | 1> => channel.invoke('redeemableNft:getLiked', { id, address });
-
-export const invokeGetNFTLike = async (channel: BaseChannel, id: string): Promise<LikeAtAsset> =>
-  channel.invoke('redeemableNft:getNFTLike', { id });
-
-export const invokeGetMomentLike = async (channel: BaseChannel, id: string): Promise<LikeAtAsset> =>
-  channel.invoke('redeemableNft:getMomentLike', { id });
-
-export const invokeGetCollectionLike = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getCollectionLike', { id });
-
-export const invokeGetCommentLike = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getCommentLike', { id });
-
-export const invokeGetReplyLike = async (channel: BaseChannel, id: string): Promise<LikeAtAsset> =>
-  channel.invoke('redeemableNft:getReplyLike', { id });
-
-export const invokeGetCommentClubsLike = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getCommentClubsLike', { id });
-
-export const invokeGetReplyClubsLike = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<LikeAtAsset> => channel.invoke('redeemableNft:getReplyClubsLike', { id });
 
 export const invokeGetAllNFTId = async (
   channel: BaseChannel,
