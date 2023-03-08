@@ -1,10 +1,6 @@
 import { BaseModule, GenesisConfig } from 'lisk-framework';
-import {
-  RedeemableNFTAccountStatsChain,
-  ProfileActivityChain,
-  EngagementActivityChain,
-} from 'enevti-types/account/profile';
-import { CollectionAsset, CollectionActivityChain } from 'enevti-types/chain/collection';
+import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
+import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import {
   LikeAtAsset,
@@ -16,23 +12,15 @@ import {
   CommentClubsAtAsset,
 } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
-import { MomentActivityChain, MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
-import { NFTActivityChain } from 'enevti-types/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
-import { SocialRaffleRecord, SocialRaffleChain } from 'enevti-types/chain/socialRaffle';
+import { SocialRaffleRecord, SocialRaffleChain } from 'enevti-types/chain/social_raffle';
 import { collectionSchema } from '../schemas/chain/collection';
 import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';
 import { redeemableNFTSchema } from '../schemas/chain/redeemable_nft';
 import { accessAccountStats } from '../utils/account_stats';
-import {
-  accessActivityNFT,
-  accessActivityCollection,
-  accessActivityProfile,
-  accessActivityEngagement,
-  accessActivityMoment,
-} from '../utils/activity';
 import {
   accessAllCollection,
   accessCollectionById,
@@ -320,16 +308,6 @@ export function redeemableNftActions(this: BaseModule) {
       const template = await accessNFTTemplateById(this._dataAccess, id);
       return template ?? undefined;
     },
-    getActivityNFT: async (params): Promise<NFTActivityChain> => {
-      const { id } = params as Record<string, string>;
-      const activity = await accessActivityNFT(this._dataAccess, id);
-      return activity;
-    },
-    getActivityMoment: async (params): Promise<MomentActivityChain> => {
-      const { id } = params as Record<string, string>;
-      const activity = await accessActivityMoment(this._dataAccess, id);
-      return activity;
-    },
     getMoment: async (params): Promise<MomentAsset | undefined> => {
       const { id } = params as Record<string, string>;
       const moment = await accessMomentById(this._dataAccess, id);
@@ -340,25 +318,10 @@ export function redeemableNftActions(this: BaseModule) {
       const momentAt = await accessMomentAt(this._dataAccess, id);
       return momentAt;
     },
-    getActivityCollection: async (params): Promise<CollectionActivityChain> => {
-      const { id } = params as Record<string, string>;
-      const activity = await accessActivityCollection(this._dataAccess, id);
-      return activity;
-    },
     getAccountStats: async (params): Promise<RedeemableNFTAccountStatsChain> => {
       const { address } = params as Record<string, string>;
       const accountStats = await accessAccountStats(this._dataAccess, address);
       return accountStats;
-    },
-    getActivityProfile: async (params): Promise<ProfileActivityChain> => {
-      const { address } = params as Record<string, string>;
-      const activity = await accessActivityProfile(this._dataAccess, address);
-      return activity;
-    },
-    getActivityEngagement: async (params): Promise<EngagementActivityChain> => {
-      const { address } = params as Record<string, string>;
-      const activity = await accessActivityEngagement(this._dataAccess, address);
-      return activity;
     },
     getSocialRaffleRecord: async (params): Promise<SocialRaffleRecord> => {
       const { height } = params as { height: number };

@@ -1,10 +1,6 @@
 import { BaseChannel } from 'lisk-framework';
-import {
-  EngagementActivityChain,
-  ProfileActivityChain,
-  RedeemableNFTAccountStatsChain,
-} from 'enevti-types/account/profile';
-import { CollectionActivityChain, CollectionAsset } from 'enevti-types/chain/collection';
+import { RedeemableNFTAccountStatsChain } from 'enevti-types/account/profile';
+import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
 import {
   CommentAsset,
@@ -16,11 +12,10 @@ import {
   ReplyAtAsset,
 } from 'enevti-types/chain/engagement';
 import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
-import { MomentActivityChain, MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
-import { NFTActivityChain } from 'enevti-types/chain/nft/NFTActivity';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
-import { SocialRaffleChain, SocialRaffleRecord } from 'enevti-types/chain/socialRaffle';
+import { SocialRaffleChain, SocialRaffleBlockRecord } from 'enevti-types/chain/social_raffle';
 
 export const invokeGetAllCollectionId = async (
   channel: BaseChannel,
@@ -205,16 +200,6 @@ export const invokeGetNFTTemplateById = async (
 ): Promise<NFTTemplateAsset | undefined> =>
   channel.invoke('redeemableNft:getNFTTemplateById', { id });
 
-export const invokeGetActivityNFT = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<NFTActivityChain> => channel.invoke('redeemableNft:getActivityNFT', { id });
-
-export const invokeGetActivityMoment = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<MomentActivityChain> => channel.invoke('redeemableNft:getActivityMoment', { id });
-
 export const invokeGetMoment = async (
   channel: BaseChannel,
   id: string,
@@ -222,23 +207,6 @@ export const invokeGetMoment = async (
 
 export const invokeGetMomentAt = async (channel: BaseChannel, id: string): Promise<MomentAtAsset> =>
   channel.invoke('redeemableNft:getMomentAt', { id });
-
-export const invokeGetActivityCollection = async (
-  channel: BaseChannel,
-  id: string,
-): Promise<CollectionActivityChain> =>
-  channel.invoke('redeemableNft:getActivityCollection', { id });
-
-export const invokeGetActivityProfile = async (
-  channel: BaseChannel,
-  address: string,
-): Promise<ProfileActivityChain> => channel.invoke('redeemableNft:getActivityProfile', { address });
-
-export const invokeGetActivityEngagement = async (
-  channel: BaseChannel,
-  address: string,
-): Promise<EngagementActivityChain> =>
-  channel.invoke('redeemableNft:getActivityEngagement', { address });
 
 export const invokeGetAccountStats = async (
   channel: BaseChannel,
