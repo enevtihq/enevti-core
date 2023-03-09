@@ -4,12 +4,12 @@ import {
 } from 'enevti-types/param/nft_exclusive_comment';
 import { TransactionApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
-import { EXCLUSIVE_COMMENT_PREFIX } from '../../constants/codec';
 import {
   ADD_EXCLUSIVE_COMMENT_ASSET_ID,
   ADD_EXCLUSIVE_REPLY_ASSET_ID,
   EXCLUSIVE_COMMENT_MODULE_ID,
-} from '../../constants/id';
+} from 'enevti-types/constant/id';
+import { EXCLUSIVE_COMMENT_PREFIX } from '../../constants/codec';
 
 export default function exclusiveCommentAfterTransactionApply(
   input: TransactionApplyContext,

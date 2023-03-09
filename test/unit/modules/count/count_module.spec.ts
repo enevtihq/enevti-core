@@ -1,7 +1,7 @@
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
 import { codec, StateStore, testing } from 'lisk-sdk';
+import { COUNT_MODULE_ID } from 'enevti-types/constant/id';
 import { COUNT_ITEM_PREFIX, COUNT_PREFIX } from '../../../../src/app/modules/count/constants/codec';
-import { COUNT_MODULE_ID } from '../../../../src/app/modules/count/constants/id';
 import {
   ADDRESS_MAX_LENGTH,
   KEY_MAX_LENGTH,

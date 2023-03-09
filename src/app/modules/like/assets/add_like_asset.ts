@@ -1,7 +1,7 @@
 import { AddLikeProps } from 'enevti-types/asset/like/add_like_asset';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
+import { ADD_LIKE_ASSET_ID } from 'enevti-types/constant/id';
 import { ADD_LIKE_ASSET_NAME } from '../constants/codec';
-import { ADD_LIKE_ASSET_ID } from '../constants/id';
 import { IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { addLikeSchema } from '../schema/assets/add_like_assets';
 import { addLike } from '../utils/add';

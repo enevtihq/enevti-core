@@ -3,8 +3,8 @@ import { AddLikeProps } from 'enevti-types/asset/like/add_like_asset';
 import { NewLikeEvent } from 'enevti-types/param/like';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { codec } from 'lisk-sdk';
+import { ADD_LIKE_ASSET_ID, LIKE_MODULE_ID } from 'enevti-types/constant/id';
 import { LIKE_PREFIX } from '../../constants/codec';
-import { ADD_LIKE_ASSET_ID, LIKE_MODULE_ID } from '../../constants/id';
 import { addLikeSchema } from '../../schema/assets/add_like_assets';
 
 export default function activityAfterTransactionApply(

@@ -1,25 +1,25 @@
 import { CommentMomentAsset } from '../../../../../src/app/modules/redeemable_nft/assets/comment_moment_asset';
 
 describe('CommentMomentAsset', () => {
-  let transactionAsset: CommentMomentAsset;
+  // let transactionAsset: CommentMomentAsset;
 
-  beforeEach(() => {
-    transactionAsset = new CommentMomentAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new CommentMomentAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(19);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(19);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('commentMoment');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('commentMoment');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

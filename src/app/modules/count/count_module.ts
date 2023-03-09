@@ -8,9 +8,9 @@ import {
   AfterGenesisBlockApplyContext,
   // GenesisConfig
 } from 'lisk-sdk';
+import { COUNT_MODULE_ID } from 'enevti-types/constant/id';
 import { countActions } from './actions';
 import { COUNT_PREFIX } from './constants/codec';
-import { COUNT_MODULE_ID } from './constants/id';
 import { countReducers } from './reducers';
 
 export class CountModule extends BaseModule {

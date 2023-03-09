@@ -7,10 +7,10 @@ import {
   BeforeBlockApplyContext,
   TransactionApplyContext,
 } from 'lisk-sdk';
+import { COMMENT_MODULE_ID } from 'enevti-types/constant/id';
 import { commentActions } from './actions';
 import { AddCommentAsset } from './assets/add_comment_asset';
 import { COMMENT_PREFIX } from './constants/codec';
-import { COMMENT_MODULE_ID } from './constants/id';
 import commentAfterTransactionApply from './hook/afterTransactionApply';
 import { commentReducers } from './reducers';
 

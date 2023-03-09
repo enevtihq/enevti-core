@@ -8,9 +8,9 @@ import {
   AfterGenesisBlockApplyContext,
   // GenesisConfig
 } from 'lisk-sdk';
+import { ACTIVITY_MODULE_ID } from 'enevti-types/constant/id';
 import { activityActions } from './actions';
 import { ACTIVITY_PREFIX } from './constants/codec';
-import { ACTIVITY_MODULE_ID } from './constants/id';
 import activityAfterBlockApply from './hook/afterBlockApply';
 import { activityReducers } from './reducers';
 

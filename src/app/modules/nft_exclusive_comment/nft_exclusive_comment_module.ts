@@ -7,11 +7,11 @@ import {
   BeforeBlockApplyContext,
   TransactionApplyContext,
 } from 'lisk-sdk';
+import { EXCLUSIVE_COMMENT_MODULE_ID } from 'enevti-types/constant/id';
 import { exclusiveCommentActions } from './actions';
 import { AddExclusiveCommentAsset } from './assets/add_exclusive_comment_asset';
 import { AddExclusiveReplyAsset } from './assets/add_exclusive_reply_asset';
 import { EXCLUSIVE_COMMENT_PREFIX } from './constants/codec';
-import { EXCLUSIVE_COMMENT_MODULE_ID } from './constants/id';
 import exclusiveCommentAfterTransactionApply from './hook/afterTransactionApply';
 import { exclusiveCommentReducers } from './reducers';
 

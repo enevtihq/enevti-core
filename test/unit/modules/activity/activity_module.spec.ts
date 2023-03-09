@@ -10,6 +10,7 @@ import {
 } from 'enevti-types/param/activity';
 import { codec, cryptography, StateStore, testing, Transaction } from 'lisk-sdk';
 import { diff, jsonPatchPathConverter } from 'just-diff';
+import { ACTIVITY_MODULE_ID } from 'enevti-types/constant/id';
 import { ActivityModule } from '../../../../src/app/modules/activity/activity_module';
 import {
   ACTIVITY_PREFIX,
@@ -19,7 +20,6 @@ import { activityGenesisSchema } from '../../../../src/app/modules/activity/sche
 import { activityItemSchema } from '../../../../src/app/modules/activity/schema/item';
 import { activityListSchema } from '../../../../src/app/modules/activity/schema/list';
 import { diffOptions } from '../../../../src/app/modules/activity/utils/add';
-import { ACTIVITY_MODULE_ID } from '../../../../src/app/modules/activity/constants/id';
 import {
   IDENTIFIER_MAX_LENGTH,
   ID_MAX_LENGTH,

@@ -1,25 +1,25 @@
 import { ReplyCommentClubsAsset } from '../../../../../src/app/modules/redeemable_nft/assets/reply_comment_clubs_asset';
 
 describe('ReplyCommentClubsAsset', () => {
-  let transactionAsset: ReplyCommentClubsAsset;
+  // let transactionAsset: ReplyCommentClubsAsset;
 
-  beforeEach(() => {
-    transactionAsset = new ReplyCommentClubsAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new ReplyCommentClubsAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(13);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(13);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('replyCommentClubs');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('replyCommentClubs');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

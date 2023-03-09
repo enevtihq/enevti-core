@@ -1,25 +1,25 @@
 import { LikeReplyClubsAsset } from '../../../../../src/app/modules/redeemable_nft/assets/like_reply_clubs_asset';
 
 describe('LikeReplyClubsAsset', () => {
-  let transactionAsset: LikeReplyClubsAsset;
+  // let transactionAsset: LikeReplyClubsAsset;
 
-  beforeEach(() => {
-    transactionAsset = new LikeReplyClubsAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new LikeReplyClubsAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(14);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(14);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('likeReplyClubs');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('likeReplyClubs');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

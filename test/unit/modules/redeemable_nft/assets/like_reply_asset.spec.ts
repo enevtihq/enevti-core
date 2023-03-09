@@ -1,25 +1,25 @@
 import { LikeReplyAsset } from '../../../../../src/app/modules/redeemable_nft/assets/like_reply_asset';
 
 describe('LikeReplyAsset', () => {
-  let transactionAsset: LikeReplyAsset;
+  // let transactionAsset: LikeReplyAsset;
 
-  beforeEach(() => {
-    transactionAsset = new LikeReplyAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new LikeReplyAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(9);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(9);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('likeReply');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('likeReply');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

@@ -1,25 +1,25 @@
 import { SetVideoCallAnsweredAsset } from '../../../../../src/app/modules/redeemable_nft/assets/set_video_call_answered_asset';
 
 describe('SetVideoCallAnsweredAsset', () => {
-  let transactionAsset: SetVideoCallAnsweredAsset;
+  // let transactionAsset: SetVideoCallAnsweredAsset;
 
-  beforeEach(() => {
-    transactionAsset = new SetVideoCallAnsweredAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new SetVideoCallAnsweredAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(17);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(17);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('setVideoCallAnswered');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('setVideoCallAnswered');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

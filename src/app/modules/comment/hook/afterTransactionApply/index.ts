@@ -1,8 +1,8 @@
 import { NewCommentEvent } from 'enevti-types/param/comment';
 import { TransactionApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
+import { ADD_COMMENT_ASSET_ID, COMMENT_MODULE_ID } from 'enevti-types/constant/id';
 import { COMMENT_PREFIX } from '../../constants/codec';
-import { ADD_COMMENT_ASSET_ID, COMMENT_MODULE_ID } from '../../constants/id';
 
 export default function commentAfterTransactionApply(
   input: TransactionApplyContext,

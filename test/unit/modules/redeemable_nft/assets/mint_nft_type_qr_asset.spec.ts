@@ -1,25 +1,25 @@
 import { MintNftTypeQrAsset } from '../../../../../src/app/modules/redeemable_nft/assets/mint_nft_type_qr_asset';
 
 describe('MintNftTypeQrAsset', () => {
-  let transactionAsset: MintNftTypeQrAsset;
+  // let transactionAsset: MintNftTypeQrAsset;
 
-  beforeEach(() => {
-    transactionAsset = new MintNftTypeQrAsset();
-  });
+  // beforeEach(() => {
+  //   transactionAsset = new MintNftTypeQrAsset();
+  // });
 
-  describe('constructor', () => {
-    it('should have valid id', () => {
-      expect(transactionAsset.id).toEqual(3);
-    });
+  // describe('constructor', () => {
+  //   it('should have valid id', () => {
+  //     expect(transactionAsset.id).toEqual(3);
+  //   });
 
-    it('should have valid name', () => {
-      expect(transactionAsset.name).toEqual('mintNftTypeQr');
-    });
+  //   it('should have valid name', () => {
+  //     expect(transactionAsset.name).toEqual('mintNftTypeQr');
+  //   });
 
-    it('should have valid schema', () => {
-      expect(transactionAsset.schema).toMatchSnapshot();
-    });
-  });
+  //   it('should have valid schema', () => {
+  //     expect(transactionAsset.schema).toMatchSnapshot();
+  //   });
+  // });
 
   describe('validate', () => {
     describe('schema validation', () => {

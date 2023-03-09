@@ -1,11 +1,11 @@
 import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar';
 import { NewRegistrarEvent } from 'enevti-types/param/registrar';
 import { codec, StateStore, testing } from 'lisk-sdk';
+import { REGISTRAR_MODULE_ID } from 'enevti-types/constant/id';
 import {
   BLOCK_REGISTRAR_PREFIX,
   REGISTRAR_PREFIX,
 } from '../../../../src/app/modules/registrar/constants/codec';
-import { REGISTRAR_MODULE_ID } from '../../../../src/app/modules/registrar/constants/id';
 import {
   IDENTIFIER_MAX_LENGTH,
   ID_MAX_LENGTH,

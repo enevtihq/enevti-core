@@ -10,9 +10,9 @@ import {
   GenesisConfig,
   // GenesisConfig
 } from 'lisk-sdk';
+import { SOCIAL_RAFFLE_MODULE_ID } from 'enevti-types/constant/id';
 import { socialRaffleActions } from './actions';
 import { SOCIAL_RAFFLE_PREFIX } from './constants/codec';
-import { SOCIAL_RAFFLE_MODULE_ID } from './constants/id';
 import socialRaffleAfterBlockApply from './hook/afterBlockApply';
 import socialRaffleAfterGenesisBlockApply from './hook/afterGenesisBlockApply';
 import socialRaffleAfterTransactionApply from './hook/afterTransactionApply';

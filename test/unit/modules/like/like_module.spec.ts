@@ -2,6 +2,7 @@ import { LikeChain, LikedChain } from 'enevti-types/chain/like';
 import { AddCountParam } from 'enevti-types/param/count';
 import { NewLikeEvent } from 'enevti-types/param/like';
 import { codec, StateStore, testing } from 'lisk-sdk';
+import { LIKE_MODULE_ID } from 'enevti-types/constant/id';
 import { COUNT_PREFIX } from '../../../../src/app/modules/count/constants/codec';
 import { AddLikeAsset } from '../../../../src/app/modules/like/assets/add_like_asset';
 import {
@@ -9,7 +10,6 @@ import {
   LIKE_MODULE_PREFIX,
   LIKE_PREFIX,
 } from '../../../../src/app/modules/like/constants/codec';
-import { LIKE_MODULE_ID } from '../../../../src/app/modules/like/constants/id';
 import { likeModuleInfo } from '../../../../src/app/modules/like/constants/info';
 import {
   IDENTIFIER_MAX_LENGTH,

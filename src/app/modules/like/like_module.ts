@@ -7,10 +7,10 @@ import {
   BeforeBlockApplyContext,
   TransactionApplyContext,
 } from 'lisk-sdk';
+import { LIKE_MODULE_ID } from 'enevti-types/constant/id';
 import { likeActions } from './actions';
 import { AddLikeAsset } from './assets/add_like_asset';
 import { LIKE_MODULE_PREFIX } from './constants/codec';
-import { LIKE_MODULE_ID } from './constants/id';
 import activityAfterTransactionApply from './hook/afterTransactionApply';
 import { likeReducers } from './reducers';
 

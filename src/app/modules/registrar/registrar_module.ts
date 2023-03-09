@@ -8,9 +8,9 @@ import {
   AfterGenesisBlockApplyContext,
   // GenesisConfig
 } from 'lisk-sdk';
+import { REGISTRAR_MODULE_ID } from 'enevti-types/constant/id';
 import { registrarActions } from './actions';
 import { REGISTRAR_PREFIX } from './constants/codec';
-import { REGISTRAR_MODULE_ID } from './constants/id';
 import registrarAfterBlockApply from './hook/afterBlockApply';
 import { registrarReducers } from './reducers';
 

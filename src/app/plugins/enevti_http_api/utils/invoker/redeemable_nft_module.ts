@@ -1,6 +1,5 @@
 import { BaseChannel } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { CollectionIdAsset, NFTIdAsset, TemplateIdAsset } from 'enevti-types/chain/id';
 import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
@@ -9,8 +8,7 @@ export const invokeGetAllCollectionId = async (
   channel: BaseChannel,
   offset: number,
   limit: number,
-): Promise<CollectionIdAsset[]> =>
-  channel.invoke('redeemableNft:getAllCollectionId', { offset, limit });
+): Promise<Buffer[]> => channel.invoke('redeemableNft:getAllCollectionId', { offset, limit });
 
 export const invokeGetAllCollection = async (
   channel: BaseChannel,
@@ -45,7 +43,7 @@ export const invokeGetAllNFTId = async (
   channel: BaseChannel,
   offset: number,
   limit: number,
-): Promise<NFTIdAsset[]> => channel.invoke('redeemableNft:getAllNFTId', { offset, limit });
+): Promise<Buffer[]> => channel.invoke('redeemableNft:getAllNFTId', { offset, limit });
 
 export const invokeGetAllNFT = async (
   channel: BaseChannel,
@@ -62,7 +60,7 @@ export const invokeGetAllNFTTemplateGenesisId = async (
   channel: BaseChannel,
   offset: number,
   limit: number,
-): Promise<TemplateIdAsset[]> =>
+): Promise<string[]> =>
   channel.invoke('redeemableNft:getAllNFTTemplateGenesisId', { offset, limit });
 
 export const invokeGetAllNFTTemplateGenesis = async (
@@ -76,8 +74,7 @@ export const invokeGetAllNFTTemplateId = async (
   channel: BaseChannel,
   offset: number,
   limit: number,
-): Promise<TemplateIdAsset[]> =>
-  channel.invoke('redeemableNft:getAllNFTTemplateId', { offset, limit });
+): Promise<string[]> => channel.invoke('redeemableNft:getAllNFTTemplateId', { offset, limit });
 
 export const invokeGetAllNFTTemplate = async (
   channel: BaseChannel,
