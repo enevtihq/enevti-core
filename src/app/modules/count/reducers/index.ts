@@ -1,15 +1,14 @@
 import { StateStore, BaseModule } from 'lisk-framework';
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
 import { AddCountParam, GetCountItemParam, GetCountParam } from 'enevti-types/param/count';
+import {
+  ADDRESS_BYTES_MAX_LENGTH,
+  ID_BYTES_MAX_LENGTH,
+  KEY_STRING_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
 import { getCountItem } from '../utils/item';
 import { getCount } from '../utils/count';
 import { addCount } from '../utils/add';
-import {
-  ADDRESS_MAX_LENGTH,
-  KEY_MAX_LENGTH,
-  ITEM_MAX_LENGTH,
-  MODULE_MAX_LENGTH,
-} from '../constants/limit';
 
 export function countReducers(this: BaseModule) {
   return {
@@ -21,14 +20,14 @@ export function countReducers(this: BaseModule) {
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }
-      if (module.length > MODULE_MAX_LENGTH) {
-        throw new Error(`maximum module length is ${MODULE_MAX_LENGTH}`);
+      if (module.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum module length is ${KEY_STRING_MAX_LENGTH}`);
       }
       if (!Buffer.isBuffer(address)) {
         throw new Error('address must be a buffer');
       }
-      if (address.length > ADDRESS_MAX_LENGTH) {
-        throw new Error(`maximum address length is ${ADDRESS_MAX_LENGTH}`);
+      if (address.length > ADDRESS_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum address length is ${ADDRESS_BYTES_MAX_LENGTH}`);
       }
       const count = await getCount(stateStore, module, address);
       return count;
@@ -41,20 +40,20 @@ export function countReducers(this: BaseModule) {
       if (typeof module !== 'string') {
         throw new Error('module must be a string');
       }
-      if (module.length > MODULE_MAX_LENGTH) {
-        throw new Error(`maximum module length is ${MODULE_MAX_LENGTH}`);
+      if (module.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum module length is ${KEY_STRING_MAX_LENGTH}`);
       }
       if (typeof key !== 'string') {
         throw new Error('key must be a string');
       }
-      if (key.length > KEY_MAX_LENGTH) {
-        throw new Error(`maximum key length is ${KEY_MAX_LENGTH}`);
+      if (key.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum key length is ${KEY_STRING_MAX_LENGTH}`);
       }
       if (!Buffer.isBuffer(address)) {
         throw new Error('address must be a buffer');
       }
-      if (address.length > ADDRESS_MAX_LENGTH) {
-        throw new Error(`maximum address length is ${ADDRESS_MAX_LENGTH}`);
+      if (address.length > ADDRESS_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum address length is ${ADDRESS_BYTES_MAX_LENGTH}`);
       }
       const countItem = await getCountItem(stateStore, module, key, address);
       return countItem;
@@ -65,26 +64,26 @@ export function countReducers(this: BaseModule) {
         if (typeof module !== 'string') {
           throw new Error('module must be a string');
         }
-        if (module.length > MODULE_MAX_LENGTH) {
-          throw new Error(`maximum module length is ${MODULE_MAX_LENGTH}`);
+        if (module.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum module length is ${KEY_STRING_MAX_LENGTH}`);
         }
         if (typeof key !== 'string') {
           throw new Error('key must be a string');
         }
-        if (key.length > KEY_MAX_LENGTH) {
-          throw new Error(`maximum key length is ${KEY_MAX_LENGTH}`);
+        if (key.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum key length is ${KEY_STRING_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(address)) {
           throw new Error('address must be a buffer');
         }
-        if (address.length > ADDRESS_MAX_LENGTH) {
-          throw new Error(`maximum address length is ${ADDRESS_MAX_LENGTH}`);
+        if (address.length > ADDRESS_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum address length is ${ADDRESS_BYTES_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(item)) {
           throw new Error('item must be a buffer');
         }
-        if (item.length > ADDRESS_MAX_LENGTH) {
-          throw new Error(`maximum item length is ${ITEM_MAX_LENGTH}`);
+        if (item.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum item length is ${ID_BYTES_MAX_LENGTH}`);
         }
         await addCount(stateStore, module, key, address, item);
         return true;

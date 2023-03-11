@@ -11,6 +11,7 @@ import {
 import { codec, cryptography, StateStore, testing, Transaction } from 'lisk-sdk';
 import { diff, jsonPatchPathConverter } from 'just-diff';
 import { ACTIVITY_MODULE_ID } from 'enevti-types/constant/id';
+import { ID_BYTES_MAX_LENGTH, KEY_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { ActivityModule } from '../../../../src/app/modules/activity/activity_module';
 import {
   ACTIVITY_PREFIX,
@@ -20,12 +21,6 @@ import { activityGenesisSchema } from '../../../../src/app/modules/activity/sche
 import { activityItemSchema } from '../../../../src/app/modules/activity/schema/item';
 import { activityListSchema } from '../../../../src/app/modules/activity/schema/list';
 import { diffOptions } from '../../../../src/app/modules/activity/utils/add';
-import {
-  IDENTIFIER_MAX_LENGTH,
-  ID_MAX_LENGTH,
-  KEY_MAX_LENGTH,
-  TYPE_MAX_LENGTH,
-} from '../../../../src/app/modules/activity/constants/limit';
 
 // eslint-disable-next-line import/order
 import variableDiff = require('variable-diff');
@@ -203,7 +198,7 @@ describe('ActivityModule', () => {
       it('should throw an error if id length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+            const id = Buffer.alloc(ID_BYTES_MAX_LENGTH + 1);
             await activityModule.actions.getActivity({ id });
             return true;
           } catch {
@@ -255,7 +250,7 @@ describe('ActivityModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.actions.getActivities({ identifier: exceeded, key });
             return true;
           } catch {
@@ -268,7 +263,7 @@ describe('ActivityModule', () => {
       it('should throw an error if key length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.actions.getActivities({ identifier, key: exceeded });
             return true;
           } catch {
@@ -320,7 +315,7 @@ describe('ActivityModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.actions.getActivityGenesis({ identifier: exceeded, key });
             return true;
           } catch {
@@ -333,7 +328,7 @@ describe('ActivityModule', () => {
       it('should throw an error if key length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.actions.getActivityGenesis({ identifier, key: exceeded });
             return true;
           } catch {
@@ -373,7 +368,7 @@ describe('ActivityModule', () => {
       it('should throw an error if id length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+            const id = Buffer.alloc(ID_BYTES_MAX_LENGTH + 1);
             await activityModule.reducers.getActivity({ id }, stateStore);
             return true;
           } catch {
@@ -431,7 +426,7 @@ describe('ActivityModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.reducers.getActivities({ identifier: exceeded, key }, stateStore);
             return true;
           } catch {
@@ -444,7 +439,7 @@ describe('ActivityModule', () => {
       it('should throw an error if key length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.reducers.getActivities({ identifier, key: exceeded }, stateStore);
             return true;
           } catch {
@@ -502,7 +497,7 @@ describe('ActivityModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.reducers.getActivityGenesis(
               { identifier: exceeded, key },
               stateStore,
@@ -518,7 +513,7 @@ describe('ActivityModule', () => {
       it('should throw an error if key length is exceeding limit', async () => {
         const activity = async () => {
           try {
-            const exceeded = 'a'.repeat(KEY_MAX_LENGTH + 1);
+            const exceeded = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await activityModule.reducers.getActivityGenesis(
               { identifier, key: exceeded },
               stateStore,
@@ -540,7 +535,7 @@ describe('ActivityModule', () => {
             newState: state3,
             payload: {
               ...addActivityPayload,
-              key: 'a'.repeat(IDENTIFIER_MAX_LENGTH + KEY_MAX_LENGTH + 1 + 1),
+              key: 'a'.repeat(KEY_STRING_MAX_LENGTH + KEY_STRING_MAX_LENGTH + 1 + 1),
             },
           },
           stateStore,
@@ -555,7 +550,7 @@ describe('ActivityModule', () => {
             newState: state3,
             payload: {
               ...addActivityPayload,
-              type: 'a'.repeat(TYPE_MAX_LENGTH + 1),
+              type: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
             },
           },
           stateStore,

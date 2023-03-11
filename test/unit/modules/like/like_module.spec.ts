@@ -3,6 +3,11 @@ import { AddCountParam } from 'enevti-types/param/count';
 import { NewLikeEvent } from 'enevti-types/param/like';
 import { codec, StateStore, testing } from 'lisk-sdk';
 import { LIKE_MODULE_ID } from 'enevti-types/constant/id';
+import {
+  KEY_STRING_MAX_LENGTH,
+  ID_STRING_MAX_LENGTH,
+  ADDRESS_BYTES_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
 import { COUNT_PREFIX } from '../../../../src/app/modules/count/constants/codec';
 import { AddLikeAsset } from '../../../../src/app/modules/like/assets/add_like_asset';
 import {
@@ -11,11 +16,6 @@ import {
   LIKE_PREFIX,
 } from '../../../../src/app/modules/like/constants/codec';
 import { likeModuleInfo } from '../../../../src/app/modules/like/constants/info';
-import {
-  IDENTIFIER_MAX_LENGTH,
-  ID_MAX_LENGTH,
-  ADDRESS_MAX_LENGTH,
-} from '../../../../src/app/modules/like/constants/limit';
 import { LikeModule } from '../../../../src/app/modules/like/like_module';
 import { likeSchema } from '../../../../src/app/modules/like/schema/like';
 import { likedSchema } from '../../../../src/app/modules/like/schema/liked';
@@ -142,7 +142,7 @@ describe('LikeModule', () => {
         const like = async () => {
           try {
             await likeModule.actions.getLike({
-              identifier: 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1),
+              identifier: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
               target,
             });
             return true;
@@ -167,7 +167,10 @@ describe('LikeModule', () => {
       it('should throw an error if target length is exceeding limit', async () => {
         const like = async () => {
           try {
-            await likeModule.actions.getLike({ identifier, target: 'a'.repeat(ID_MAX_LENGTH + 1) });
+            await likeModule.actions.getLike({
+              identifier,
+              target: 'a'.repeat(ID_STRING_MAX_LENGTH + 1),
+            });
             return true;
           } catch {
             return false;
@@ -203,7 +206,10 @@ describe('LikeModule', () => {
       it('should throw an error if target length is exceeding limit', async () => {
         const liked = async () => {
           try {
-            await likeModule.actions.getLiked({ target: 'a'.repeat(ID_MAX_LENGTH + 1), address });
+            await likeModule.actions.getLiked({
+              target: 'a'.repeat(ID_STRING_MAX_LENGTH + 1),
+              address,
+            });
             return true;
           } catch {
             return false;
@@ -229,7 +235,7 @@ describe('LikeModule', () => {
           try {
             await likeModule.actions.getLiked({
               target,
-              address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+              address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
             });
             return true;
           } catch {
@@ -280,7 +286,7 @@ describe('LikeModule', () => {
           try {
             await likeModule.reducers.getLike(
               {
-                identifier: 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1),
+                identifier: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
                 target,
               },
               stateStore,
@@ -308,7 +314,7 @@ describe('LikeModule', () => {
         const like = async () => {
           try {
             await likeModule.reducers.getLike(
-              { identifier, target: 'a'.repeat(ID_MAX_LENGTH + 1) },
+              { identifier, target: 'a'.repeat(ID_STRING_MAX_LENGTH + 1) },
               stateStore,
             );
             return true;
@@ -350,7 +356,7 @@ describe('LikeModule', () => {
         const liked = async () => {
           try {
             await likeModule.reducers.getLiked(
-              { target: 'a'.repeat(ID_MAX_LENGTH + 1), address },
+              { target: 'a'.repeat(ID_STRING_MAX_LENGTH + 1), address },
               stateStore,
             );
             return true;
@@ -379,7 +385,7 @@ describe('LikeModule', () => {
             await likeModule.reducers.getLiked(
               {
                 target,
-                address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+                address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
               },
               stateStore,
             );
@@ -530,7 +536,7 @@ describe('LikeModule', () => {
         const add = await likeModule.reducers.addLike(
           {
             reducerHandler,
-            identifier: 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1),
+            identifier: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
             target,
             senderAddress,
           },
@@ -559,7 +565,7 @@ describe('LikeModule', () => {
           {
             reducerHandler,
             identifier,
-            target: 'a'.repeat(ID_MAX_LENGTH + 1),
+            target: 'a'.repeat(ID_STRING_MAX_LENGTH + 1),
             senderAddress,
           },
           stateStore,
@@ -586,7 +592,7 @@ describe('LikeModule', () => {
             reducerHandler,
             identifier,
             target,
-            senderAddress: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+            senderAddress: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
           },
           stateStore,
         );

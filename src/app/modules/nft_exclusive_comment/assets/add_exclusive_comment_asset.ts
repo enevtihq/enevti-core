@@ -2,8 +2,12 @@ import { AddExclusiveCommentProps } from 'enevti-types/asset/nft_exclusive_comme
 import { AddExclusiveCommentPayload } from 'enevti-types/param/nft_exclusive_comment';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { ADD_EXCLUSIVE_COMMENT_ASSET_ID } from 'enevti-types/constant/id';
+import {
+  CID_STRING_MAX_LENGTH,
+  ID_STRING_MAX_LENGTH,
+  KEY_STRING_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
 import { ADD_EXCLUSIVE_COMMENT_ASSET_NAME } from '../constants/codec';
-import { CID_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { addExclusiveCommentSchema } from '../schema/assets/add_exclusive_comment_asset';
 import { addExclusiveComment } from '../utils/addExclusiveComment';
 
@@ -13,14 +17,14 @@ export class AddExclusiveCommentAsset extends BaseAsset {
   public schema = addExclusiveCommentSchema;
 
   public validate({ asset }: ValidateAssetContext<AddExclusiveCommentProps>): void {
-    if (asset.id.length > ID_MAX_LENGTH) {
-      throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum id length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.identifier.length > IDENTIFIER_MAX_LENGTH) {
-      throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+    if (asset.identifier.length > KEY_STRING_MAX_LENGTH) {
+      throw new Error(`maximum identifier length is ${KEY_STRING_MAX_LENGTH}`);
     }
-    if (asset.cid.length > CID_MAX_LENGTH) {
-      throw new Error(`maximum cid length is ${CID_MAX_LENGTH}`);
+    if (asset.cid.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum cid length is ${CID_STRING_MAX_LENGTH}`);
     }
   }
 

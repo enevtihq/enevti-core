@@ -13,17 +13,15 @@ import {
   GetExclusiveRepliesParam,
   GetExclusiveReplyParam,
 } from 'enevti-types/param/nft_exclusive_comment';
+import {
+  ADDRESS_BYTES_MAX_LENGTH,
+  CID_STRING_MAX_LENGTH,
+  ID_BYTES_MAX_LENGTH,
+  KEY_STRING_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
 import { getExclusiveComment } from '../utils/commentItem';
 import { getExclusiveComments } from '../utils/commentList';
 import { addExclusiveComment } from '../utils/addExclusiveComment';
-import {
-  ADDRESS_MAX_LENGTH,
-  CID_MAX_LENGTH,
-  IDENTIFIER_MAX_LENGTH,
-  ID_MAX_LENGTH,
-  KEY_MAX_LENGTH,
-  TARGET_MAX_LENGTH,
-} from '../constants/limit';
 import { getExclusiveReply } from '../utils/replyItem';
 import { getExclusiveReplies } from '../utils/replyList';
 import { addExclusiveReply } from '../utils/addExclusiveReply';
@@ -38,8 +36,8 @@ export function exclusiveCommentReducers(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const comment = await getExclusiveComment(stateStore, id);
       return comment;
@@ -52,14 +50,14 @@ export function exclusiveCommentReducers(this: BaseModule) {
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
-      if (identifier.length > IDENTIFIER_MAX_LENGTH) {
-        throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+      if (identifier.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum identifier length is ${KEY_STRING_MAX_LENGTH}`);
       }
       if (typeof key !== 'string') {
         throw new Error('key must be a string');
       }
-      if (key.length > KEY_MAX_LENGTH) {
-        throw new Error(`maximum key length is ${KEY_MAX_LENGTH}`);
+      if (key.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum key length is ${KEY_STRING_MAX_LENGTH}`);
       }
       const comments = await getExclusiveComments(stateStore, identifier, key);
       return comments;
@@ -72,8 +70,8 @@ export function exclusiveCommentReducers(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const comment = await getExclusiveReply(stateStore, id);
       return comment;
@@ -86,8 +84,8 @@ export function exclusiveCommentReducers(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const replies = await getExclusiveReplies(stateStore, id);
       return replies;
@@ -107,32 +105,32 @@ export function exclusiveCommentReducers(this: BaseModule) {
         if (typeof payload.cid !== 'string') {
           throw new Error('payload.cid must be a string');
         }
-        if (payload.cid.length > CID_MAX_LENGTH) {
-          throw new Error(`maximum payload.cid length is ${CID_MAX_LENGTH}`);
+        if (payload.cid.length > CID_STRING_MAX_LENGTH) {
+          throw new Error(`maximum payload.cid length is ${CID_STRING_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.creator)) {
           throw new Error('payload.creator must be a buffer');
         }
-        if (payload.creator.length > ADDRESS_MAX_LENGTH) {
-          throw new Error(`maximum payload.creator length is ${ADDRESS_MAX_LENGTH}`);
+        if (payload.creator.length > ADDRESS_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.creator length is ${ADDRESS_BYTES_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.id)) {
           throw new Error('payload.id must be a buffer');
         }
-        if (payload.id.length > ID_MAX_LENGTH) {
-          throw new Error(`maximum payload.id length is ${ID_MAX_LENGTH}`);
+        if (payload.id.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.id length is ${ID_BYTES_MAX_LENGTH}`);
         }
         if (typeof payload.identifier !== 'string') {
           throw new Error('payload.identifier must be a string');
         }
-        if (payload.identifier.length > IDENTIFIER_MAX_LENGTH) {
-          throw new Error(`maximum payload.identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+        if (payload.identifier.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum payload.identifier length is ${KEY_STRING_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.target)) {
           throw new Error('payload.target must be a buffer');
         }
-        if (payload.target.length > TARGET_MAX_LENGTH) {
-          throw new Error(`maximum payload.target length is ${TARGET_MAX_LENGTH}`);
+        if (payload.target.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.target length is ${ID_BYTES_MAX_LENGTH}`);
         }
         await addExclusiveComment(stateStore, reducerHandler, payload);
         return true;
@@ -155,32 +153,32 @@ export function exclusiveCommentReducers(this: BaseModule) {
         if (typeof payload.cid !== 'string') {
           throw new Error('payload.cid must be a string');
         }
-        if (payload.cid.length > CID_MAX_LENGTH) {
-          throw new Error(`maximum payload.cid length is ${CID_MAX_LENGTH}`);
+        if (payload.cid.length > CID_STRING_MAX_LENGTH) {
+          throw new Error(`maximum payload.cid length is ${CID_STRING_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.creator)) {
           throw new Error('payload.creator must be a buffer');
         }
-        if (payload.creator.length > ADDRESS_MAX_LENGTH) {
-          throw new Error(`maximum payload.creator length is ${ADDRESS_MAX_LENGTH}`);
+        if (payload.creator.length > ADDRESS_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.creator length is ${ADDRESS_BYTES_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.id)) {
           throw new Error('payload.id must be a buffer');
         }
-        if (payload.id.length > ID_MAX_LENGTH) {
-          throw new Error(`maximum payload.id length is ${ID_MAX_LENGTH}`);
+        if (payload.id.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.id length is ${ID_BYTES_MAX_LENGTH}`);
         }
         if (typeof payload.identifier !== 'string') {
           throw new Error('payload.identifier must be a string');
         }
-        if (payload.identifier.length > IDENTIFIER_MAX_LENGTH) {
-          throw new Error(`maximum payload.identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+        if (payload.identifier.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum payload.identifier length is ${KEY_STRING_MAX_LENGTH}`);
         }
         if (!Buffer.isBuffer(payload.target)) {
           throw new Error('payload.target must be a buffer');
         }
-        if (payload.target.length > TARGET_MAX_LENGTH) {
-          throw new Error(`maximum payload.target length is ${TARGET_MAX_LENGTH}`);
+        if (payload.target.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum payload.target length is ${ID_BYTES_MAX_LENGTH}`);
         }
         await addExclusiveReply(stateStore, reducerHandler, payload);
         return true;

@@ -1,12 +1,8 @@
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
 import { codec, StateStore, testing } from 'lisk-sdk';
 import { COUNT_MODULE_ID } from 'enevti-types/constant/id';
+import { ADDRESS_BYTES_MAX_LENGTH, KEY_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { COUNT_ITEM_PREFIX, COUNT_PREFIX } from '../../../../src/app/modules/count/constants/codec';
-import {
-  ADDRESS_MAX_LENGTH,
-  KEY_MAX_LENGTH,
-  MODULE_MAX_LENGTH,
-} from '../../../../src/app/modules/count/constants/limit';
 import { CountModule } from '../../../../src/app/modules/count/count_module';
 import { countSchema } from '../../../../src/app/modules/count/schema/count';
 import { countItemSchema } from '../../../../src/app/modules/count/schema/item';
@@ -89,7 +85,7 @@ describe('CountModule', () => {
         const count = async () => {
           try {
             await countModule.actions.getCount({
-              module: 'a'.repeat(MODULE_MAX_LENGTH + 1),
+              module: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
               address,
             });
             return true;
@@ -117,7 +113,7 @@ describe('CountModule', () => {
           try {
             await countModule.actions.getCount({
               module,
-              address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+              address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
             });
             return true;
           } catch {
@@ -159,7 +155,7 @@ describe('CountModule', () => {
         const countItem = async () => {
           try {
             await countModule.actions.getCountItem({
-              module: 'a'.repeat(MODULE_MAX_LENGTH + 1),
+              module: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
               key,
               address,
             });
@@ -188,7 +184,7 @@ describe('CountModule', () => {
           try {
             await countModule.actions.getCountItem({
               module,
-              key: 'a'.repeat(KEY_MAX_LENGTH + 1),
+              key: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
               address,
             });
             return true;
@@ -217,7 +213,7 @@ describe('CountModule', () => {
             await countModule.actions.getCountItem({
               module,
               key,
-              address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+              address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
             });
             return true;
           } catch {
@@ -264,7 +260,7 @@ describe('CountModule', () => {
           try {
             await countModule.reducers.getCount(
               {
-                module: 'a'.repeat(MODULE_MAX_LENGTH + 1),
+                module: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
                 address,
               },
               stateStore,
@@ -295,7 +291,7 @@ describe('CountModule', () => {
             await countModule.reducers.getCount(
               {
                 module,
-                address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+                address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
               },
               stateStore,
             );
@@ -346,7 +342,7 @@ describe('CountModule', () => {
           try {
             await countModule.reducers.getCountItem(
               {
-                module: 'a'.repeat(MODULE_MAX_LENGTH + 1),
+                module: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
                 key,
                 address,
               },
@@ -378,7 +374,7 @@ describe('CountModule', () => {
             await countModule.reducers.getCountItem(
               {
                 module,
-                key: 'a'.repeat(KEY_MAX_LENGTH + 1),
+                key: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
                 address,
               },
               stateStore,
@@ -410,7 +406,7 @@ describe('CountModule', () => {
               {
                 module,
                 key,
-                address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+                address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
               },
               stateStore,
             );
@@ -469,7 +465,7 @@ describe('CountModule', () => {
       it('should return false if module length exceed limit', async () => {
         const res = await countModule.reducers.addCount(
           {
-            module: 'a'.repeat(MODULE_MAX_LENGTH + 1),
+            module: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
             key,
             address,
             item,
@@ -491,7 +487,7 @@ describe('CountModule', () => {
         const res = await countModule.reducers.addCount(
           {
             module,
-            key: 'a'.repeat(KEY_MAX_LENGTH + 1),
+            key: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1),
             address,
             item,
           },
@@ -513,7 +509,7 @@ describe('CountModule', () => {
           {
             module,
             key,
-            address: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+            address: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
             item,
           },
           stateStore,
@@ -535,7 +531,7 @@ describe('CountModule', () => {
             module,
             key,
             address,
-            item: Buffer.alloc(ADDRESS_MAX_LENGTH + 1),
+            item: Buffer.alloc(ADDRESS_BYTES_MAX_LENGTH + 1),
           },
           stateStore,
         );

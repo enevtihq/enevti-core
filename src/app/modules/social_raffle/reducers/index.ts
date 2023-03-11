@@ -9,9 +9,9 @@ import {
   GetRecordParam,
   SetCollectionRaffleConfig,
 } from 'enevti-types/param/social_raffle';
+import { ID_BYTES_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { getSocialRaffleState } from '../utils/state';
 import { getSocialRaffleBlockRecord } from '../utils/block';
-import { ID_MAX_LENGTH } from '../constants/limit';
 import { getCollectionRaffleConfig, setCollectionRaffleConfig } from '../utils/collectionConfig';
 
 export function socialRaffleReducers(this: BaseModule) {
@@ -29,8 +29,8 @@ export function socialRaffleReducers(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const collectionConfig = await getCollectionRaffleConfig(stateStore, id);
       return collectionConfig;
@@ -62,8 +62,8 @@ export function socialRaffleReducers(this: BaseModule) {
         if (!Buffer.isBuffer(id)) {
           throw new Error('id must be a buffer');
         }
-        if (id.length > ID_MAX_LENGTH) {
-          throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+        if (id.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
         }
         if (typeof activated !== 'boolean') {
           throw new Error('activated must be a boolean');

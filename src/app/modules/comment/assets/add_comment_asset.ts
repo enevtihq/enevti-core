@@ -2,8 +2,12 @@ import { AddCommentProps } from 'enevti-types/asset/comment/add_comment_asset';
 import { AddCommentPayload } from 'enevti-types/param/comment';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { ADD_COMMENT_ASSET_ID } from 'enevti-types/constant/id';
+import {
+  CID_STRING_MAX_LENGTH,
+  KEY_STRING_MAX_LENGTH,
+  ID_STRING_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
 import { ADD_COMMENT_ASSET_NAME } from '../constants/codec';
-import { CID_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { addCommentSchema } from '../schema/assets/add_comment_assets';
 import { addComment } from '../utils/add';
 
@@ -13,14 +17,14 @@ export class AddCommentAsset extends BaseAsset {
   public schema = addCommentSchema;
 
   public validate({ asset }: ValidateAssetContext<AddCommentProps>): void {
-    if (asset.id.length > ID_MAX_LENGTH) {
-      throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum id length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.identifier.length > IDENTIFIER_MAX_LENGTH) {
-      throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+    if (asset.identifier.length > KEY_STRING_MAX_LENGTH) {
+      throw new Error(`maximum identifier length is ${KEY_STRING_MAX_LENGTH}`);
     }
-    if (asset.cid.length > CID_MAX_LENGTH) {
-      throw new Error(`maximum cid length is ${CID_MAX_LENGTH}`);
+    if (asset.cid.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum cid length is ${CID_STRING_MAX_LENGTH}`);
     }
   }
 

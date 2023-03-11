@@ -2,8 +2,8 @@ import { AddExclusiveReplyProps } from 'enevti-types/asset/nft_exclusive_comment
 import { AddExclusiveReplyPayload } from 'enevti-types/param/nft_exclusive_comment';
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { ADD_EXCLUSIVE_REPLY_ASSET_ID } from 'enevti-types/constant/id';
+import { CID_STRING_MAX_LENGTH, ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { ADD_EXCLUSIVE_REPLY_ASSET_NAME } from '../constants/codec';
-import { CID_MAX_LENGTH, ID_MAX_LENGTH } from '../constants/limit';
 import { addExclusiveReplySchema } from '../schema/assets/add_exclusive_reply_asset';
 import { addExclusiveReply } from '../utils/addExclusiveReply';
 
@@ -13,11 +13,11 @@ export class AddExclusiveReplyAsset extends BaseAsset {
   public schema = addExclusiveReplySchema;
 
   public validate({ asset }: ValidateAssetContext<AddExclusiveReplyProps>): void {
-    if (asset.id.length > ID_MAX_LENGTH) {
-      throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum id length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.cid.length > CID_MAX_LENGTH) {
-      throw new Error(`maximum cid length is ${CID_MAX_LENGTH}`);
+    if (asset.cid.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`maximum cid length is ${CID_STRING_MAX_LENGTH}`);
     }
   }
 

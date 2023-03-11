@@ -1,4 +1,0 @@
-export const VALIDATION = {
-  IPFS_CID_v1_MAXLENGTH: 59,
-  TWITTER_ID_MAXLENGTH: 64,
-};

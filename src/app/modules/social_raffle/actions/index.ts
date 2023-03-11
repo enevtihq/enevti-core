@@ -3,9 +3,9 @@ import {
   SocialRaffleChain,
   SocialRaffleCollectionChain,
 } from 'enevti-types/chain/social_raffle';
+import { ID_BYTES_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { GetCollectionRaffleConfig, GetRecordParam } from 'enevti-types/param/social_raffle';
 import { BaseModule, GenesisConfig } from 'lisk-framework';
-import { ID_MAX_LENGTH } from '../constants/limit';
 import { accessSocialRaffleBlockRecord } from '../utils/block';
 import { accessCollectionRaffleConfig } from '../utils/collectionConfig';
 import { accessSocialRaffleState } from '../utils/state';
@@ -19,8 +19,8 @@ export function socialRaffleActions(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const collectionConfig = await accessCollectionRaffleConfig(this._dataAccess, id);
       return collectionConfig;

@@ -2,6 +2,7 @@ import { AddLikeProps } from 'enevti-types/asset/like/add_like_asset';
 import { LikeChain, LikedChain } from 'enevti-types/chain/like';
 import { codec, ReducerHandler, StateStore, testing } from 'lisk-sdk';
 import { ADD_LIKE_ASSET_ID } from 'enevti-types/constant/id';
+import { KEY_STRING_MAX_LENGTH, ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { COUNT_PREFIX } from '../../../../../src/app/modules/count/constants/codec';
 import { AddLikeAsset } from '../../../../../src/app/modules/like/assets/add_like_asset';
 import {
@@ -10,10 +11,6 @@ import {
   LIKE_MODULE_PREFIX,
   LIKE_PREFIX,
 } from '../../../../../src/app/modules/like/constants/codec';
-import {
-  IDENTIFIER_MAX_LENGTH,
-  ID_MAX_LENGTH,
-} from '../../../../../src/app/modules/like/constants/limit';
 import { addLikeSchema } from '../../../../../src/app/modules/like/schema/assets/add_like_assets';
 import { likeSchema } from '../../../../../src/app/modules/like/schema/like';
 import { likedSchema } from '../../../../../src/app/modules/like/schema/liked';
@@ -45,7 +42,7 @@ describe('AddLikeAsset', () => {
     describe('schema validation', () => {
       it('should throw error if identifier length exceeding limit', () => {
         const context = testing.createValidateAssetContext<AddLikeProps>({
-          asset: { identifier: 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1), id: 'id' },
+          asset: { identifier: 'a'.repeat(KEY_STRING_MAX_LENGTH + 1), id: 'id' },
           transaction: { senderAddress: Buffer.alloc(0) } as any,
         });
         expect(() => transactionAsset.validate(context)).toThrow();
@@ -53,7 +50,7 @@ describe('AddLikeAsset', () => {
 
       it('should throw error if id length exceeding limit', () => {
         const context = testing.createValidateAssetContext<AddLikeProps>({
-          asset: { identifier: 'identifier', id: 'a'.repeat(ID_MAX_LENGTH + 1) },
+          asset: { identifier: 'identifier', id: 'a'.repeat(ID_STRING_MAX_LENGTH + 1) },
           transaction: { senderAddress: Buffer.alloc(0) } as any,
         });
         expect(() => transactionAsset.validate(context)).toThrow();

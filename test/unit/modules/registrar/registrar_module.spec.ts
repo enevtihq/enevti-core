@@ -2,15 +2,11 @@ import { BlockRegisrarChain, RegistrarChain } from 'enevti-types/chain/registrar
 import { NewRegistrarEvent } from 'enevti-types/param/registrar';
 import { codec, StateStore, testing } from 'lisk-sdk';
 import { REGISTRAR_MODULE_ID } from 'enevti-types/constant/id';
+import { KEY_STRING_MAX_LENGTH, ID_BYTES_MAX_LENGTH } from 'enevti-types/constant/validation';
 import {
   BLOCK_REGISTRAR_PREFIX,
   REGISTRAR_PREFIX,
 } from '../../../../src/app/modules/registrar/constants/codec';
-import {
-  IDENTIFIER_MAX_LENGTH,
-  ID_MAX_LENGTH,
-  VALUE_MAX_LENGTH,
-} from '../../../../src/app/modules/registrar/constants/limit';
 import { RegistrarModule } from '../../../../src/app/modules/registrar/registrar_module';
 import { blockRegistrarSchema } from '../../../../src/app/modules/registrar/schema/block';
 import { registrarSchema } from '../../../../src/app/modules/registrar/schema/registrar';
@@ -138,7 +134,7 @@ describe('RegistrarModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const registrar = async () => {
           try {
-            const exceeding = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeding = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await registrarModule.actions.getRegistrar({ identifier: exceeding, value: 'test' });
             return true;
           } catch {
@@ -151,7 +147,7 @@ describe('RegistrarModule', () => {
       it('should throw an error if value length is exceeding limit', async () => {
         const registrar = async () => {
           try {
-            const exceeding = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+            const exceeding = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await registrarModule.actions.getRegistrar({ identifier: 'test', value: exceeding });
             return true;
           } catch {
@@ -256,7 +252,7 @@ describe('RegistrarModule', () => {
       it('should throw an error if identifier length is exceeding limit', async () => {
         const registrar = async () => {
           try {
-            const exceeding = 'a'.repeat(IDENTIFIER_MAX_LENGTH + 1);
+            const exceeding = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await registrarModule.reducers.getRegistrar(
               { identifier: exceeding, value: 'test' },
               stateStore,
@@ -272,7 +268,7 @@ describe('RegistrarModule', () => {
       it('should throw an error if value length is exceeding limit', async () => {
         const registrar = async () => {
           try {
-            const exceeding = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+            const exceeding = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
             await registrarModule.reducers.getRegistrar(
               { identifier: 'test', value: exceeding },
               stateStore,
@@ -335,7 +331,7 @@ describe('RegistrarModule', () => {
       });
 
       it('should return false if identifier length is exceeding limit', async () => {
-        const identifier = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+        const identifier = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
         const value = 'test';
         const id = Buffer.alloc(0);
 
@@ -349,7 +345,7 @@ describe('RegistrarModule', () => {
 
       it('should return false if value length is exceeding limit', async () => {
         const identifier = 'test';
-        const value = 'a'.repeat(VALUE_MAX_LENGTH + 1);
+        const value = 'a'.repeat(KEY_STRING_MAX_LENGTH + 1);
         const id = Buffer.alloc(0);
 
         const res = await registrarModule.reducers.setRegistrar(
@@ -363,7 +359,7 @@ describe('RegistrarModule', () => {
       it('should return false if id length is exceeding limit', async () => {
         const identifier = 'test';
         const value = 'test';
-        const id = Buffer.alloc(ID_MAX_LENGTH + 1);
+        const id = Buffer.alloc(ID_BYTES_MAX_LENGTH + 1);
 
         const res = await registrarModule.reducers.setRegistrar(
           { identifier, value, id },

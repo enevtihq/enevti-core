@@ -1,7 +1,7 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
 import { PersonaAccountProps } from 'enevti-types/account/persona';
 import { ChangePhotoProps } from 'enevti-types/asset/persona/change_photo_asset';
-import { VALIDATION } from '../constant/validation';
+import { CID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { changePhotoAssetSchema } from '../schema/asset/change_photo_asset';
 
 export class ChangePhotoAsset extends BaseAsset<ChangePhotoProps> {
@@ -12,8 +12,8 @@ export class ChangePhotoAsset extends BaseAsset<ChangePhotoProps> {
   public schema = changePhotoAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<ChangePhotoProps>): void {
-    if (asset.photo.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.photo max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.photo.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.photo max length is ${CID_STRING_MAX_LENGTH}`);
     }
   }
 

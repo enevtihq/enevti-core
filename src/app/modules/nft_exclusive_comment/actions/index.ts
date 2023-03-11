@@ -4,6 +4,7 @@ import {
   ExclusiveReplyItemChain,
   ExclusiveReplyListChain,
 } from 'enevti-types/chain/nft_exclusive_comment';
+import { ID_BYTES_MAX_LENGTH, KEY_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
 import {
   GetExclusiveCommentParam,
   GetExclusiveCommentsParam,
@@ -11,7 +12,6 @@ import {
   GetExclusiveReplyParam,
 } from 'enevti-types/param/nft_exclusive_comment';
 import { BaseModule } from 'lisk-framework';
-import { ID_MAX_LENGTH, IDENTIFIER_MAX_LENGTH, KEY_MAX_LENGTH } from '../constants/limit';
 import { accessExclusiveComment } from '../utils/commentItem';
 import { accessExclusiveComments } from '../utils/commentList';
 import { accessExclusiveReply } from '../utils/replyItem';
@@ -24,8 +24,8 @@ export function exclusiveCommentActions(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const comment = await accessExclusiveComment(this._dataAccess, id);
       return comment;
@@ -35,14 +35,14 @@ export function exclusiveCommentActions(this: BaseModule) {
       if (typeof identifier !== 'string') {
         throw new Error('identifier must be a string');
       }
-      if (identifier.length > IDENTIFIER_MAX_LENGTH) {
-        throw new Error(`maximum identifier length is ${IDENTIFIER_MAX_LENGTH}`);
+      if (identifier.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum identifier length is ${KEY_STRING_MAX_LENGTH}`);
       }
       if (typeof key !== 'string') {
         throw new Error('key must be a string');
       }
-      if (key.length > KEY_MAX_LENGTH) {
-        throw new Error(`maximum key length is ${KEY_MAX_LENGTH}`);
+      if (key.length > KEY_STRING_MAX_LENGTH) {
+        throw new Error(`maximum key length is ${KEY_STRING_MAX_LENGTH}`);
       }
       const comments = await accessExclusiveComments(this._dataAccess, identifier, key);
       return comments;
@@ -52,8 +52,8 @@ export function exclusiveCommentActions(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const reply = await accessExclusiveReply(this._dataAccess, id);
       return reply;
@@ -63,8 +63,8 @@ export function exclusiveCommentActions(this: BaseModule) {
       if (!Buffer.isBuffer(id)) {
         throw new Error('id must be a buffer');
       }
-      if (id.length > ID_MAX_LENGTH) {
-        throw new Error(`maximum id length is ${ID_MAX_LENGTH}`);
+      if (id.length > ID_BYTES_MAX_LENGTH) {
+        throw new Error(`maximum id length is ${ID_BYTES_MAX_LENGTH}`);
       }
       const replies = await accessExclusiveReplies(this._dataAccess, id);
       return replies;
