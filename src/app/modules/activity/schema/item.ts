@@ -13,6 +13,7 @@ export const activityItemSchema: StateSchemaFromType<ActivityItemChain> = {
     'height',
     'diff',
     'patch',
+    'amount',
     'payload',
   ],
   properties: {
@@ -47,9 +48,13 @@ export const activityItemSchema: StateSchemaFromType<ActivityItemChain> = {
         dataType: 'string',
       },
     },
+    amount: {
+      dataType: 'uint64',
+      fieldNumber: 8,
+    },
     payload: {
       dataType: 'bytes',
-      fieldNumber: 8,
+      fieldNumber: 9,
     },
   },
 };
