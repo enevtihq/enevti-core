@@ -20,7 +20,7 @@ import {
 import { onStakerUpdates } from './stake';
 import { onNewNFTComment, onNewNFTLike, onVideoCallStatusChanged } from './nft';
 import { onDeletedBlock, onNewBlock } from './app';
-import { onNewRaffled, onWonRaffle } from './raffle';
+import { onNewRaffleBlockRecord } from './raffle';
 import { getAddressBySocketId, mapAddress, removeMapBySocket } from '../utils/mapper';
 
 export function createEnevtiSocket(
@@ -67,8 +67,7 @@ export function createEnevtiSocket(
   onNewActivityProfile(channel, io);
 
   // Social Raffle
-  onNewRaffled(channel, io);
-  onWonRaffle(channel, io);
+  onNewRaffleBlockRecord(channel, io);
 }
 
 export function registerAccountSocket(io: Server) {

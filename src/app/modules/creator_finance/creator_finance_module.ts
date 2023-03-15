@@ -93,19 +93,33 @@ export class CreatorFinanceModule extends BaseModule {
         new VoteTransactionAsset().schema,
         _input.transaction.asset,
       );
+      // const totalStake = await input.reducerHandler.invoke<bigint>(
+      //   'creatorFinance:getTotalStake',
+      //   { address: item.delegateAddress },
+      // );
       for (const vote of voteAsset.votes) {
         if (vote.amount >= BigInt(0)) {
-          await addStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
-            id: _input.transaction.id,
-            persona: _input.transaction.senderAddress,
-            stake: vote.amount,
-          });
+          await addStakeByAddress(
+            _input.stateStore,
+            _input.reducerHandler,
+            vote.delegateAddress.toString('hex'),
+            {
+              id: _input.transaction.id,
+              persona: _input.transaction.senderAddress,
+              stake: vote.amount,
+            },
+          );
         } else {
-          await subtractStakeByAddress(_input.stateStore, vote.delegateAddress.toString('hex'), {
-            id: _input.transaction.id,
-            persona: _input.transaction.senderAddress,
-            stake: vote.amount,
-          });
+          await subtractStakeByAddress(
+            _input.stateStore,
+            _input.reducerHandler,
+            vote.delegateAddress.toString('hex'),
+            {
+              id: _input.transaction.id,
+              persona: _input.transaction.senderAddress,
+              stake: vote.amount,
+            },
+          );
         }
       }
     }

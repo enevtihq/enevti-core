@@ -1,6 +1,6 @@
 import { AfterBlockApplyContext } from 'lisk-framework';
 import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
-import { codec, cryptography } from 'lisk-sdk';
+import { codec } from 'lisk-sdk';
 import { VoteTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
 import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
 import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
@@ -12,17 +12,17 @@ import {
   MintNFTByQRProps,
   MintNFTByQR,
 } from 'enevti-types/asset/redeemable_nft/mint_nft_type_qr_asset';
+import { SetVideoCallRejectedProps } from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
+import { SetVideoCallAnsweredProps } from 'enevti-types/asset/redeemable_nft/set_video_call_answered_asset';
+import { CommentNFTProps } from 'enevti-types/asset/redeemable_nft/comment_nft_asset';
+import { CommentCollectionProps } from 'enevti-types/asset/redeemable_nft/comment_collection_asset';
+import { AddActivityParam } from 'enevti-types/param/activity';
 import { ACTIVITY } from '../../constants/activity';
-import { COIN_NAME } from '../../constants/chain';
-import { addActivityProfile } from '../../utils/activity';
 import { getCollectionById } from '../../utils/collection';
 import { collectionMintingAvailabilityMonitor } from './collectionMintingAvailabilityMonitor';
 import { socialRaffleMonitor } from './socialRaffleMonitor';
 import { getNFTById } from '../../utils/redeemable_nft';
 import { asyncForEach, addInObject } from '../../utils/transaction';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
-import { CommentNFTProps } from 'enevti-types/asset/redeemable_nft/comment_nft_asset';
-import { CommentCollectionProps } from 'enevti-types/asset/redeemable_nft/comment_collection_asset';
 import { mintNftAssetSchema } from '../../schemas/asset/mint_nft_asset';
 import { deliverSecretAssetSchema } from '../../schemas/asset/deliver_secret_asset';
 import { mintNftTypeQrAssetSchema } from '../../schemas/asset/mint_nft_type_qr_asset';
@@ -30,28 +30,28 @@ import { likeNftAssetSchema } from '../../schemas/asset/like_nft_asset';
 import { likeCollectionAssetSchema } from '../../schemas/asset/like_collection_asset';
 import { commentNftAssetSchema } from '../../schemas/asset/comment_nft_asset';
 import { commentCollectionAssetSchema } from '../../schemas/asset/comment_collection_asset';
-import { SetVideoCallRejectedProps } from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
 import { setVideoCallRejectedAssetSchema } from '../../schemas/asset/set_video_call_rejected_asset';
-import { SetVideoCallAnsweredProps } from 'enevti-types/asset/redeemable_nft/set_video_call_answered_asset';
 import { setVideoCallAnsweredAssetSchema } from '../../schemas/asset/set_video_call_answered_asset';
 
 export default async function redeemableNftAfterBlockApply(
   input: AfterBlockApplyContext,
   channel: BaseModuleChannel,
-  config: Record<string, unknown>,
 ) {
   await collectionMintingAvailabilityMonitor(input);
   const timestampBlock = input.stateStore.chain.lastBlockHeaders[0];
 
+  // TODO: evaluate this activity, because it is already published by activity module
+  const accountWithNewActivity: Set<string> = new Set<string>();
+  const collectionWithNewActivity: Set<string> = new Set<string>();
+  const nftWithNewActivity: Set<string> = new Set<string>();
+
   const accountWithNewCollection: Set<string> = new Set<string>();
   const accountWithNewPending: Set<string> = new Set<string>();
   const accountWithNewMomentSlot: Set<string> = new Set<string>();
-  const accountWithNewActivity: Set<string> = new Set<string>();
+
   const pendingNFTBuffer: Set<string> = new Set<string>();
-  const collectionWithNewActivity: Set<string> = new Set<string>();
   const collectionWithNewLike: Set<string> = new Set<string>();
   const collectionWithNewComment: Set<string> = new Set<string>();
-  const nftWithNewActivity: Set<string> = new Set<string>();
   const nftWithNewLike: Set<string> = new Set<string>();
   const nftWithNewComment: Set<string> = new Set<string>();
   const totalNftMintedInCollection: { [collection: string]: number } = {};
@@ -59,8 +59,6 @@ export default async function redeemableNftAfterBlockApply(
 
   await socialRaffleMonitor(
     input,
-    config as SocialRaffleGenesisConfig,
-    channel,
     collectionWithNewActivity,
     accountWithNewActivity,
     totalNftMintedInCollection,
@@ -69,7 +67,7 @@ export default async function redeemableNftAfterBlockApply(
   );
 
   for (const payload of input.block.payload) {
-    const senderAddress = cryptography.getAddressFromPublicKey(payload.senderPublicKey);
+    const { senderAddress } = payload;
 
     // transferAsset
     if (payload.moduleID === 2 && payload.assetID === 0) {
@@ -78,52 +76,39 @@ export default async function redeemableNftAfterBlockApply(
         recipientAddress: Buffer;
       }>(new TransferAsset(BigInt(0)).schema, payload.asset);
 
-      await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
-        transaction: payload.id,
-        name: ACTIVITY.PROFILE.TOKENSENT,
-        date: BigInt(timestampBlock.timestamp),
-        from: senderAddress,
-        to: transferAsset.recipientAddress,
-        payload: Buffer.alloc(0),
-        value: {
-          amount: transferAsset.amount,
-          currency: COIN_NAME,
-        },
+      const senderBalance = await input.reducerHandler.invoke<bigint>('token:getBalance', {
+        address: senderAddress,
       });
+      await input.reducerHandler.invoke('activity:addActivity', {
+        newState: { token: { balance: senderBalance } },
+        oldState: { token: { balance: senderBalance + transferAsset.amount } },
+        payload: {
+          key: `profile:${senderAddress.toString('hex')}`,
+          type: ACTIVITY.PROFILE.TOKENSENT,
+          transaction: payload.id,
+          amount: -transferAsset.amount,
+        },
+      } as AddActivityParam);
       accountWithNewActivity.add(senderAddress.toString('hex'));
 
-      await addActivityProfile(input.stateStore, transferAsset.recipientAddress.toString('hex'), {
-        transaction: payload.id,
-        name: ACTIVITY.PROFILE.TOKENRECEIVED,
-        date: BigInt(timestampBlock.timestamp),
-        from: senderAddress,
-        to: transferAsset.recipientAddress,
-        payload: Buffer.alloc(0),
-        value: {
-          amount: transferAsset.amount,
-          currency: COIN_NAME,
-        },
+      const recipientBalance = await input.reducerHandler.invoke<bigint>('token:getBalance', {
+        address: transferAsset.recipientAddress,
       });
+      await input.reducerHandler.invoke('activity:addActivity', {
+        newState: { token: { balance: recipientBalance } },
+        oldState: { token: { balance: recipientBalance - transferAsset.amount } },
+        payload: {
+          key: `profile:${senderAddress.toString('hex')}`,
+          type: ACTIVITY.PROFILE.TOKENSENT,
+          transaction: payload.id,
+          amount: transferAsset.amount,
+        },
+      } as AddActivityParam);
       accountWithNewActivity.add(transferAsset.recipientAddress.toString('hex'));
     }
 
     // registerTransactionAsset
     if (payload.moduleID === 5 && payload.assetID === 0) {
-      const registerBaseFee = await input.reducerHandler.invoke('dynamicBaseFee:getBaseFee', {
-        transaction: payload,
-      });
-      await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
-        transaction: payload.id,
-        name: ACTIVITY.PROFILE.REGISTERUSERNAME,
-        date: BigInt(timestampBlock.timestamp),
-        from: senderAddress,
-        to: Buffer.alloc(0),
-        payload: Buffer.alloc(0),
-        value: {
-          amount: registerBaseFee as bigint,
-          currency: COIN_NAME,
-        },
-      });
       accountWithNewActivity.add(senderAddress.toString('hex'));
     }
 
@@ -133,22 +118,23 @@ export default async function redeemableNftAfterBlockApply(
         votes: { delegateAddress: Buffer; amount: bigint }[];
       }>(new VoteTransactionAsset().schema, payload.asset);
 
+      let senderBalance = await input.reducerHandler.invoke<bigint>('token:getBalance', {
+        address: senderAddress,
+      });
+
       await asyncForEach(voteAsset.votes, async item => {
-        await addActivityProfile(input.stateStore, senderAddress.toString('hex'), {
-          transaction: payload.id,
-          name:
-            Buffer.compare(senderAddress, item.delegateAddress) === 0
-              ? ACTIVITY.PROFILE.SELFSTAKE
-              : ACTIVITY.PROFILE.ADDSTAKE,
-          date: BigInt(timestampBlock.timestamp),
-          from: senderAddress,
-          to: item.delegateAddress,
-          payload: Buffer.alloc(0),
-          value: {
-            amount: item.amount,
-            currency: COIN_NAME,
+        const isSelfStake = Buffer.compare(senderAddress, item.delegateAddress) === 0;
+        await input.reducerHandler.invoke('activity:addActivity', {
+          newState: { token: { balance: senderBalance } },
+          oldState: { token: { balance: senderBalance + item.amount } },
+          payload: {
+            key: `profile:${senderAddress.toString('hex')}`,
+            type: isSelfStake ? ACTIVITY.PROFILE.SELFSTAKE : ACTIVITY.PROFILE.ADDSTAKE,
+            transaction: payload.id,
+            amount: -item.amount,
           },
-        });
+        } as AddActivityParam);
+        senderBalance += item.amount;
       });
       accountWithNewActivity.add(senderAddress.toString('hex'));
     }

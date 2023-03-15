@@ -13,9 +13,9 @@ export const diffOptions = { color: false };
 
 export const addActivity = async (
   stateStore: StateStore,
-  oldState: Record<string, unknown>,
-  newState: Record<string, unknown>,
   addActivityPayload: AddActivityPayload,
+  oldState?: Record<string, unknown>,
+  newState?: Record<string, unknown>,
 ) => {
   const identifier = addActivityPayload.key.split(':')[0];
   const key = addActivityPayload.key.split(':')[1];
@@ -26,18 +26,20 @@ export const addActivity = async (
   const activities = (await getActivities(stateStore, identifier, key)) ?? { items: [] };
   if (activities.items.length > 0) {
     [previousActivityId] = activities.items;
-  } else {
+  } else if (oldState) {
     await setActivityGenesis(stateStore, identifier, key, { state: JSON.stringify(oldState) });
   }
 
-  const activityDiff = variableDiff(oldState, newState, diffOptions);
-  const activityPatch = diff(oldState, newState, jsonPatchPathConverter).map(p =>
-    JSON.stringify(p),
-  );
+  let activityDiff = '';
+  let activityPatch: string[] = [];
+  if (oldState && newState) {
+    activityDiff = variableDiff(oldState, newState, diffOptions).text;
+    activityPatch = diff(oldState, newState, jsonPatchPathConverter).map(p => JSON.stringify(p));
+  }
   const compiledActivity = {
     ...addActivityPayload,
     previousActivityId,
-    diff: activityDiff.text,
+    diff: activityDiff,
     patch: activityPatch,
     height: stateStore.chain.lastBlockHeaders[0].height + 1,
     transaction,

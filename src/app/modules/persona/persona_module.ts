@@ -13,6 +13,7 @@ import { RegisterTransactionAsset } from 'lisk-framework/dist-node/modules/dpos'
 import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
 import { PersonaAccountProps } from 'enevti-types/account/persona';
 import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AddActivityParam } from 'enevti-types/param/activity';
 import { ChangePhotoAsset } from './assets/change_photo_asset';
 import { ChangeTwitterAsset } from './assets/change_twitter_asset';
 import { personaAccountSchema } from './schema/account';
@@ -95,6 +96,21 @@ export class PersonaModule extends BaseModule {
         value: registerAsset.username as string,
         id: _input.transaction.senderAddress,
       });
+
+      const registerBaseFee = await _input.reducerHandler.invoke<bigint>(
+        'dynamicBaseFee:getBaseFee',
+        { transaction: { moduleID: 5, assetID: 0 } },
+      );
+      await _input.reducerHandler.invoke('activity:addActivity', {
+        newState: { dpos: { delegate: { username: registerAsset.username } } },
+        oldState: { dpos: { delegate: { username: '' } } },
+        payload: {
+          key: `profile:${_input.transaction.senderAddress.toString('hex')}`,
+          type: 'registerUsername',
+          transaction: _input.transaction.id,
+          amount: registerBaseFee,
+        },
+      } as AddActivityParam);
     }
   }
 

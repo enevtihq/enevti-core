@@ -78,12 +78,6 @@ export function activityReducers(this: BaseModule) {
     ): Promise<boolean> => {
       try {
         const { oldState, newState, payload } = params as AddActivityParam;
-        if (typeof oldState !== 'object') {
-          throw new Error('oldState must be an object');
-        }
-        if (typeof newState !== 'object') {
-          throw new Error('newState must be an object');
-        }
         if (typeof payload !== 'object') {
           throw new Error('payload must be an object');
         }
@@ -101,7 +95,7 @@ export function activityReducers(this: BaseModule) {
         if (payload.type.length > KEY_STRING_MAX_LENGTH) {
           throw new Error(`maximum payload.type length is ${KEY_STRING_MAX_LENGTH}`);
         }
-        await addActivity(stateStore, oldState, newState, payload);
+        await addActivity(stateStore, payload, oldState, newState);
         return true;
       } catch {
         return false;

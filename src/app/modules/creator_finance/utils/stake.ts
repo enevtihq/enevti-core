@@ -1,9 +1,10 @@
-import { codec, StateStore, BaseModuleDataAccess } from 'lisk-sdk';
+import { codec, StateStore, BaseModuleDataAccess, ReducerHandler } from 'lisk-sdk';
+import { CreaFiAccountProps } from 'enevti-types/account/profile';
 import BigNumber from 'bignumber.js';
 import { StakerChain, StakerItemUtils } from 'enevti-types/chain/stake';
+import { AddActivityParam } from 'enevti-types/param/activity';
 import { CHAIN_STATE_STAKER } from '../constant/codec';
 import { stakerSchema } from '../schema/chain/stake';
-import { CreaFiAccountProps } from 'enevti-types/account/profile';
 
 export const accessStakerByAddress = async (dataAccess: BaseModuleDataAccess, address: string) => {
   const stakerBuffer = await dataAccess.getChainState(`${CHAIN_STATE_STAKER}:${address}`);
@@ -38,6 +39,7 @@ export const initStakeByAddress = async (stateStore: StateStore, address: string
 
 export const addStakeByAddress = async (
   stateStore: StateStore,
+  reducerHandler: ReducerHandler,
   address: string,
   stakeItem: StakerItemUtils,
 ) => {
@@ -60,6 +62,16 @@ export const addStakeByAddress = async (
   stakerItems = stakerItems.map((item, index) => ({ ...item, rank: index + 1 }));
 
   addressStaker.items = stakerItems.slice();
+  await reducerHandler.invoke('activity:addActivity', {
+    newState: addressStaker,
+    oldState: await getStakerByAddress(stateStore, address),
+    payload: {
+      key: `stakePool:${address}`,
+      type: 'stakeChanged',
+      transaction: stakeItem.id,
+      amount: stakeItem.stake,
+    },
+  } as AddActivityParam);
   await setStakerByAddress(stateStore, address, addressStaker);
 
   const addressAccount = await stateStore.account.get<CreaFiAccountProps>(
@@ -71,6 +83,7 @@ export const addStakeByAddress = async (
 
 export const subtractStakeByAddress = async (
   stateStore: StateStore,
+  reducerHandler: ReducerHandler,
   address: string,
   stakeItem: StakerItemUtils,
 ) => {
@@ -100,6 +113,16 @@ export const subtractStakeByAddress = async (
   stakerItems = stakerItems.map((item, i) => ({ ...item, rank: i }));
 
   addressStaker.items = stakerItems.slice();
+  await reducerHandler.invoke('activity:addActivity', {
+    newState: addressStaker,
+    oldState: await getStakerByAddress(stateStore, address),
+    payload: {
+      key: `stakePool:${address}`,
+      type: 'stakeChanged',
+      transaction: stakeItem.id,
+      amount: stakeItem.stake,
+    },
+  } as AddActivityParam);
   await setStakerByAddress(stateStore, address, addressStaker);
 
   const addressAccount = await stateStore.account.get<CreaFiAccountProps>(

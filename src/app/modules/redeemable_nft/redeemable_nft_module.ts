@@ -97,7 +97,7 @@ export class RedeemableNftModule extends BaseModule {
   }
 
   public async afterBlockApply(_input: AfterBlockApplyContext) {
-    await redeemableNftAfterBlockApply(_input, this._channel, this.config);
+    await redeemableNftAfterBlockApply(_input, this._channel);
   }
 
   public async beforeTransactionApply(_input: TransactionApplyContext) {
