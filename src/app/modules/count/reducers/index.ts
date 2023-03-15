@@ -1,6 +1,11 @@
 import { StateStore, BaseModule } from 'lisk-framework';
 import { CountChain, CountItemChain } from 'enevti-types/chain/count';
-import { AddCountParam, GetCountItemParam, GetCountParam } from 'enevti-types/param/count';
+import {
+  AddCountParam,
+  GetCountItemParam,
+  GetCountParam,
+  RemoveCountParam,
+} from 'enevti-types/param/count';
 import {
   ADDRESS_BYTES_MAX_LENGTH,
   ID_BYTES_MAX_LENGTH,
@@ -9,6 +14,7 @@ import {
 import { getCountItem } from '../utils/item';
 import { getCount } from '../utils/count';
 import { addCount } from '../utils/add';
+import { removeCount } from '../utils/remove';
 
 export function countReducers(this: BaseModule) {
   return {
@@ -86,6 +92,42 @@ export function countReducers(this: BaseModule) {
           throw new Error(`maximum item length is ${ID_BYTES_MAX_LENGTH}`);
         }
         await addCount(stateStore, module, key, address, item);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    removeCount: async (
+      params: Record<string, unknown>,
+      stateStore: StateStore,
+    ): Promise<boolean> => {
+      try {
+        const { module, key, address, item } = params as RemoveCountParam;
+        if (typeof module !== 'string') {
+          throw new Error('module must be a string');
+        }
+        if (module.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum module length is ${KEY_STRING_MAX_LENGTH}`);
+        }
+        if (typeof key !== 'string') {
+          throw new Error('key must be a string');
+        }
+        if (key.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum key length is ${KEY_STRING_MAX_LENGTH}`);
+        }
+        if (!Buffer.isBuffer(address)) {
+          throw new Error('address must be a buffer');
+        }
+        if (address.length > ADDRESS_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum address length is ${ADDRESS_BYTES_MAX_LENGTH}`);
+        }
+        if (!Buffer.isBuffer(item)) {
+          throw new Error('item must be a buffer');
+        }
+        if (item.length > ID_BYTES_MAX_LENGTH) {
+          throw new Error(`maximum item length is ${ID_BYTES_MAX_LENGTH}`);
+        }
+        await removeCount(stateStore, module, key, address, item);
         return true;
       } catch {
         return false;
