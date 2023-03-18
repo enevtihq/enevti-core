@@ -1,8 +1,9 @@
 import { BaseChannel } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { MomentAsset, MomentAtAsset, MomentSlotChain } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
+import { ServeRateChain } from 'enevti-types/chain/redeemable_nft';
 
 export const invokeGetAllCollectionId = async (
   channel: BaseChannel,
@@ -96,3 +97,13 @@ export const invokeGetMoment = async (
 
 export const invokeGetMomentAt = async (channel: BaseChannel, id: string): Promise<MomentAtAsset> =>
   channel.invoke('redeemableNft:getMomentAt', { id });
+
+export const invokeGetMomentSlot = async (
+  channel: BaseChannel,
+  address: Buffer,
+): Promise<MomentSlotChain> => channel.invoke('redeemableNft:getMomentSlot', { address });
+
+export const invokeGetServeRate = async (
+  channel: BaseChannel,
+  address: Buffer,
+): Promise<ServeRateChain> => channel.invoke('redeemableNft:getServeRate', { address });

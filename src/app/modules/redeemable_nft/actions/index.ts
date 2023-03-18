@@ -1,8 +1,9 @@
 import { BaseModule } from 'lisk-framework';
 import { CollectionAsset } from 'enevti-types/chain/collection';
-import { MomentAsset, MomentAtAsset } from 'enevti-types/chain/moment';
+import { MomentAsset, MomentAtAsset, MomentSlotChain } from 'enevti-types/chain/moment';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { NFTTemplateAsset } from 'enevti-types/chain/nft/NFTTemplate';
+import { ServeRateChain } from 'enevti-types/chain/redeemable_nft';
 import { collectionSchema } from '../schemas/chain/collection';
 import { momentSchema } from '../schemas/chain/moment';
 import { nftTemplateSchema } from '../schemas/chain/nft_template';
@@ -19,6 +20,8 @@ import {
   accessAllNFTTemplateGenesis,
 } from '../utils/nft_template';
 import { accessAllNFT, accessNFTById } from '../utils/redeemable_nft';
+import { accessMomentSlot } from '../utils/momentSlot';
+import { accessServeRate } from '../utils/serveRate';
 
 export function redeemableNftActions(this: BaseModule) {
   return {
@@ -180,6 +183,16 @@ export function redeemableNftActions(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const momentAt = await accessMomentAt(this._dataAccess, id);
       return momentAt;
+    },
+    getMomentSlot: async (params): Promise<MomentSlotChain | undefined> => {
+      const { address } = params as { address: Buffer };
+      const momentSlot = await accessMomentSlot(this._dataAccess, address);
+      return momentSlot;
+    },
+    getServeRate: async (params): Promise<ServeRateChain | undefined> => {
+      const { address } = params as { address: Buffer };
+      const serveRate = await accessServeRate(this._dataAccess, address);
+      return serveRate;
     },
   };
 }
