@@ -1,15 +1,16 @@
 import * as seedrandom from 'seedrandom';
 import { StateStore, ReducerHandler, cryptography } from 'lisk-sdk';
 import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
-import { CollectionActivityChainItems, CollectionAsset } from 'enevti-types/chain/collection';
-import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
+import { CollectionAsset } from 'enevti-types/chain/collection';
+import { AddCountParam } from 'enevti-types/param/count';
+import { AddActivityParam } from 'enevti-types/param/activity';
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
-import { getAccountStats, setAccountStats } from './account_stats';
-import { addActivityNFT, addActivityProfile, addActivityCollection } from './activity';
 import { getCollectionById, isMintingAvailable, setCollectionById } from './collection';
 import { getNFTById, setNFTById } from './redeemable_nft';
 import { getBlockTimestamp, asyncForEach } from './transaction';
+import { getMomentSlot, setMomentSlot } from './momentSlot';
+import { getServeRate, setServeRate } from './serveRate';
 
 export type MintNFTUtilsFunctionProps = {
   id: string;
@@ -59,14 +60,14 @@ export async function mintNFT({
       case NFTTYPE.ONEKIND:
       case NFTTYPE.UPGRADABLE:
         if (collection.packSize === 1) {
-          recordNFTMint(rng, collection, boughtItem);
+          await recordNFTMint(reducerHandler, rng, transactionId, type, collection, boughtItem);
         } else {
           throw new Error('invalid packsize, should be 1');
         }
         break;
       case NFTTYPE.PACKED:
         for (let j = 0; j < collection.packSize; j += 1) {
-          recordNFTMint(rng, collection, boughtItem);
+          await recordNFTMint(reducerHandler, rng, transactionId, type, collection, boughtItem);
         }
         break;
       default:
@@ -74,11 +75,14 @@ export async function mintNFT({
     }
   }
 
-  const accountStats = await getAccountStats(stateStore, creatorAccount.address.toString('hex'));
-  const senderAccountStats =
-    Buffer.compare(creatorAddress, senderAddress) === 0
-      ? accountStats
-      : await getAccountStats(stateStore, senderAccount.address.toString('hex'));
+  const accountServeRate = (await getServeRate(stateStore, creatorAccount.address)) ?? {
+    score: 0,
+    items: [],
+  };
+
+  const senderMomentSlot = (await getMomentSlot(stateStore, senderAccount.address)) ?? {
+    items: [],
+  };
 
   await asyncForEach<Buffer>(boughtItem, async item => {
     const nft = await getNFTById(stateStore, item.toString('hex'));
@@ -91,79 +95,107 @@ export async function mintNFT({
     if (nft.redeem.status === 'pending-secret') nft.redeem.secret.recipient = senderPublicKey;
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
-    const activity: NFTActivityChainItems = {
-      transaction: transactionId,
-      date: BigInt(timestamp),
-      name: type === 'raffle' ? ACTIVITY.NFT.RAFFLED : ACTIVITY.NFT.MINT,
-      to: senderAddress,
-      value: {
+    await reducerHandler.invoke('activity:addActivity', {
+      newState: nft as unknown,
+      oldState: await getNFTById(stateStore, item.toString('hex')),
+      payload: {
+        key: `nft:${nft.id.toString('hex')}`,
+        type: type === 'raffle' ? ACTIVITY.NFT.RAFFLED : ACTIVITY.NFT.MINT,
+        transaction: transactionId,
         amount: collection.minting.price.amount,
-        currency: collection.minting.price.currency,
       },
-    };
-    await addActivityNFT(stateStore, nft.id.toString('hex'), activity);
+    } as AddActivityParam);
 
     senderAccount.redeemableNft.owned.unshift(nft.id);
     if (nft.redeem.status === 'pending-secret') {
       creatorAccount.redeemableNft.pending.unshift(nft.id);
       senderAccount.redeemableNft.momentSlot += 1;
-      senderAccountStats.momentSlot.push(nft.id);
+      senderMomentSlot.items.push(nft.id);
     }
 
+    const senderBalanceOld = await reducerHandler.invoke<bigint>('token:getBalance', {
+      address: senderAddress,
+    });
+    let senderBalanceNew = senderBalanceOld;
     if (collection.minting.price.amount > BigInt(0)) {
+      senderBalanceNew -= collection.minting.price.amount;
       await reducerHandler.invoke('token:debit', {
         address: senderAddress,
         amount: collection.minting.price.amount,
       });
     }
 
-    await addActivityProfile(stateStore, senderAddress.toString('hex'), {
-      transaction: transactionId,
-      name: type === 'raffle' ? ACTIVITY.PROFILE.WINRAFFLE : ACTIVITY.PROFILE.MINTNFT,
-      date: BigInt(timestamp),
-      from: senderAddress,
-      to: creatorAddress,
-      payload: nft.id,
-      value: {
-        amount: collection.minting.price.amount,
-        currency: collection.minting.price.currency,
+    await reducerHandler.invoke('activity:addActivity', {
+      newState: {
+        token: { balance: senderBalanceNew },
+        redeemableNft: { ...senderAccount.redeemableNft },
       },
-    });
+      oldState: {
+        token: { balance: senderBalanceOld },
+        redeemableNft: {
+          ...(await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress)),
+        },
+      },
+      payload: {
+        key: `profile:${senderAddress.toString('hex')}`,
+        type: type === 'raffle' ? ACTIVITY.PROFILE.WINRAFFLE : ACTIVITY.PROFILE.MINTNFT,
+        transaction: transactionId,
+        amount: collection.minting.price.amount,
+        payload: nft.id,
+      },
+    } as AddActivityParam);
 
     if (nft.redeem.status !== 'pending-secret') {
+      const creatorBalanceOld = await reducerHandler.invoke<bigint>('token:getBalance', {
+        address: creatorAddress,
+      });
+      let creatorBalanceNew = creatorBalanceOld;
       if (collection.minting.price.amount > BigInt(0)) {
+        creatorBalanceNew += collection.minting.price.amount;
         await reducerHandler.invoke('token:credit', {
           address: creatorAddress,
           amount: collection.minting.price.amount,
         });
       }
-      await addActivityProfile(stateStore, creatorAddress.toString('hex'), {
-        transaction: transactionId,
-        name: ACTIVITY.PROFILE.NFTSALE,
-        date: BigInt(timestamp),
-        from: senderAddress,
-        to: creatorAddress,
-        payload: nft.id,
-        value: {
-          amount: collection.minting.price.amount,
-          currency: collection.minting.price.currency,
+      await reducerHandler.invoke('activity:addActivity', {
+        newState: {
+          token: { balance: creatorBalanceNew },
+          redeemableNft: { ...creatorAccount.redeemableNft },
         },
-      });
+        oldState: {
+          token: { balance: creatorBalanceOld },
+          redeemableNft: {
+            ...(await stateStore.account.get<RedeemableNFTAccountProps>(creatorAddress)),
+          },
+        },
+        payload: {
+          key: `profile:${creatorAddress.toString('hex')}`,
+          type: ACTIVITY.PROFILE.NFTSALE,
+          transaction: transactionId,
+          amount: collection.minting.price.amount,
+          payload: nft.id,
+        },
+      } as AddActivityParam);
     }
 
     if (type === 'normal') {
-      accountStats.nftSold.unshift(nft.id);
+      await reducerHandler.invoke('count:addCount', {
+        module: 'nftSold',
+        key: 'mint',
+        address: creatorAccount.address,
+        item: nft.id,
+      } as AddCountParam);
     }
 
     if (nft.utility === 'videocall') {
-      accountStats.serveRate.items.unshift({
+      accountServeRate.items.unshift({
         id: nft.id,
         owner: senderAddress,
         nonce: nft.redeem.velocity,
         status: 1,
       });
     } else {
-      accountStats.serveRate.items.unshift({
+      accountServeRate.items.unshift({
         id: nft.id,
         owner: senderAddress,
         nonce: nft.redeem.velocity,
@@ -174,8 +206,8 @@ export async function mintNFT({
 
   const serveRate = Number(
     (
-      (accountStats.serveRate.items.filter(t => t.status === 1).length * 10000) /
-      accountStats.serveRate.items.length
+      (accountServeRate.items.filter(t => t.status === 1).length * 10000) /
+      accountServeRate.items.length
     ).toFixed(0),
   );
 
@@ -183,33 +215,17 @@ export async function mintNFT({
   if (type === 'normal') {
     creatorAccount.redeemableNft.nftSold += boughtItem.length;
   } else if (type === 'raffle') {
-    accountStats.raffled.unshift(collection.id);
     creatorAccount.redeemableNft.raffled += 1;
   }
 
-  accountStats.serveRate.score = serveRate;
-  await setAccountStats(stateStore, creatorAccount.address.toString('hex'), accountStats);
-  if (Buffer.compare(creatorAddress, senderAddress) !== 0) {
-    await setAccountStats(stateStore, senderAccount.address.toString('hex'), senderAccountStats);
-  }
+  accountServeRate.score = serveRate;
+  await setServeRate(stateStore, creatorAccount.address, accountServeRate);
+  await setMomentSlot(stateStore, senderAccount.address, senderMomentSlot);
 
   collection.stat.minted += boughtItem.length;
   if (collection.stat.owner.findIndex(o => Buffer.compare(o, senderAddress) === 0) === -1) {
     collection.stat.owner.push(senderAddress);
   }
-
-  const collectionActivity: CollectionActivityChainItems = {
-    transaction: transactionId,
-    date: BigInt(timestamp),
-    name: type === 'raffle' ? ACTIVITY.COLLECTION.RAFFLED : ACTIVITY.COLLECTION.MINTED,
-    to: senderAddress,
-    value: {
-      amount: collection.minting.price.amount,
-      currency: collection.minting.price.currency,
-    },
-    nfts: boughtItem,
-  };
-  await addActivityCollection(stateStore, collection.id.toString('hex'), collectionActivity);
 
   await setCollectionById(stateStore, collection.id.toString('hex'), collection);
   await stateStore.account.set(creatorAddress, creatorAccount);
@@ -218,10 +234,31 @@ export async function mintNFT({
   return boughtItem;
 }
 
-function recordNFTMint(pnrg: seedrandom.PRNG, collection: CollectionAsset, boughtItem: Buffer[]) {
+async function recordNFTMint(
+  reducerHandler: ReducerHandler,
+  pnrg: seedrandom.PRNG,
+  transactionId: Buffer,
+  type: string,
+  collection: CollectionAsset,
+  boughtItem: Buffer[],
+) {
+  const oldCollection = { ...collection };
   const index = Math.floor(pnrg() * collection.minting.available.length);
   const item = collection.minting.available[index];
+
   boughtItem.unshift(item);
   collection.minting.available.splice(index, 1);
   collection.minted.unshift(item);
+
+  await reducerHandler.invoke('activity:addActivity', {
+    newState: collection as unknown,
+    oldState: oldCollection,
+    payload: {
+      key: `collection:${collection.id.toString('hex')}`,
+      type: type === 'raffle' ? ACTIVITY.COLLECTION.RAFFLED : ACTIVITY.COLLECTION.MINTED,
+      transaction: transactionId,
+      amount: collection.minting.price.amount,
+      payload: item,
+    },
+  } as AddActivityParam);
 }
