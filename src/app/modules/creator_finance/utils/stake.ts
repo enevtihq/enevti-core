@@ -63,13 +63,13 @@ export const addStakeByAddress = async (
 
   addressStaker.items = stakerItems.slice();
   await reducerHandler.invoke('activity:addActivity', {
-    newState: addressStaker,
-    oldState: await getStakerByAddress(stateStore, address),
-    payload: {
-      key: `stakePool:${address}`,
-      type: 'stakeChanged',
-      transaction: stakeItem.id,
-      amount: stakeItem.stake,
+    key: `stakePool:${address}`,
+    type: 'stakeChanged',
+    transaction: stakeItem.id,
+    amount: stakeItem.stake,
+    state: {
+      old: await getStakerByAddress(stateStore, address),
+      new: addressStaker,
     },
   } as AddActivityParam);
   await setStakerByAddress(stateStore, address, addressStaker);
@@ -114,13 +114,13 @@ export const subtractStakeByAddress = async (
 
   addressStaker.items = stakerItems.slice();
   await reducerHandler.invoke('activity:addActivity', {
-    newState: addressStaker,
-    oldState: await getStakerByAddress(stateStore, address),
-    payload: {
-      key: `stakePool:${address}`,
-      type: 'stakeChanged',
-      transaction: stakeItem.id,
-      amount: stakeItem.stake,
+    key: `stakePool:${address}`,
+    type: 'stakeChanged',
+    transaction: stakeItem.id,
+    amount: stakeItem.stake,
+    state: {
+      old: await getStakerByAddress(stateStore, address),
+      new: addressStaker,
     },
   } as AddActivityParam);
   await setStakerByAddress(stateStore, address, addressStaker);

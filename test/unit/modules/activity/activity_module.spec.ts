@@ -46,6 +46,7 @@ describe('ActivityModule', () => {
   const payload = Buffer.from('testPayload', 'utf-8');
   const addActivityPayload: AddActivityPayload = {
     key: `${identifier}:${key}`,
+    amount: BigInt(10),
     type: activityType,
     transaction: transactionId2,
     payload,
@@ -53,6 +54,7 @@ describe('ActivityModule', () => {
 
   const activity1: ActivityItemChain = {
     key: `${identifier}:${key}`,
+    amount: BigInt(10),
     type: activityType,
     previousActivityId: Buffer.alloc(0),
     transaction: transactionId1,

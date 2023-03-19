@@ -1,6 +1,6 @@
 import * as seedrandom from 'seedrandom';
 import { StateStore, ReducerHandler, cryptography } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { AddCountParam } from 'enevti-types/param/count';
 import { AddActivityParam } from 'enevti-types/param/activity';
@@ -96,13 +96,13 @@ export async function mintNFT({
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
     await reducerHandler.invoke('activity:addActivity', {
-      newState: nft as unknown,
-      oldState: await getNFTById(stateStore, item.toString('hex')),
-      payload: {
-        key: `nft:${nft.id.toString('hex')}`,
-        type: type === 'raffle' ? ACTIVITY.NFT.RAFFLED : ACTIVITY.NFT.MINT,
-        transaction: transactionId,
-        amount: collection.minting.price.amount,
+      key: `nft:${nft.id.toString('hex')}`,
+      type: type === 'raffle' ? ACTIVITY.NFT.RAFFLED : ACTIVITY.NFT.MINT,
+      transaction: transactionId,
+      amount: collection.minting.price.amount,
+      state: {
+        old: (await getNFTById(stateStore, item.toString('hex'))) as unknown,
+        new: nft as unknown,
       },
     } as AddActivityParam);
 
@@ -125,23 +125,22 @@ export async function mintNFT({
       });
     }
 
+    const senderAccountOld = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAccount.address.toString('hex'),
+    });
+    const senderAccountNew = { ...senderAccountOld };
+    senderAccountOld.token.balance = senderBalanceOld;
+    senderAccountNew.token.balance = senderBalanceNew;
+    senderAccountNew.redeemableNft = { ...senderAccount.redeemableNft };
     await reducerHandler.invoke('activity:addActivity', {
-      newState: {
-        token: { balance: senderBalanceNew },
-        redeemableNft: { ...senderAccount.redeemableNft },
-      },
-      oldState: {
-        token: { balance: senderBalanceOld },
-        redeemableNft: {
-          ...(await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress)),
-        },
-      },
-      payload: {
-        key: `profile:${senderAddress.toString('hex')}`,
-        type: type === 'raffle' ? ACTIVITY.PROFILE.WINRAFFLE : ACTIVITY.PROFILE.MINTNFT,
-        transaction: transactionId,
-        amount: collection.minting.price.amount,
-        payload: nft.id,
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: type === 'raffle' ? ACTIVITY.PROFILE.WINRAFFLE : ACTIVITY.PROFILE.MINTNFT,
+      transaction: transactionId,
+      amount: collection.minting.price.amount,
+      payload: nft.id,
+      state: {
+        old: senderAccountOld,
+        new: senderAccountNew,
       },
     } as AddActivityParam);
 
@@ -157,23 +156,23 @@ export async function mintNFT({
           amount: collection.minting.price.amount,
         });
       }
+
+      const creatorAccountOld = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+        address: creatorAccount.address.toString('hex'),
+      });
+      const creatorAccountNew = { ...creatorAccountOld };
+      creatorAccountOld.token.balance = creatorBalanceOld;
+      creatorAccountNew.token.balance = creatorBalanceNew;
+      creatorAccountNew.redeemableNft = { ...creatorAccount.redeemableNft };
       await reducerHandler.invoke('activity:addActivity', {
-        newState: {
-          token: { balance: creatorBalanceNew },
-          redeemableNft: { ...creatorAccount.redeemableNft },
-        },
-        oldState: {
-          token: { balance: creatorBalanceOld },
-          redeemableNft: {
-            ...(await stateStore.account.get<RedeemableNFTAccountProps>(creatorAddress)),
-          },
-        },
-        payload: {
-          key: `profile:${creatorAddress.toString('hex')}`,
-          type: ACTIVITY.PROFILE.NFTSALE,
-          transaction: transactionId,
-          amount: collection.minting.price.amount,
-          payload: nft.id,
+        key: `profile:${creatorAddress.toString('hex')}`,
+        type: ACTIVITY.PROFILE.NFTSALE,
+        transaction: transactionId,
+        amount: collection.minting.price.amount,
+        payload: nft.id,
+        state: {
+          old: creatorAccountOld,
+          new: creatorAccountNew,
         },
       } as AddActivityParam);
     }
@@ -251,14 +250,14 @@ async function recordNFTMint(
   collection.minted.unshift(item);
 
   await reducerHandler.invoke('activity:addActivity', {
-    newState: collection as unknown,
-    oldState: oldCollection,
-    payload: {
-      key: `collection:${collection.id.toString('hex')}`,
-      type: type === 'raffle' ? ACTIVITY.COLLECTION.RAFFLED : ACTIVITY.COLLECTION.MINTED,
-      transaction: transactionId,
-      amount: collection.minting.price.amount,
-      payload: item,
+    key: `collection:${collection.id.toString('hex')}`,
+    type: type === 'raffle' ? ACTIVITY.COLLECTION.RAFFLED : ACTIVITY.COLLECTION.MINTED,
+    transaction: transactionId,
+    amount: collection.minting.price.amount,
+    payload: item,
+    state: {
+      old: oldCollection,
+      new: collection as unknown,
     },
   } as AddActivityParam);
 }

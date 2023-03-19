@@ -3,7 +3,7 @@ import { BaseModuleChannel } from 'lisk-framework/dist-node/modules';
 import { codec } from 'lisk-sdk';
 import { VoteTransactionAsset } from 'lisk-framework/dist-node/modules/dpos';
 import { TransferAsset } from 'lisk-framework/dist-node/modules/token';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { DeliverSecretProps } from 'enevti-types/asset/redeemable_nft/deliver_secret_asset';
 import { LikeCollectionProps } from 'enevti-types/asset/redeemable_nft/like_collection_asset';
 import { LikeNFTProps } from 'enevti-types/asset/redeemable_nft/like_nft_asset';
@@ -79,14 +79,20 @@ export default async function redeemableNftAfterBlockApply(
       const senderBalance = await input.reducerHandler.invoke<bigint>('token:getBalance', {
         address: senderAddress,
       });
+      const senderAccountOld = await input.reducerHandler.invoke<AccountChain>(
+        'activity:getAccount',
+        { address: senderAddress.toString('hex') },
+      );
+      const senderAccountNew = { ...senderAccountOld };
+      senderAccountOld.token.balance = senderBalance + transferAsset.amount;
       await input.reducerHandler.invoke('activity:addActivity', {
-        newState: { token: { balance: senderBalance } },
-        oldState: { token: { balance: senderBalance + transferAsset.amount } },
-        payload: {
-          key: `profile:${senderAddress.toString('hex')}`,
-          type: ACTIVITY.PROFILE.TOKENSENT,
-          transaction: payload.id,
-          amount: -transferAsset.amount,
+        key: `profile:${senderAddress.toString('hex')}`,
+        type: ACTIVITY.PROFILE.TOKENSENT,
+        transaction: payload.id,
+        amount: -transferAsset.amount,
+        state: {
+          old: senderAccountOld,
+          new: senderAccountNew,
         },
       } as AddActivityParam);
       accountWithNewActivity.add(senderAddress.toString('hex'));
@@ -94,14 +100,20 @@ export default async function redeemableNftAfterBlockApply(
       const recipientBalance = await input.reducerHandler.invoke<bigint>('token:getBalance', {
         address: transferAsset.recipientAddress,
       });
+      const recipientAccountOld = await input.reducerHandler.invoke<AccountChain>(
+        'activity:getAccount',
+        { address: transferAsset.recipientAddress.toString('hex') },
+      );
+      const recipientAccountNew = { ...recipientAccountOld };
+      recipientAccountOld.token.balance = recipientBalance - transferAsset.amount;
       await input.reducerHandler.invoke('activity:addActivity', {
-        newState: { token: { balance: recipientBalance } },
-        oldState: { token: { balance: recipientBalance - transferAsset.amount } },
-        payload: {
-          key: `profile:${senderAddress.toString('hex')}`,
-          type: ACTIVITY.PROFILE.TOKENSENT,
-          transaction: payload.id,
-          amount: transferAsset.amount,
+        key: `profile:${senderAddress.toString('hex')}`,
+        type: ACTIVITY.PROFILE.TOKENSENT,
+        transaction: payload.id,
+        amount: transferAsset.amount,
+        state: {
+          old: recipientAccountOld,
+          new: recipientAccountNew,
         },
       } as AddActivityParam);
       accountWithNewActivity.add(transferAsset.recipientAddress.toString('hex'));
@@ -124,14 +136,20 @@ export default async function redeemableNftAfterBlockApply(
 
       await asyncForEach(voteAsset.votes, async item => {
         const isSelfStake = Buffer.compare(senderAddress, item.delegateAddress) === 0;
+        const senderAccountOld = await input.reducerHandler.invoke<AccountChain>(
+          'activity:getAccount',
+          { address: senderAddress.toString('hex') },
+        );
+        const senderAccountNew = { ...senderAccountOld };
+        senderAccountOld.token.balance = senderBalance + item.amount;
         await input.reducerHandler.invoke('activity:addActivity', {
-          newState: { token: { balance: senderBalance } },
-          oldState: { token: { balance: senderBalance + item.amount } },
-          payload: {
-            key: `profile:${senderAddress.toString('hex')}`,
-            type: isSelfStake ? ACTIVITY.PROFILE.SELFSTAKE : ACTIVITY.PROFILE.ADDSTAKE,
-            transaction: payload.id,
-            amount: -item.amount,
+          key: `profile:${senderAddress.toString('hex')}`,
+          type: isSelfStake ? ACTIVITY.PROFILE.SELFSTAKE : ACTIVITY.PROFILE.ADDSTAKE,
+          transaction: payload.id,
+          amount: -item.amount,
+          state: {
+            old: senderAccountOld,
+            new: senderAccountNew,
           },
         } as AddActivityParam);
         senderBalance += item.amount;

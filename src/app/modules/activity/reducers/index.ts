@@ -11,13 +11,29 @@ import {
   GetActivityParam,
 } from 'enevti-types/param/activity';
 import { KEY_STRING_MAX_LENGTH, ID_BYTES_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { AccountChain } from 'enevti-types/account/profile';
 import { getActivity } from '../utils/item';
 import { getActivities } from '../utils/list';
 import { addActivity } from '../utils/add';
 import { getActivityGenesis } from '../utils/genesis';
+import { getDefaultAccount } from '../utils/account';
 
 export function activityReducers(this: BaseModule) {
   return {
+    getAccount: async (
+      params: Record<string, unknown>,
+      _stateStore: StateStore,
+    ): Promise<AccountChain> => {
+      const { address } = params as Record<string, string>;
+      try {
+        const ret = await this._dataAccess.getAccountByAddress<AccountChain>(
+          Buffer.from(address, 'hex'),
+        );
+        return ret;
+      } catch {
+        return getDefaultAccount(address);
+      }
+    },
     getActivity: async (
       params: Record<string, unknown>,
       stateStore: StateStore,
@@ -77,25 +93,22 @@ export function activityReducers(this: BaseModule) {
       stateStore: StateStore,
     ): Promise<boolean> => {
       try {
-        const { oldState, newState, payload } = params as AddActivityParam;
-        if (typeof payload !== 'object') {
-          throw new Error('payload must be an object');
+        const { state, ...param } = params as AddActivityParam;
+        if (typeof param.key !== 'string') {
+          throw new Error('key must be a string');
         }
-        if (typeof payload.key !== 'string') {
-          throw new Error('payload.key must be a string');
-        }
-        if (payload.key.length > KEY_STRING_MAX_LENGTH + KEY_STRING_MAX_LENGTH + 1) {
+        if (param.key.length > KEY_STRING_MAX_LENGTH + KEY_STRING_MAX_LENGTH + 1) {
           throw new Error(
-            `maximum payload.key length is ${KEY_STRING_MAX_LENGTH + KEY_STRING_MAX_LENGTH + 1}`,
+            `maximum key length is ${KEY_STRING_MAX_LENGTH + KEY_STRING_MAX_LENGTH + 1}`,
           );
         }
-        if (typeof payload.type !== 'string') {
-          throw new Error('payload.type must be a string');
+        if (typeof param.type !== 'string') {
+          throw new Error('type must be a string');
         }
-        if (payload.type.length > KEY_STRING_MAX_LENGTH) {
-          throw new Error(`maximum payload.type length is ${KEY_STRING_MAX_LENGTH}`);
+        if (param.type.length > KEY_STRING_MAX_LENGTH) {
+          throw new Error(`maximum type length is ${KEY_STRING_MAX_LENGTH}`);
         }
-        await addActivity(stateStore, payload, oldState, newState);
+        await addActivity(stateStore, param, state?.old, state?.new);
         return true;
       } catch {
         return false;
