@@ -2,9 +2,11 @@ import { StateStore, GenesisConfig, BaseModule } from 'lisk-framework';
 import { NFTAsset } from 'enevti-types/chain/nft';
 import { CollectionAsset } from 'enevti-types/chain/collection';
 import { SocialRaffleConfig } from 'enevti-types/chain/social_raffle/config';
+import { MomentAsset } from 'enevti-types/chain/moment';
 import { MintNFTUtilsFunctionProps, mintNFT } from '../utils/mint';
 import { getNFTById } from '../utils/redeemable_nft';
 import { getCollectionById } from '../utils/collection';
+import { getMomentById } from '../utils/moment';
 
 export function redeemableNftReducers(this: BaseModule) {
   return {
@@ -36,6 +38,14 @@ export function redeemableNftReducers(this: BaseModule) {
       const { id } = params as Record<string, string>;
       const collection = await getCollectionById(stateStore, id);
       return collection ?? undefined;
+    },
+    getMoment: async (
+      params: Record<string, unknown>,
+      stateStore: StateStore,
+    ): Promise<MomentAsset | undefined> => {
+      const { id } = params as Record<string, string>;
+      const moment = await getMomentById(stateStore, id);
+      return moment ?? undefined;
     },
   };
 }

@@ -1,20 +1,13 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps, ProfileActivityChainItems } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { MintMomentProps } from 'enevti-types/asset/redeemable_nft/mint_moment_asset';
-import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
-import { MomentAsset, MomentActivityChainItems } from 'enevti-types/chain/moment';
-import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
+import { MomentAsset } from 'enevti-types/chain/moment';
+import { CID_STRING_MAX_LENGTH, ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { AddActivityParam } from 'enevti-types/param/activity';
+import { MINT_MOMENT_ASSET_ID } from 'enevti-types/constant/id';
 import { ACTIVITY } from '../constants/activity';
-import { COIN_NAME } from '../constants/chain';
 import { VALIDATION } from '../constants/validation';
 import { mintMomentAssetSchema } from '../schemas/asset/mint_moment_asset';
-import { getAccountStats, setAccountStats } from '../utils/account_stats';
-import {
-  addActivityCollection,
-  addActivityNFT,
-  addActivityProfile,
-  addActivityMoment,
-} from '../utils/activity';
 import {
   setMomentById,
   getMomentAt,
@@ -24,23 +17,24 @@ import {
 } from '../utils/moment';
 import { getNFTById } from '../utils/redeemable_nft';
 import { getBlockTimestamp, generateID } from '../utils/transaction';
+import { getMomentSlot, setMomentSlot } from '../utils/momentSlot';
 
 export class MintMomentAsset extends BaseAsset {
   public name = 'mintMoment';
-  public id = 18;
+  public id = MINT_MOMENT_ASSET_ID;
 
   // Define schema for asset
   public schema = mintMomentAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<MintMomentProps>): void {
-    if (asset.nftId.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.nftId max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.nftId.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.nftId max length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.text.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.text max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.text.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.text max length is ${CID_STRING_MAX_LENGTH}`);
     }
-    if (asset.data.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.data max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.data.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.data max length is ${CID_STRING_MAX_LENGTH}`);
     }
     if (asset.dataMime.length > VALIDATION.MIME_MAXLENGTH) {
       throw new Error(`asset.dataMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
@@ -51,8 +45,8 @@ export class MintMomentAsset extends BaseAsset {
     if (asset.dataProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
       throw new Error(`asset.dataProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
     }
-    if (asset.cover.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.cover max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.cover.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.cover max length is ${CID_STRING_MAX_LENGTH}`);
     }
     if (asset.coverMime.length > VALIDATION.MIME_MAXLENGTH) {
       throw new Error(`asset.coverMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
@@ -69,6 +63,7 @@ export class MintMomentAsset extends BaseAsset {
   public async apply({
     asset,
     transaction,
+    reducerHandler,
     stateStore,
   }: ApplyAssetContext<MintMomentProps>): Promise<void> {
     const timestamp = getBlockTimestamp(stateStore);
@@ -79,13 +74,17 @@ export class MintMomentAsset extends BaseAsset {
 
     const nft = await getNFTById(stateStore, asset.nftId);
     if (!nft) throw new Error('invalid NFT id');
-    const accountStats = await getAccountStats(stateStore, senderAddress.toString('hex'));
-    const index = accountStats.momentSlot.findIndex(t => Buffer.compare(t, nft.id) === 0);
-    if (index === -1) throw new Error('NFT id not found in sender stats moment slot');
-    accountStats.momentSlot.splice(index, 1);
-    await setAccountStats(stateStore, senderAddress.toString('hex'), accountStats);
+    const momentSlot = await getMomentSlot(stateStore, senderAddress);
+    if (!momentSlot) {
+      throw new Error('momentSlot chain data not found');
+    }
 
-    const moment: MomentAsset = {
+    const index = momentSlot.items.findIndex(t => Buffer.compare(t, nft.id) === 0);
+    if (index === -1) throw new Error('NFT id not found in sender stats moment slot');
+    momentSlot.items.splice(index, 1);
+    await setMomentSlot(stateStore, senderAddress, momentSlot);
+
+    const baseMoment: MomentAsset = {
       id: generateID(transaction, stateStore, BigInt(0)),
       nftId: Buffer.from(asset.nftId, 'hex'),
       creator: nft.creator,
@@ -110,73 +109,71 @@ export class MintMomentAsset extends BaseAsset {
         protocol: asset.coverProtocol,
       },
     };
-    await setMomentById(stateStore, moment.id.toString('hex'), moment);
+    const moment = { ...baseMoment };
 
     const momentAtCollection = await getMomentAt(stateStore, nft.collectionId.toString('hex'));
     momentAtCollection.moment.unshift(moment.id);
-    await setMomentAt(stateStore, nft.collectionId.toString('hex'), momentAtCollection);
 
     const momentAtNft = await getMomentAt(stateStore, nft.id.toString('hex'));
     momentAtNft.moment.unshift(moment.id);
-    await setMomentAt(stateStore, nft.id.toString('hex'), momentAtNft);
 
     senderAccount.redeemableNft.momentSlot -= 1;
     senderAccount.redeemableNft.momentCreated.unshift(moment.id);
-    await stateStore.account.set(senderAddress, senderAccount);
 
-    const collectionActivity: CollectionActivityChainItems = {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `collection:${nft.collectionId.toString('hex')}`,
+      type: ACTIVITY.COLLECTION.MOMENTCREATED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.COLLECTION.MOMENTCREATED,
-      to: senderAddress,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
-      },
-      nfts: [nft.id],
-    };
-    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
-
-    const nftActivity: NFTActivityChainItems = {
-      transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.NFT.MOMENTCREATED,
-      to: senderAddress,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
-      },
-    };
-    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
-
-    const profileActivity: ProfileActivityChainItems = {
-      transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.PROFILE.MOMENTCREATED,
-      from: senderAddress,
-      to: nft.creator,
+      amount: BigInt(0),
       payload: nft.id,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
-      },
-    };
-    await addActivityProfile(stateStore, senderAddress.toString('hex'), profileActivity);
+    } as AddActivityParam);
 
-    const momentActivity: MomentActivityChainItems = {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `nft:${nft.id.toString('hex')}`,
+      type: ACTIVITY.NFT.MOMENTCREATED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.MOMENT.MINTED,
-      to: senderAddress,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
+      amount: BigInt(0),
+      payload: moment.id,
+    } as AddActivityParam);
+
+    const oldSenderState = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAddress.toString('hex'),
+    });
+    const newSenderState = { ...oldSenderState };
+    newSenderState.redeemableNft.momentSlot -= 1;
+    newSenderState.redeemableNft.momentCreated.unshift(moment.id);
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: ACTIVITY.PROFILE.MOMENTCREATED,
+      transaction: transaction.id,
+      amount: BigInt(0),
+      state: {
+        old: oldSenderState,
+        new: newSenderState,
       },
-    };
-    await addActivityMoment(stateStore, moment.id.toString('hex'), momentActivity);
+    } as AddActivityParam);
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `moment:${moment.id.toString('hex')}`,
+      type: ACTIVITY.MOMENT.MINTED,
+      transaction: transaction.id,
+      amount: BigInt(0),
+      state: {
+        old: baseMoment as unknown,
+        new: moment as unknown,
+      },
+    } as AddActivityParam);
 
     const allMoment = await getAllMoment(stateStore);
     allMoment.items.unshift(moment.id);
+
+    // TODO: should we add activity to set moment at function?
+    await setMomentAt(stateStore, nft.collectionId.toString('hex'), momentAtCollection);
+    await setMomentAt(stateStore, nft.id.toString('hex'), momentAtNft);
+
+    await setMomentById(stateStore, moment.id.toString('hex'), moment);
     await setAllMoment(stateStore, allMoment);
+    await stateStore.account.set(senderAddress, senderAccount);
   }
 }

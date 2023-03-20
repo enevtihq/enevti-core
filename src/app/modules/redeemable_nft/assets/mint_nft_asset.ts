@@ -1,20 +1,21 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
 import { MintNFTProps } from 'enevti-types/asset/redeemable_nft/mint_nft_asset';
+import { ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { MINT_NFT_ASSET_ID } from 'enevti-types/constant/id';
+import { mintNftAssetSchema } from '../schemas/asset/mint_nft_asset';
 import { getCollectionById } from '../utils/collection';
 import { mintNFT } from '../utils/mint';
-import { VALIDATION } from '../constants/validation';
 
 export class MintNftAsset extends BaseAsset<MintNFTProps> {
   public name = 'mintNft';
-  public id = 1;
+  public id = MINT_NFT_ASSET_ID;
 
   // Define schema for asset
   public schema = mintNftAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<MintNFTProps>): void {
-    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.id max length is ${ID_STRING_MAX_LENGTH}`);
     }
     if (asset.quantity <= 0) {
       throw new Error(`asset.quantity must be greater than 0`);

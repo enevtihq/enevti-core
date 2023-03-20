@@ -6,26 +6,11 @@ import {
   TransactionApplyContext,
 } from 'lisk-sdk';
 import { redeemableNftActions } from './actions';
-import { CommentCollectionAsset } from './assets/comment_collection_asset';
-import { CommentCollectionClubsAsset } from './assets/comment_collection_clubs_asset';
-import { CommentMomentAsset } from './assets/comment_moment_asset';
-import { CommentMomentClubsAsset } from './assets/comment_moment_clubs_asset';
-import { CommentNftAsset } from './assets/comment_nft_asset';
-import { CommentNftClubsAsset } from './assets/comment_nft_clubs_asset';
 import { CreateOnekindNftAsset } from './assets/create_onekind_nft_asset';
 import { DeliverSecretAsset } from './assets/deliver_secret_asset';
-import { LikeCollectionAsset } from './assets/like_collection_asset';
-import { LikeCommentAsset } from './assets/like_comment_asset';
-import { LikeCommentClubsAsset } from './assets/like_comment_clubs_asset';
-import { LikeMomentAsset } from './assets/like_moment_asset';
-import { LikeNftAsset } from './assets/like_nft_asset';
-import { LikeReplyAsset } from './assets/like_reply_asset';
-import { LikeReplyClubsAsset } from './assets/like_reply_clubs_asset';
 import { MintMomentAsset } from './assets/mint_moment_asset';
 import { MintNftAsset } from './assets/mint_nft_asset';
 import { MintNftTypeQrAsset } from './assets/mint_nft_type_qr_asset';
-import { ReplyCommentAsset } from './assets/reply_comment_asset';
-import { ReplyCommentClubsAsset } from './assets/reply_comment_clubs_asset';
 import { SetVideoCallAnsweredAsset } from './assets/set_video_call_answered_asset';
 import { SetVideoCallRejectedAsset } from './assets/set_video_call_rejected_asset';
 import redeemableNftAfterBlockApply from './hook/afterBlockApply';
@@ -42,24 +27,9 @@ export class RedeemableNftModule extends BaseModule {
     new MintNftAsset(),
     new DeliverSecretAsset(),
     new MintNftTypeQrAsset(),
-    new LikeNftAsset(),
-    new LikeCollectionAsset(),
-    new CommentNftAsset(),
-    new CommentCollectionAsset(),
-    new LikeCommentAsset(),
-    new LikeReplyAsset(),
-    new ReplyCommentAsset(),
-    new CommentCollectionClubsAsset(),
-    new CommentNftClubsAsset(),
-    new ReplyCommentClubsAsset(),
-    new LikeReplyClubsAsset(),
-    new LikeCommentClubsAsset(),
     new SetVideoCallRejectedAsset(),
     new SetVideoCallAnsweredAsset(),
     new MintMomentAsset(),
-    new CommentMomentAsset(),
-    new CommentMomentClubsAsset(),
-    new LikeMomentAsset(),
   ];
   public events = [
     'newCollection',

@@ -8,11 +8,13 @@ import {
   GetCollectionRaffleConfig,
   GetRecordParam,
   SetCollectionRaffleConfig,
+  GetCollectionEligibilityParam,
 } from 'enevti-types/param/social_raffle';
 import { ID_BYTES_MAX_LENGTH } from 'enevti-types/constant/validation';
 import { getSocialRaffleState } from '../utils/state';
 import { getSocialRaffleBlockRecord } from '../utils/block';
 import { getCollectionRaffleConfig, setCollectionRaffleConfig } from '../utils/collectionConfig';
+import { isCollectionEligibleForRaffle } from '../utils/eligibility';
 
 export function socialRaffleReducers(this: BaseModule) {
   return {
@@ -21,6 +23,14 @@ export function socialRaffleReducers(this: BaseModule) {
       _stateStore: StateStore,
       // eslint-disable-next-line @typescript-eslint/require-await
     ): Promise<GenesisConfig> => this.config,
+    getCollectionEligibility: async (
+      params: Record<string, unknown>,
+      _stateStore: StateStore,
+    ): Promise<boolean> => {
+      const { reducerHandler, id } = params as GetCollectionEligibilityParam;
+      const eligible = await isCollectionEligibleForRaffle(reducerHandler, id);
+      return eligible;
+    },
     getCollectionRaffleConfig: async (
       params: Record<string, unknown>,
       stateStore: StateStore,

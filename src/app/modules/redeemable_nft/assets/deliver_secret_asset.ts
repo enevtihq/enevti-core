@@ -1,27 +1,24 @@
 import { BaseAsset, ApplyAssetContext, cryptography, ValidateAssetContext } from 'lisk-sdk';
-import { deliverSecretAssetSchema } from '../schemas/asset/deliver_secret_asset';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { DeliverSecretProps } from 'enevti-types/asset/redeemable_nft/deliver_secret_asset';
+import { ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { AddActivityParam } from 'enevti-types/param/activity';
+import { DELIVER_SECRET_ASSET_ID } from 'enevti-types/constant/id';
+import { deliverSecretAssetSchema } from '../schemas/asset/deliver_secret_asset';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
-import { getBlockTimestamp } from '../utils/transaction';
 import { ACTIVITY } from '../constants/activity';
-import { COIN_NAME } from '../constants/chain';
-import { addActivityCollection, addActivityNFT, addActivityProfile } from '../utils/activity';
-import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
-import { getAccountStats, setAccountStats } from '../utils/account_stats';
-import { VALIDATION } from '../constants/validation';
+import { getServeRate, setServeRate } from '../utils/serveRate';
 
 export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   public name = 'deliverSecret';
-  public id = 2;
+  public id = DELIVER_SECRET_ASSET_ID;
 
   // Define schema for asset
   public schema = deliverSecretAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<DeliverSecretProps>): void {
-    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.id max length is ${ID_STRING_MAX_LENGTH}`);
     }
   }
 
@@ -34,7 +31,6 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
   }: ApplyAssetContext<DeliverSecretProps>): Promise<void> {
     const { senderPublicKey, senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
-    const timestamp = getBlockTimestamp(stateStore);
 
     if (
       !cryptography.verifyData(
@@ -59,8 +55,11 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
       throw new Error('NFT status is not pending-secret');
     }
 
-    const accountStats = await getAccountStats(stateStore, senderAccount.address.toString('hex'));
-    const nftInServeRateIndex = accountStats.serveRate.items.findIndex(
+    const senderServeRate = (await getServeRate(stateStore, senderAccount.address)) ?? {
+      score: 0,
+      items: [],
+    };
+    const nftInServeRateIndex = senderServeRate.items.findIndex(
       t =>
         Buffer.compare(t.id, nft.id) === 0 &&
         t.nonce === nft.redeem.velocity &&
@@ -72,18 +71,18 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
       throw new Error('cannot find NFT in account stats serveRate items');
     }
 
-    accountStats.serveRate.items[nftInServeRateIndex].status = 1;
+    senderServeRate.items[nftInServeRateIndex].status = 1;
 
     const serveRate = Number(
       (
-        (accountStats.serveRate.items.filter(t => t.status === 1).length * 10000) /
-        accountStats.serveRate.items.length
+        (senderServeRate.items.filter(t => t.status === 1).length * 10000) /
+        senderServeRate.items.length
       ).toFixed(0),
     );
 
-    accountStats.serveRate.score = serveRate;
+    senderServeRate.score = serveRate;
     senderAccount.redeemableNft.serveRate = serveRate;
-    await setAccountStats(stateStore, senderAccount.address.toString('hex'), accountStats);
+    await setServeRate(stateStore, senderAccount.address, senderServeRate);
 
     nft.redeem.secret.cipher = asset.cipher;
     nft.redeem.secret.signature.cipher = asset.signature.cipher;
@@ -92,6 +91,23 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     nft.redeem.status = 'ready';
     nft.redeem.nonce += 1;
 
+    const oldSenderState = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAddress.toString('hex'),
+    });
+    const newSenderState = { ...oldSenderState };
+    newSenderState.token.balance += nft.price.amount;
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: ACTIVITY.PROFILE.DELIVERSECRET,
+      transaction: transaction.id,
+      amount: BigInt(nft.price.amount),
+      state: {
+        old: oldSenderState,
+        new: newSenderState,
+      },
+    } as AddActivityParam);
+
     if (nft.price.amount > BigInt(0)) {
       await reducerHandler.invoke('token:credit', {
         address: senderAddress,
@@ -99,18 +115,16 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
       });
     }
 
-    await addActivityProfile(stateStore, senderAddress.toString('hex'), {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `nft:${nft.id.toString('hex')}`,
+      type: ACTIVITY.NFT.SECRETDELIVERED,
       transaction: transaction.id,
-      name: ACTIVITY.PROFILE.DELIVERSECRET,
-      date: BigInt(timestamp),
-      from: senderAddress,
-      to: nft.owner,
-      payload: nft.id,
-      value: {
-        amount: nft.price.amount,
-        currency: nft.price.currency,
+      amount: BigInt(0),
+      state: {
+        old: (await getNFTById(stateStore, nft.id.toString('hex'))) as unknown,
+        new: nft as unknown,
       },
-    });
+    } as AddActivityParam);
 
     await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
@@ -121,29 +135,12 @@ export class DeliverSecretAsset extends BaseAsset<DeliverSecretProps> {
     senderAccount.redeemableNft.pending.splice(index, 1);
     await stateStore.account.set(senderAddress, senderAccount);
 
-    const nftActivity: NFTActivityChainItems = {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `collection:${nft.collectionId.toString('hex')}`,
+      type: ACTIVITY.COLLECTION.SECRETDELIVERED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.NFT.SECRETDELIVERED,
-      to: cryptography.getAddressFromPublicKey(nft.redeem.secret.recipient),
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
-      },
-    };
-    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
-
-    const collectionActivity: CollectionActivityChainItems = {
-      transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.COLLECTION.SECRETDELIVERED,
-      to: cryptography.getAddressFromPublicKey(nft.redeem.secret.recipient),
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
-      },
-      nfts: [nft.id],
-    };
-    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
+      amount: BigInt(0),
+      payload: nft.id,
+    } as AddActivityParam);
   }
 }

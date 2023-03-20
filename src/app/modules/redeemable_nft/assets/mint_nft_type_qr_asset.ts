@@ -1,16 +1,17 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
-import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asset';
 import {
   MintNFTByQR,
   MintNFTByQRProps,
 } from 'enevti-types/asset/redeemable_nft/mint_nft_type_qr_asset';
+import { SIGNATURE_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { MINT_NFT_BY_QR_ASSET_ID } from 'enevti-types/constant/id';
+import { mintNftTypeQrAssetSchema } from '../schemas/asset/mint_nft_type_qr_asset';
 import { getCollectionById } from '../utils/collection';
 import { mintNFT } from '../utils/mint';
-import { VALIDATION } from '../constants/validation';
 
 export class MintNftTypeQrAsset extends BaseAsset {
   public name = 'mintNftTypeQr';
-  public id = 3;
+  public id = MINT_NFT_BY_QR_ASSET_ID;
 
   // Define schema for asset
   public schema = mintNftTypeQrAssetSchema;
@@ -19,8 +20,8 @@ export class MintNftTypeQrAsset extends BaseAsset {
     if (asset.body.length === 0) {
       throw new Error(`asset.body cannot be empty`);
     }
-    if (asset.signature.length > VALIDATION.SIGNATURE_MAXLENGTH) {
-      throw new Error(`asset.signature max length is ${VALIDATION.SIGNATURE_MAXLENGTH}`);
+    if (asset.signature.length > SIGNATURE_STRING_MAX_LENGTH) {
+      throw new Error(`asset.signature max length is ${SIGNATURE_STRING_MAX_LENGTH}`);
     }
   }
 

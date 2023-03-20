@@ -1,27 +1,24 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { SetVideoCallAnsweredProps } from 'enevti-types/asset/redeemable_nft/set_video_call_answered_asset';
-import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
-import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
+import { ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { AddActivityParam } from 'enevti-types/param/activity';
+import { SET_VIDEO_CALL_ANSWERED_ASSET_ID } from 'enevti-types/constant/id';
 import { ACTIVITY } from '../constants/activity';
-import { COIN_NAME } from '../constants/chain';
-import { VALIDATION } from '../constants/validation';
 import { setVideoCallAnsweredAssetSchema } from '../schemas/asset/set_video_call_answered_asset';
-import { getAccountStats, setAccountStats } from '../utils/account_stats';
-import { addActivityCollection, addActivityEngagement, addActivityNFT } from '../utils/activity';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { getBlockTimestamp } from '../utils/transaction';
+import { getMomentSlot, setMomentSlot } from '../utils/momentSlot';
 
 export class SetVideoCallAnsweredAsset extends BaseAsset {
   public name = 'setVideoCallAnswered';
-  public id = 17;
+  public id = SET_VIDEO_CALL_ANSWERED_ASSET_ID;
 
   // Define schema for asset
   public schema = setVideoCallAnsweredAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<SetVideoCallAnsweredProps>): void {
-    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.id max length is ${ID_STRING_MAX_LENGTH}`);
     }
   }
 
@@ -29,11 +26,11 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
   public async apply({
     asset,
     transaction,
+    reducerHandler,
     stateStore,
   }: ApplyAssetContext<SetVideoCallAnsweredProps>): Promise<void> {
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
-    const timestamp = getBlockTimestamp(stateStore);
 
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
@@ -53,11 +50,9 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
     }
 
     senderAccount.redeemableNft.momentSlot += 1;
-    await stateStore.account.set(senderAddress, senderAccount);
 
-    const senderAccountStats = await getAccountStats(stateStore, senderAddress.toString('hex'));
-    senderAccountStats.momentSlot.push(nft.id);
-    await setAccountStats(stateStore, senderAddress.toString('hex'), senderAccountStats);
+    const senderMomentSlot = (await getMomentSlot(stateStore, senderAddress)) ?? { items: [] };
+    senderMomentSlot.items.push(nft.id);
 
     nft.redeem.count += 1;
     nft.redeem.nonce += 1;
@@ -65,38 +60,47 @@ export class SetVideoCallAnsweredAsset extends BaseAsset {
       nft.redeem.status = 'limit-exceeded';
     if (nft.redeem.countLimit > 0 && nft.redeem.count >= nft.redeem.countLimit)
       nft.redeem.status = 'limit-exceeded';
-    await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
-    await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
-      transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.SETVIDEOCALLANSWERED,
-      date: BigInt(timestamp),
-      target: nft.id,
+    const oldSenderState = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAddress.toString('hex'),
     });
+    const newSenderState = { ...oldSenderState };
+    newSenderState.redeemableNft.momentSlot += 1;
 
-    const nftActivity: NFTActivityChainItems = {
+    // TODO: should we change this activity type to 'addMomentSlot'?
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: ACTIVITY.ENGAGEMENT.SETVIDEOCALLANSWERED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.NFT.VIDEOCALLANSWERED,
-      to: nft.creator,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
+      amount: BigInt(0),
+      payload: nft.id,
+      state: {
+        old: oldSenderState,
+        new: newSenderState,
       },
-    };
-    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
+    } as AddActivityParam);
 
-    const collectionActivity: CollectionActivityChainItems = {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `nft:${nft.id.toString('hex')}`,
+      type: ACTIVITY.NFT.VIDEOCALLANSWERED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.COLLECTION.VIDEOCALLANSWERED,
-      to: nft.creator,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
+      amount: BigInt(0),
+      state: {
+        old: (await getNFTById(stateStore, nft.id.toString('hex'))) as unknown,
+        new: nft as unknown,
       },
-      nfts: [nft.id],
-    };
-    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
+    } as AddActivityParam);
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `collection:${nft.collectionId.toString('hex')}`,
+      type: ACTIVITY.COLLECTION.VIDEOCALLANSWERED,
+      transaction: transaction.id,
+      payload: nft.id,
+      amount: BigInt(0),
+    } as AddActivityParam);
+
+    await stateStore.account.set(senderAddress, senderAccount);
+    await setMomentSlot(stateStore, senderAddress, senderMomentSlot);
+    await setNFTById(stateStore, nft.id.toString('hex'), nft);
   }
 }

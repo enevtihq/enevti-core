@@ -5,19 +5,20 @@ import {
   transactions,
   cryptography,
 } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { CreateOneKindNFTProps } from 'enevti-types/asset/redeemable_nft/create_onekind_nft_asset';
-import { CollectionActivityChainItems, CollectionAsset } from 'enevti-types/chain/collection';
-import { NFTIdAsset } from 'enevti-types/chain/id';
+import { CollectionAsset } from 'enevti-types/chain/collection';
 import { NFTAsset } from 'enevti-types/chain/nft';
-import { SocialRaffleGenesisConfig } from 'enevti-types/chain/config/SocialRaffleGenesisConfig';
+import { GetCollectionEligibilityParam } from 'enevti-types/param/social_raffle';
+import { CID_STRING_MAX_LENGTH, ID_STRING_MAX_LENGTH } from 'enevti-types/constant/validation';
+import { CREATE_NFT_ASSET_ID } from 'enevti-types/constant/id';
+import { AddActivityParam } from 'enevti-types/param/activity';
 import { ACTIVITY } from '../constants/activity';
 import { NFTTYPE } from '../constants/nft_type';
 import { RECURRING } from '../constants/recurring';
 import { UTILITY, UTILITY_WITH_SECRET } from '../constants/utility';
 import { VALIDATION } from '../constants/validation';
 import { createOnekindNftAssetSchema } from '../schemas/asset/create_onekind_nft_asset';
-import { addActivityCollection, addActivityProfile } from '../utils/activity';
 import { getAllCollection, setAllCollection, setCollectionById } from '../utils/collection';
 import { getAllNFTTemplate } from '../utils/nft_template';
 import { getAllNFT, setAllNFT, setNFTById } from '../utils/redeemable_nft';
@@ -27,11 +28,10 @@ import {
   getBlockTimestamp,
   getNetworkIdentifier,
 } from '../utils/transaction';
-import { isCollectionEligibleForRaffle } from '../utils/social_raffle';
 
 export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
   public name = 'createOnekindNft';
-  public id = 0;
+  public id = CREATE_NFT_ASSET_ID;
 
   // Define schema for asset
   public schema = createOnekindNftAssetSchema;
@@ -99,11 +99,11 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.royalty.staker < 0) {
       throw new Error(`asset.royalty.staker can't be negative`);
     }
-    if (asset.template.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.template max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.template.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.template max length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.data.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.data max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.data.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.data max length is ${CID_STRING_MAX_LENGTH}`);
     }
     if (asset.dataMime.length > VALIDATION.MIME_MAXLENGTH) {
       throw new Error(`asset.dataMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
@@ -114,8 +114,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.dataProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
       throw new Error(`asset.dataProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
     }
-    if (asset.cover.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.cover max length is ${VALIDATION.IPFS_CID_v1_MAXLENGTH}`);
+    if (asset.cover.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.cover max length is ${CID_STRING_MAX_LENGTH}`);
     }
     if (asset.coverMime.length > VALIDATION.MIME_MAXLENGTH) {
       throw new Error(`asset.coverMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
@@ -126,8 +126,8 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     if (asset.coverProtocol.length > VALIDATION.FILE_PROTOCOL_MAXLENGTH) {
       throw new Error(`asset.coverProtocol max length is ${VALIDATION.FILE_PROTOCOL_MAXLENGTH}`);
     }
-    if (asset.content.length > VALIDATION.IPFS_CID_v1_MAXLENGTH) {
-      throw new Error(`asset.content max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.content.length > CID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.content max length is ${CID_STRING_MAX_LENGTH}`);
     }
     if (asset.contentMime.length > VALIDATION.MIME_MAXLENGTH) {
       throw new Error(`asset.contentMime max length is ${VALIDATION.MIME_MAXLENGTH}`);
@@ -194,7 +194,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
 
     let idCounter = 0;
 
-    const collection: CollectionAsset = {
+    const baseCollection: CollectionAsset = {
       id: generateID(transaction, stateStore, BigInt(idCounter)),
       collectionType: NFTTYPE.ONEKIND,
       mintingType: asset.mintingType,
@@ -243,12 +243,14 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       promoted: false,
       raffled: asset.raffled,
     };
+    const collection = { ...baseCollection };
 
     if (collection.raffled > -1) {
-      const config: SocialRaffleGenesisConfig['socialRaffle'] = await reducerHandler.invoke(
-        'redeemableNft:getSocialRaffleConfig',
-      );
-      if (!isCollectionEligibleForRaffle(collection, config)) {
+      const eligible = await reducerHandler.invoke('socialRaffle:getCollectionEligibility', {
+        reducerHandler,
+        id: collection.id,
+      } as GetCollectionEligibilityParam);
+      if (!eligible) {
         throw new Error('parameter not eligible for raffle activation');
       }
     }
@@ -256,7 +258,7 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
     idCounter += 1;
 
     const nftsInThisCollection: NFTAsset[] = [];
-    const nftsIdInThisCollection: NFTIdAsset[] = [];
+    const nftsIdInThisCollection: Buffer[] = [];
     for (let i = 0; i < asset.quantity; i += 1) {
       const nft: NFTAsset = {
         id: generateID(transaction, stateStore, BigInt(idCounter)),
@@ -352,21 +354,20 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
 
     collection.minting.total = nftsIdInThisCollection;
     collection.minting.available = nftsIdInThisCollection;
-
     allCollection.items.unshift(collection.id);
-    await setAllCollection(stateStore, allCollection);
 
-    await setCollectionById(stateStore, collection.id.toString('hex'), collection);
     await reducerHandler.invoke('registrar:setRegistrar', {
       identifier: 'name',
       value: collection.name,
       id: collection.id,
     });
+
     await reducerHandler.invoke('registrar:setRegistrar', {
       identifier: 'symbol',
       value: collection.symbol,
       id: collection.id,
     });
+
     await asyncForEach(nftsInThisCollection, async item => {
       await reducerHandler.invoke('registrar:setRegistrar', {
         identifier: 'symbol',
@@ -375,34 +376,39 @@ export class CreateOnekindNftAsset extends BaseAsset<CreateOneKindNFTProps> {
       });
     });
 
-    const activity: CollectionActivityChainItems = {
-      transaction: transaction.id,
-      name: ACTIVITY.COLLECTION.CREATED,
-      date: BigInt(timestamp),
-      nfts: [],
-      to: senderAddress,
-      value: {
-        amount: BigInt(0),
-        currency: asset.price.currency,
-      },
-    };
-    await addActivityCollection(stateStore, collection.id.toString('hex'), activity);
-
-    await addActivityProfile(stateStore, senderAddress.toString('hex'), {
-      transaction: transaction.id,
-      name: ACTIVITY.PROFILE.CREATENFT,
-      date: BigInt(timestamp),
-      from: senderAddress,
-      to: Buffer.alloc(0),
-      payload: collection.id,
-      value: {
-        amount: BigInt(0),
-        currency: asset.price.currency,
-      },
-    });
-
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
     senderAccount.redeemableNft.collection.unshift(collection.id);
+
+    const oldSenderState = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAddress.toString('hex'),
+    });
+    const newSenderState = { ...oldSenderState };
+    newSenderState.redeemableNft.collection.unshift(collection.id);
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: ACTIVITY.PROFILE.CREATENFT,
+      transaction: transaction.id,
+      amount: BigInt(0),
+      state: {
+        old: oldSenderState,
+        new: newSenderState,
+      },
+    } as AddActivityParam);
+
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `collection:${collection.id.toString('hex')}`,
+      type: ACTIVITY.COLLECTION.CREATED,
+      transaction: transaction.id,
+      amount: BigInt(0),
+      state: {
+        old: baseCollection as unknown,
+        new: collection as unknown,
+      },
+    } as AddActivityParam);
+
     await stateStore.account.set(senderAddress, senderAccount);
+    await setAllCollection(stateStore, allCollection);
+    await setCollectionById(stateStore, collection.id.toString('hex'), collection);
   }
 }

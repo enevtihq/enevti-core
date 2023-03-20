@@ -45,7 +45,7 @@ export default async function socialRaffleAfterBlockApply(
 
       // TODO: change to LIP-52 based collection retrival
       const collection = await input.reducerHandler.invoke<CollectionAsset | undefined>(
-        'redeemable_nft:getCollection',
+        'redeemableNft:getCollection',
         { id: registrar.id.toString('hex') },
       );
       if (!collection) throw new Error('Collection not found while monintorng social raffle');

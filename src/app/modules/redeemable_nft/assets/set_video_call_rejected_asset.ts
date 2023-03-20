@@ -1,33 +1,35 @@
 import { BaseAsset, ApplyAssetContext, ValidateAssetContext, cryptography } from 'lisk-sdk';
-import { RedeemableNFTAccountProps } from 'enevti-types/account/profile';
+import { AccountChain, RedeemableNFTAccountProps } from 'enevti-types/account/profile';
 import { SetVideoCallRejectedProps } from 'enevti-types/asset/redeemable_nft/set_video_call_rejected_asset';
-import { CollectionActivityChainItems } from 'enevti-types/chain/collection';
-import { NFTActivityChainItems } from 'enevti-types/chain/nft/NFTActivity';
+import {
+  ID_STRING_MAX_LENGTH,
+  PUBLIC_KEY_STRING_MAX_LENGTH,
+  SIGNATURE_STRING_MAX_LENGTH,
+} from 'enevti-types/constant/validation';
+import { AddActivityParam } from 'enevti-types/param/activity';
+import { SET_VIDEO_CALL_REJECTED_ASSET_ID } from 'enevti-types/constant/id';
 import { ACTIVITY } from '../constants/activity';
-import { COIN_NAME } from '../constants/chain';
-import { VALIDATION } from '../constants/validation';
 import { setVideoCallRejectedAssetSchema } from '../schemas/asset/set_video_call_rejected_asset';
-import { getAccountStats, setAccountStats } from '../utils/account_stats';
-import { addActivityEngagement, addActivityNFT, addActivityCollection } from '../utils/activity';
 import { getNFTById, setNFTById } from '../utils/redeemable_nft';
-import { getBlockTimestamp } from '../utils/transaction';
+import { getMomentSlot, setMomentSlot } from '../utils/momentSlot';
+import { getServeRate, setServeRate } from '../utils/serveRate';
 
 export class SetVideoCallRejectedAsset extends BaseAsset {
   public name = 'setVideoCallRejected';
-  public id = 16;
+  public id = SET_VIDEO_CALL_REJECTED_ASSET_ID;
 
   // Define schema for asset
   public schema = setVideoCallRejectedAssetSchema;
 
   public validate({ asset }: ValidateAssetContext<SetVideoCallRejectedProps>): void {
-    if (asset.id.length > VALIDATION.ID_MAXLENGTH) {
-      throw new Error(`asset.id max length is ${VALIDATION.ID_MAXLENGTH}`);
+    if (asset.id.length > ID_STRING_MAX_LENGTH) {
+      throw new Error(`asset.id max length is ${ID_STRING_MAX_LENGTH}`);
     }
-    if (asset.publicKey.length > VALIDATION.PUBLIC_KEY_MAXLENGTH) {
-      throw new Error(`asset.publicKey max length is ${VALIDATION.PUBLIC_KEY_MAXLENGTH}`);
+    if (asset.publicKey.length > PUBLIC_KEY_STRING_MAX_LENGTH) {
+      throw new Error(`asset.publicKey max length is ${PUBLIC_KEY_STRING_MAX_LENGTH}`);
     }
-    if (asset.signature.length > VALIDATION.SIGNATURE_MAXLENGTH) {
-      throw new Error(`asset.signature max length is ${VALIDATION.SIGNATURE_MAXLENGTH}`);
+    if (asset.signature.length > SIGNATURE_STRING_MAX_LENGTH) {
+      throw new Error(`asset.signature max length is ${SIGNATURE_STRING_MAX_LENGTH}`);
     }
   }
 
@@ -35,11 +37,11 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
   public async apply({
     asset,
     transaction,
+    reducerHandler,
     stateStore,
   }: ApplyAssetContext<SetVideoCallRejectedProps>): Promise<void> {
     const { senderAddress } = transaction;
     const senderAccount = await stateStore.account.get<RedeemableNFTAccountProps>(senderAddress);
-    const timestamp = getBlockTimestamp(stateStore);
 
     const nft = await getNFTById(stateStore, asset.id);
     if (!nft) {
@@ -74,11 +76,9 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
     }
 
     senderAccount.redeemableNft.momentSlot += 1;
-    await stateStore.account.set(senderAddress, senderAccount);
 
-    const senderAccountStats = await getAccountStats(stateStore, senderAddress.toString('hex'));
-    senderAccountStats.momentSlot.push(nft.id);
-    await setAccountStats(stateStore, senderAddress.toString('hex'), senderAccountStats);
+    const senderMomentSlot = (await getMomentSlot(stateStore, senderAddress)) ?? { items: [] };
+    senderMomentSlot.items.push(nft.id);
 
     nft.redeem.count += 1;
     nft.redeem.nonce += 1;
@@ -86,42 +86,50 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
       nft.redeem.status = 'limit-exceeded';
     if (nft.redeem.countLimit > 0 && nft.redeem.count >= nft.redeem.countLimit)
       nft.redeem.status = 'limit-exceeded';
-    await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
-    await addActivityEngagement(stateStore, transaction.senderAddress.toString('hex'), {
-      transaction: transaction.id,
-      name: ACTIVITY.ENGAGEMENT.SETVIDEOCALLREJECTED,
-      date: BigInt(timestamp),
-      target: nft.id,
+    const oldSenderState = await reducerHandler.invoke<AccountChain>('activity:getAccount', {
+      address: senderAddress.toString('hex'),
     });
+    const newSenderState = { ...oldSenderState };
+    newSenderState.redeemableNft.momentSlot += 1;
 
-    const nftActivity: NFTActivityChainItems = {
+    // TODO: should we change this activity type to 'addMomentSlot'?
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `profile:${senderAddress.toString('hex')}`,
+      type: ACTIVITY.ENGAGEMENT.SETVIDEOCALLREJECTED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.NFT.VIDEOCALLREJECTED,
-      to: nft.creator,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
+      amount: BigInt(0),
+      payload: nft.id,
+      state: {
+        old: oldSenderState,
+        new: newSenderState,
       },
-    };
-    await addActivityNFT(stateStore, nft.id.toString('hex'), nftActivity);
+    } as AddActivityParam);
 
-    const collectionActivity: CollectionActivityChainItems = {
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `nft:${nft.id.toString('hex')}`,
+      type: ACTIVITY.NFT.VIDEOCALLREJECTED,
       transaction: transaction.id,
-      date: BigInt(timestamp),
-      name: ACTIVITY.COLLECTION.VIDEOCALLREJECTED,
-      to: nft.creator,
-      value: {
-        amount: BigInt(0),
-        currency: COIN_NAME,
+      amount: BigInt(0),
+      state: {
+        old: (await getNFTById(stateStore, nft.id.toString('hex'))) as unknown,
+        new: nft as unknown,
       },
-      nfts: [nft.id],
-    };
-    await addActivityCollection(stateStore, nft.collectionId.toString('hex'), collectionActivity);
+    } as AddActivityParam);
 
-    const creatorAccountStats = await getAccountStats(stateStore, nft.creator.toString('hex'));
-    const nftInServeRateIndex = creatorAccountStats.serveRate.items.findIndex(
+    await reducerHandler.invoke('activity:addActivity', {
+      key: `collection:${nft.collectionId.toString('hex')}`,
+      type: ACTIVITY.COLLECTION.VIDEOCALLREJECTED,
+      transaction: transaction.id,
+      payload: nft.id,
+      amount: BigInt(0),
+    } as AddActivityParam);
+
+    const creatorServeRate = (await getServeRate(stateStore, nft.creator)) ?? {
+      score: 0,
+      items: [],
+    };
+    const nftInServeRateIndex = creatorServeRate.items.findIndex(
       t =>
         Buffer.compare(t.id, nft.id) === 0 &&
         t.nonce === nft.redeem.velocity &&
@@ -133,18 +141,26 @@ export class SetVideoCallRejectedAsset extends BaseAsset {
       throw new Error('cannot find NFT in creator account stats serveRate items');
     }
 
-    creatorAccountStats.serveRate.items[nftInServeRateIndex].status = 0;
+    creatorServeRate.items[nftInServeRateIndex].status = 0;
 
     const serveRate = Number(
       (
-        (creatorAccountStats.serveRate.items.filter(t => t.status === 1).length * 10000) /
-        creatorAccountStats.serveRate.items.length
+        (creatorServeRate.items.filter(t => t.status === 1).length * 10000) /
+        creatorServeRate.items.length
       ).toFixed(0),
     );
 
-    creatorAccountStats.serveRate.score = serveRate;
+    creatorServeRate.score = serveRate;
     creatorAccount.redeemableNft.serveRate = serveRate;
-    await setAccountStats(stateStore, creatorAccount.address.toString('hex'), creatorAccountStats);
+
+    // TODO: should we add activity for serve rate?
+    await setServeRate(stateStore, creatorAccount.address, creatorServeRate);
+
+    // TODO: should we add activity for account set?
     await stateStore.account.set(nft.creator, creatorAccount);
+
+    await stateStore.account.set(senderAddress, senderAccount);
+    await setNFTById(stateStore, nft.id.toString('hex'), nft);
+    await setMomentSlot(stateStore, senderAddress, senderMomentSlot);
   }
 }

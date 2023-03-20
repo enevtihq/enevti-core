@@ -93,7 +93,6 @@ export async function mintNFT({
     nft.redeem.velocity += 1;
     nft.redeem.count = 0;
     if (nft.redeem.status === 'pending-secret') nft.redeem.secret.recipient = senderPublicKey;
-    await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
     await reducerHandler.invoke('activity:addActivity', {
       key: `nft:${nft.id.toString('hex')}`,
@@ -105,6 +104,8 @@ export async function mintNFT({
         new: nft as unknown,
       },
     } as AddActivityParam);
+
+    await setNFTById(stateStore, nft.id.toString('hex'), nft);
 
     senderAccount.redeemableNft.owned.unshift(nft.id);
     if (nft.redeem.status === 'pending-secret') {
